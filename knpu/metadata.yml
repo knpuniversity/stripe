@@ -1,0 +1,28 @@
+title: Stripe: Killer Payment Processing + ??? = Profit
+
+summary: |
+    You've already got the unstoppably amazing product, you
+    *just* need to get out there and sell it! Knowing that almost
+    every payment-processor ever is a *huge* pain you choose
+    Stripe (so wise).
+    
+    In this tutorial, we'll build a full checkout system for our
+    awesome product and learn all about:
+        
+    - Handling the Stripe.js checkout process
+    - Creating Stripe customers
+    - Storing cards type and last-4
+    - Creating and charging subscriptions!
+    - Handling monthly charges (via webhooks)
+    - What happens when charging fails :(
+    - Updating credit card details
+    - Using discounts and coupon Codes
+
+illustration: stripe.png
+
+tuts_hero:
+# todo - fill in the steps properly
+#    start_step: start
+    finish_step: start
+
+chapters: []
