@@ -4,3 +4,24 @@ AppBundle\Entity\User:
         email: <email()>
         plainPassword: breakingbaad
         enabled: true
+
+AppBundle\Entity\Product:
+    product (template):
+        price: <numberBetween(9, 99)>
+        description: <realText(500, 5)>
+
+    product_1 (extends product):
+        name: Sheer Shears
+        imageFilename: product_1.png
+    product_2 (extends product):
+        name: I Love Ewe Cologne
+        imageFilename: product_2.png
+    product_3 (extends product):
+        name: Fur Conditioner
+        imageFilename: product_3.png
+    product_4 (extends product):
+        name: Skin like a lamb facial wash
+        imageFilename: product_4.png
+    product_5 (extends product):
+        name: 'Ram: Mustache wax for men'
+        imageFilename: product_5.png
