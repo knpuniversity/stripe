@@ -1,18 +1,30 @@
 {% extends 'base.html.twig' %}
+{% block title %} {{ product.name }} {% endblock %}
 
 {% block body %}
-    <h1>{{ product.name }}</h1>
-
-    <form action="{{ path('order_add_product_to_cart', {'slug': product.slug}) }}" method="POST">
-        <button type="submit">Add to Cart</button>
-    </form>
-
-    <strong>{{ product.price }}</strong>
-
-    <img width="100" src="{{ asset('uploads/'~product.imageFilename) }}" />
-
-    <p>
-        {{ product.description }}
-    </p>
+<div class="product-space">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>{{ product.name }}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <img class="product-show-img" src="{{ asset('uploads/'~product.imageFilename) }}" />
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="product-show-details-container product-price">
+                    <p>Price: <strong>${{ product.price }}</strong></p>
+                </div>
+                <div class="product-show-details-container product-description">
+                    <p>{{ product.description }}</p>
+                    <form action="{{ path('order_add_product_to_cart', {'slug': product.slug}) }}" method="POST">
+                        <button class="btn btn-sm btn-success" type="submit">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
