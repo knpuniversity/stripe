@@ -19,10 +19,23 @@ body {
 }
 
 .hero-space {
-    height: 300px;
+    height: 550px;
     width: 100%;
     background-color: gray;
     margin-bottom: 30px;
+    padding-top: 150px;
+}
+
+.hero-space-headline {
+    font-family: 'Lobster Two', cursive;
+    font-size: 3em;
+    margin-top:0px;
+    margin-bottom: 40px;
+}
+
+.hero-space-headline, .hero-space-text {
+    color: #fff;
+    text-align: center;
 }
 
 .shear-product {
@@ -183,18 +196,14 @@ transition: all 0.5s ease;
     text-decoration: none;
 }
 
-.social-icons {
+a>.instagram-text {
+    color: #6d665c;
+    display: inline-block;
+}
+
+.instagram {
     padding-top: 10px;
-    margin-top: 5px;
+    height: 25px;
+    width: auto;
     float: right;
-}
-
-.social-size {
-    width: 32px;
-    height: auto;
-}
-
-.login-footer {
-    padding-top: 5px;
-    text-align: center;
 }

@@ -18,13 +18,13 @@ AppBundle\Entity\Product:
         imageFilename: product_2.jpg
     product_3 (extends product):
         name: After-Shear (Fresh Cut Grass)
-        imageFilename: product_3.png
+        imageFilename: product_3.jpg
     product_4 (extends product):
         name: After-Shear (Morning Dew)
-        imageFilename: product_4.png
+        imageFilename: product_4.jpg
     product_5 (extends product):
         name: Shear Comb
-        imageFilename: product_5.png
-    product_5 (extends product):
+        imageFilename: product_5.jpg
+    product_6 (extends product):
         name: Shearly Conditioned
-        imageFilename: product_5.png
+        imageFilename: product_6.png
