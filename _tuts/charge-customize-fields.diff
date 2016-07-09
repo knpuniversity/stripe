@@ -6,10 +6,10 @@ index 0000000..bbb7b52
 @@ -0,0 +1 @@
 +buying_products_description: Buying 1 product|Buying %count% products
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index 1ff9ea1..1421883 100644
+index 1e3ef63..53d2ee2 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
-@@ -26,10 +26,10 @@
+@@ -27,10 +27,11 @@
          <script
              src="https://checkout.stripe.com/checkout.js" class="stripe-button"
              data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
@@ -20,6 +20,7 @@ index 1ff9ea1..1421883 100644
 -            data-image="/img/documentation/checkout/marketplace.png"
 +            data-description="{{ 'buying_products_description'|transchoice(products|length) }}"
 +            data-image="{{ asset('images/logo.png') }}"
++            data-zip-code="true"
              data-locale="auto">
          </script>
      </form>

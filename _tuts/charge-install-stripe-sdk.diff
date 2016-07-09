@@ -1,0 +1,91 @@
+diff --git a/composer.json b/composer.json
+index 7dceabc..49f70fc 100644
+--- a/composer.json
++++ b/composer.json
+@@ -29,7 +29,8 @@
+         "sensio/framework-extra-bundle": "^3.0.2",
+         "incenteev/composer-parameter-handler": "^2.0",
+         "friendsofsymfony/user-bundle": "~2.0@dev",
+-        "stof/doctrine-extensions-bundle": "^1.2"
++        "stof/doctrine-extensions-bundle": "^1.2",
++        "stripe/stripe-php": "^3.15"
+     },
+     "require-dev": {
+         "sensio/generator-bundle": "^3.0",
+diff --git a/composer.lock b/composer.lock
+index 1620418..0eeb1dd 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -4,8 +4,8 @@
+         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+         "This file is @generated automatically"
+     ],
+-    "hash": "12f0d3e16456cccf2b00623be25b42ec",
+-    "content-hash": "116eaf77630d0684114ffe371fc58c30",
++    "hash": "f038be03527624beaeb0062247602bd2",
++    "content-hash": "5092bf4c78db23ad9ab194055151b1ff",
+     "packages": [
+         {
+             "name": "behat/transliterator",
+@@ -1493,6 +1493,61 @@
+             "time": "2016-01-26 23:58:32"
+         },
+         {
++            "name": "stripe/stripe-php",
++            "version": "v3.15.0",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/stripe/stripe-php.git",
++                "reference": "6bc921a03af31387ef3f0a1fc233d432315ecb3a"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/6bc921a03af31387ef3f0a1fc233d432315ecb3a",
++                "reference": "6bc921a03af31387ef3f0a1fc233d432315ecb3a",
++                "shasum": ""
++            },
++            "require": {
++                "ext-curl": "*",
++                "ext-json": "*",
++                "ext-mbstring": "*",
++                "php": ">=5.3.3"
++            },
++            "require-dev": {
++                "phpunit/phpunit": "~4.0",
++                "satooshi/php-coveralls": "~0.6.1",
++                "squizlabs/php_codesniffer": "~2.0"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.0-dev"
++                }
++            },
++            "autoload": {
++                "psr-4": {
++                    "Stripe\\": "lib/"
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "MIT"
++            ],
++            "authors": [
++                {
++                    "name": "Stripe and contributors",
++                    "homepage": "https://github.com/stripe/stripe-php/contributors"
++                }
++            ],
++            "description": "Stripe PHP Library",
++            "homepage": "https://stripe.com/",
++            "keywords": [
++                "api",
++                "payment processing",
++                "stripe"
++            ],
++            "time": "2016-06-29 21:32:55"
++        },
++        {
+             "name": "swiftmailer/swiftmailer",
+             "version": "v5.4.2",
+             "source": {

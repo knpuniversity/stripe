@@ -1,0 +1,30 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index c32793a..cb315fc 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
++use Symfony\Component\HttpFoundation\Request;
+ 
+ class OrderController extends Controller
+ {
+@@ -28,10 +29,16 @@ class OrderController extends Controller
+      * @Route("/checkout", name="order_checkout")
+      * @Security("is_granted('ROLE_USER')")
+      */
+-    public function checkoutAction()
++    public function checkoutAction(Request $request)
+     {
+         $products = $this->get('shopping_cart')->getProducts();
+ 
++        if ($request->isMethod('POST')) {
++            $token = $request->request->get('stripeToken');
++
++            dump($token);
++        }
++
+         return $this->render('order/checkout.html.twig', array(
+             'products' => $products,
+             'cart' => $this->get('shopping_cart')

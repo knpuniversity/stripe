@@ -1,0 +1,23 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index cb315fc..7f47371 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -36,7 +36,17 @@ class OrderController extends Controller
+         if ($request->isMethod('POST')) {
+             $token = $request->request->get('stripeToken');
+ 
+-            dump($token);
++            \Stripe\Stripe::setApiKey("XXX_PRIVATEKEY_XXX");
++            \Stripe\Charge::create(array(
++              "amount" => $this->get('shopping_cart')->getTotal() * 100,
++              "currency" => "usd",
++              "source" => $token,
++              "description" => "First test charge!"
++            ));
++
++            $this->addFlash('success', 'Order Complete! Yay!');
++
++            return $this->redirectToRoute('homepage');
+         }
+ 
+         return $this->render('order/checkout.html.twig', array(

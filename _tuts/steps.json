@@ -14,7 +14,22 @@
             "id": "charge-customize-fields",
             "name": "Charge: Customize fields",
             "description": null
+        },
+        {
+            "id": "charge-submit-dump-token",
+            "name": "Charge: Submit & dump token",
+            "description": null
+        },
+        {
+            "id": "charge-install-stripe-sdk",
+            "name": "Charge: Install Stripe SDK",
+            "description": null
+        },
+        {
+            "id": "charge-make-basic-charge-in-controller",
+            "name": "Charge: Make basic charge in controller",
+            "description": null
         }
     ],
-    "sha": "47fc4e9d0a19ab5e7e3a8adad8e6d25b8a7a21d5"
+    "sha": "9143598cf22d62b667176330ceaac6d1f273776b"
 }
