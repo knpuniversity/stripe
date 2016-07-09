@@ -17,4 +17,13 @@ class ProductController extends Controller
             'product' => $product
         ));
     }
+
+    /**
+     * @Route("/pricing", name="pricing_show")
+     */
+    public function pricingAction()
+    {
+        return $this->render('product/pricing.html.twig', array(
+        ));
+    }
 }

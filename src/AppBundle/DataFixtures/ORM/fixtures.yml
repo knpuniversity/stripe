@@ -12,16 +12,19 @@ AppBundle\Entity\Product:
 
     product_1 (extends product):
         name: Sheer Shears
-        imageFilename: product_1.png
+        imageFilename: product_1.jpg
     product_2 (extends product):
-        name: I Love Ewe Cologne
-        imageFilename: product_2.png
+        name: Wool Hauling Basket
+        imageFilename: product_2.jpg
     product_3 (extends product):
-        name: Fur Conditioner
-        imageFilename: product_3.png
+        name: After-Shear (Fresh Cut Grass)
+        imageFilename: product_3.jpg
     product_4 (extends product):
-        name: Skin like a lamb facial wash
-        imageFilename: product_4.png
+        name: After-Shear (Morning Dew)
+        imageFilename: product_4.jpg
     product_5 (extends product):
-        name: 'Ram: Mustache wax for men'
-        imageFilename: product_5.png
+        name: Shear Comb
+        imageFilename: product_5.jpg
+    product_6 (extends product):
+        name: Shearly Conditioned
+        imageFilename: product_6.png

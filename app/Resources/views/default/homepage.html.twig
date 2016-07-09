@@ -1,17 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <table>
-        {% for product in products %}
-            <tr>
-                <td>
-                    <a href="{{ path('product_show', {slug: product.slug}) }}">{{ product.name }}</a>
-                </td>
-                <td>{{ product.price }}</td>
-                <td><img width="100"
-                         src="{{ asset('uploads/'~product.imageFilename) }}"/>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+<div class="hero-space">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="hero-space-headline">Artisinal Shearing for the Dapper Sheep</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <h2 class="hero-space-text">Before</h2>
+                <img class="center-block" src="{{ asset('uploads/before.png') }}"/>
+            </div>
+            <div class="col-xs-6">
+                <h2 class="hero-space-text">After</h2>
+                <img class="center-block" src="{{ asset('uploads/after.png') }}"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+<div class="container" style="margin-top: 20px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-xs-4">
+                        <div class="shear-product">
+                            <img class="center-block shear-product-img" height="100" src="{{ asset('uploads/'~product.imageFilename) }}"/>
+                            <p class="text-center shear-product-title"><a href="{{ path('product_show', {slug: product.slug}) }}">{{ product.name }}</a>
+                            <span>${{ product.price }}</span></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

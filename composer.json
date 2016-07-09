@@ -65,5 +65,8 @@
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
         }
+    },
+    "platform": {
+        "php": "5.6"
     }
 }
