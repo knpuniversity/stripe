@@ -1,0 +1,20 @@
+{
+    "steps": [
+        {
+            "id": "start",
+            "name": "start",
+            "description": null
+        },
+        {
+            "id": "charge-paste-in-embedded-checkout-code",
+            "name": "Charge: Paste in embedded checkout code",
+            "description": null
+        },
+        {
+            "id": "charge-customize-fields",
+            "name": "Charge: Customize fields",
+            "description": null
+        }
+    ],
+    "sha": "47fc4e9d0a19ab5e7e3a8adad8e6d25b8a7a21d5"
+}

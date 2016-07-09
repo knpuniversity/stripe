@@ -1,0 +1,24 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 5e9c90f..1ff9ea1 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -19,4 +19,18 @@
+             </tr>
+         </tfoot>
+     </table>
++
++    <h2>Checkout</h2>
++
++    <form action="" method="POST">
++        <script
++            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
++            data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
++            data-amount="999"
++            data-name="Dollar Shear Club"
++            data-description="Widget"
++            data-image="/img/documentation/checkout/marketplace.png"
++            data-locale="auto">
++        </script>
++    </form>
+ {% endblock %}
+\ No newline at end of file

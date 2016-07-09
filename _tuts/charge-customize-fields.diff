@@ -1,0 +1,25 @@
+diff --git a/app/Resources/translations/messages.en.yml b/app/Resources/translations/messages.en.yml
+new file mode 100644
+index 0000000..bbb7b52
+--- /dev/null
++++ b/app/Resources/translations/messages.en.yml
+@@ -0,0 +1 @@
++buying_products_description: Buying 1 product|Buying %count% products
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 1ff9ea1..1421883 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -26,10 +26,10 @@
+         <script
+             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+             data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
+-            data-amount="999"
++            data-amount="{{ cart.total * 100 }}"
+             data-name="Dollar Shear Club"
+-            data-description="Widget"
+-            data-image="/img/documentation/checkout/marketplace.png"
++            data-description="{{ 'buying_products_description'|transchoice(products|length) }}"
++            data-image="{{ asset('images/logo.png') }}"
+             data-locale="auto">
+         </script>
+     </form>
