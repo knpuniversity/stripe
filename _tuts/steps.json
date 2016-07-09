@@ -29,7 +29,12 @@
             "id": "charge-make-basic-charge-in-controller",
             "name": "Charge: Make basic charge in controller",
             "description": null
+        },
+        {
+            "id": "config-move-secret-key-to-config",
+            "name": "Config: Move secret key to config",
+            "description": null
         }
     ],
-    "sha": "9143598cf22d62b667176330ceaac6d1f273776b"
+    "sha": "195b2a14e555b0343e850a1b06f72fcbd99c7a08"
 }
