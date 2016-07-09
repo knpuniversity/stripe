@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class OrderController extends Controller
@@ -25,6 +26,7 @@ class OrderController extends Controller
 
     /**
      * @Route("/checkout", name="order_checkout")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function checkoutAction()
     {
