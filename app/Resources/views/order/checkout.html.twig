@@ -2,22 +2,27 @@
 {% block title %}SSC Checkout{% endblock %}
 
 {% block body %}
-    <h1>Checkout</h1>
-
-    <table>
-        <tbody>
-            {% for product in products %}
-                <tr>
-                    <th>{{ product.name }}</th>
-                    <td>{{ product.price }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <th>Total</th>
-                <td>{{ cart.total }}</td>
-            </tr>
-        </tfoot>
-    </table>
+<div class="nav-space">
+    <div class="container">
+        <div class="row">
+            <h1>Checkout</h1>
+            <table>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <th>{{ product.name }}</th>
+                            <td>{{ product.price }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Total</th>
+                        <td>{{ cart.total }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

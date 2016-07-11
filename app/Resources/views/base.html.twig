@@ -36,27 +36,15 @@
         <footer class="footer footer-styling">
     <div class="container">
         <div class="row">
-            {% block footer_content %}
-            <div class="col-xs-7 col-sm-9">
-                <div class="row">
-                    <div class="col-xs-6">
-                        <ul class="list-unstyled footer-link">
-                            <li><a class="footer-link" href="{{ path('homepage')}}">Sheep Shear Club</a>
-                        </ul>
-                    </div>
-
-                </div>
-            </div>
-            <div class="col-xs-5 col-sm-3">
-                <div class="social-icons">
-
+            <div class="col-xs-12">
+                <a class="footer-link" href="{{ path('homepage')}}"><p>Sheep Shear Club</p></a>
+                <div class="social-icons pull-right">
                     <a href="#">
                         <p class="instagram-text">Share your new look with us:</p>
                         <img class="instagram" src="{{ asset('uploads/instagram.png') }}"/>
                     </a>
                 </div>
             </div>
-            {% endblock %}
         </div>
     </div>
 </footer>
