@@ -29,9 +29,11 @@
                 {% for product in products %}
                     <div class="col-xs-4">
                         <div class="shear-product">
-                            <img class="center-block shear-product-img" height="100" src="{{ asset('uploads/'~product.imageFilename) }}"/>
-                            <p class="text-center shear-product-title"><a href="{{ path('product_show', {slug: product.slug}) }}">{{ product.name }}</a>
-                            <span>${{ product.price }}</span></p>
+                            <a href="{{ path('product_show', {slug: product.slug}) }}">
+                                <img class="center-block shear-product-img" height="100" src="{{ asset('uploads/'~product.imageFilename) }}"/>
+                                <p class="text-center shear-product-title">{{ product.name }}
+                                <span>${{ product.price }}</span></p>
+                            </a>
                         </div>
                     </div>
                 {% endfor %}

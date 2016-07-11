@@ -50,7 +50,7 @@ body {
     font-weight: bold;
 }
 
-.shear-product-title>a, .shear-product-title>span {
+.shear-product-title, .shear-product-title>span {
     color: #6d665c;
 }
 
@@ -60,6 +60,10 @@ body {
 
 .nav-space {
     margin-top: 150px;
+}
+
+.nav-space-checkout {
+    margin-top: 100px;
 }
 
 .product-show-img {
@@ -152,6 +156,45 @@ body {
 .table-bordered>tbody>tr>td {
     text-align: center;
 }
+
+
+
+
+/*====================
+    CHECKOUT
+====================*/
+
+.checkout-header {
+    margin-bottom: 30px;
+    color: ;
+}
+
+.table-margin {
+    margin-top: 50px;
+}
+
+.stripe-text {
+    margin-bottom: 20px;
+}
+
+.address-space{
+    margin-bottom: 5px;
+}
+
+.add-button-margin {
+    margin-bottom: 10px;
+}
+
+.checkout-product-name {
+    font-weight: normal;
+}
+
+.checkout-total {
+    font-weight: bold;
+    text-align: center;
+
+}
+
 
 /*====================
     FOOTER
