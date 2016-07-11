@@ -16,5 +16,10 @@ class User extends BaseUser
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    private $id;
+
+    public function getId()
+    {
+        return $this->id;
+    }
 }
