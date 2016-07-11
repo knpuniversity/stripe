@@ -13,7 +13,7 @@
     </head>
     <body>
         {% for msg in app.session.flashBag.get('success') %}
-            <div class="alert alert-info">{{ msg }}</div>
+            <div class="sheep-flash alert alert-success">{{ msg }}</div>
         {% endfor %}
 
         <nav class="navbar navbar-default navbar-fixed-top">

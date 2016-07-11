@@ -10,6 +10,10 @@ body {
     color: $knp-color-black;
 }
 
+.sheep-flash {
+    margin-top: 50px;
+}
+
 .ssc-logo {
     width: 80px;
     height: auto;
@@ -63,7 +67,7 @@ body {
 }
 
 .nav-space-checkout {
-    margin-top: 100px;
+    margin-top: 50px;
 }
 
 .product-show-img {
