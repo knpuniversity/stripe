@@ -1,0 +1,24 @@
+diff --git a/app/config/parameters.yml.dist b/app/config/parameters.yml.dist
+index 8f519ec..9cb06c0 100644
+--- a/app/config/parameters.yml.dist
++++ b/app/config/parameters.yml.dist
+@@ -18,3 +18,6 @@ parameters:
+     # A secret key that's used to generate certain security-related tokens
+     secret:            ThisTokenIsNotSoSecretChangeIt
+     stripe_secret_key: XXX_PRIVATEKEY_XXX
++
++    # set to https on production
++    secure_scheme: http
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index e5f042c..65ffeea 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -27,7 +27,7 @@ class OrderController extends Controller
+     }
+ 
+     /**
+-     * @Route("/checkout", name="order_checkout", schemes={"https"})
++     * @Route("/checkout", name="order_checkout", schemes={"%secure_scheme%"})
+      * @Security("is_granted('ROLE_USER')")
+      */
+     public function checkoutAction(Request $request)

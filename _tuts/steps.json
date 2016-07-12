@@ -79,7 +79,17 @@
             "id": "organization-invoice-item-stuff",
             "name": "Organization: invoice item stuff",
             "description": null
+        },
+        {
+            "id": "ssl-setup-schemes-for-https",
+            "name": "SSL: Setup schemes for https",
+            "description": null
+        },
+        {
+            "id": "ssl-make-schemes-configurable",
+            "name": "SSL: Make schemes configurable",
+            "description": null
         }
     ],
-    "sha": "4eca0b7056b4c42ba4adbed3fff1ed88a77211c1"
+    "sha": "e830433e94e2b02a580d12253e5ce211c52c04f2"
 }
