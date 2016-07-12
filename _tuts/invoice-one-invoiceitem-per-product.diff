@@ -1,0 +1,25 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 5290da1..bc2be97 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -56,12 +56,14 @@ class OrderController extends Controller
+             $customer->source = $token;
+             $customer->save();
+ 
+-            \Stripe\InvoiceItem::create(array(
+-              "amount" => $this->get('shopping_cart')->getTotal() * 100,
+-              "currency" => "usd",
+-              "customer" => $customer->id,
+-              "description" => "First test charge!"
+-            ));
++            foreach ($this->get('shopping_cart')->getProducts() as $product) {
++                \Stripe\InvoiceItem::create(array(
++                    "amount" => $product->getPrice() * 100,
++                    "currency" => "usd",
++                    "customer" => $customer->id,
++                    "description" => $product->getName()
++                ));
++            }
+             $invoice = \Stripe\Invoice::create(array(
+                 "customer" => $customer->id
+             ));

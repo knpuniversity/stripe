@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index cb315fc..7f47371 100644
+index cb315fc..f3f7197 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -36,7 +36,17 @@ class OrderController extends Controller
+@@ -36,7 +36,18 @@ class OrderController extends Controller
          if ($request->isMethod('POST')) {
              $token = $request->request->get('stripeToken');
  
@@ -15,6 +15,7 @@ index cb315fc..7f47371 100644
 +              "description" => "First test charge!"
 +            ));
 +
++            $this->get('shopping_cart')->emptyCart();
 +            $this->addFlash('success', 'Order Complete! Yay!');
 +
 +            return $this->redirectToRoute('homepage');

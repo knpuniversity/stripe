@@ -39,7 +39,17 @@
             "id": "customer-fetch-and-associate-stripe-customer",
             "name": "Customer: Fetch and associate Stripe customer",
             "description": null
+        },
+        {
+            "id": "invoice-create-and-charge-invoice",
+            "name": "Invoice: Create and charge invoice",
+            "description": null
+        },
+        {
+            "id": "invoice-one-invoiceitem-per-product",
+            "name": "Invoice: One InvoiceItem per product",
+            "description": null
         }
     ],
-    "sha": "151f03c8dc66d67fc109eec1855f69efe34f0a8f"
+    "sha": "b54d8a6a2cde4556c740c608b304ba8e8944e546"
 }
