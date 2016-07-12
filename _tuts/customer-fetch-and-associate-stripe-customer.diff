@@ -41,7 +41,7 @@ index 0000000..2577f24
 +    }
 +}
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index ca07730..7e17650 100644
+index ca07730..fc20695 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
 @@ -3,6 +3,7 @@
@@ -52,12 +52,11 @@ index ca07730..7e17650 100644
  use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
  use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-@@ -37,10 +38,24 @@ class OrderController extends Controller
+@@ -37,10 +38,28 @@ class OrderController extends Controller
              $token = $request->request->get('stripeToken');
  
              \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
 +
-+            // todo - create (or create) the customer, then charge the customer
 +            /** @var User $user */
 +            $user = $this->getUser();
 +            if ($user->getStripeCustomerId()) {
@@ -66,6 +65,11 @@ index ca07730..7e17650 100644
 +                $customer = \Stripe\Customer::create([
 +                    'email' => $user->getEmail(),
 +                ]);
++                $user->setStripeCustomerId($customer->id);
++
++                $em = $this->getDoctrine()->getManager();
++                $em->persist($user);
++                $em->flush();
 +            }
 +            $customer->source = $token;
 +            $customer->save();
