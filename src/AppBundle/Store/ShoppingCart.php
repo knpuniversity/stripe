@@ -65,6 +65,12 @@ class ShoppingCart
         return $total;
     }
 
+    public function emptyCart()
+    {
+        $this->products = [];
+        $this->saveProductsToSession();
+    }
+
     private function saveProductsToSession()
     {
         $ids = array_map(function(Product $item) {
