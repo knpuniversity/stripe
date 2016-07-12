@@ -1,7 +1,7 @@
 AppBundle\Entity\User:
     user_{1..10}:
         username: sleek_sheep<current()>
-        email: <email()>
+        email: sleek_sheep<email()>@example.com
         plainPassword: breakingbaad
         enabled: true
 
