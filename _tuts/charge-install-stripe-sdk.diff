@@ -1,33 +1,31 @@
 diff --git a/composer.json b/composer.json
-index 7dceabc..49f70fc 100644
+index 86e51a9..739eeb8 100644
 --- a/composer.json
 +++ b/composer.json
-@@ -29,7 +29,8 @@
-         "sensio/framework-extra-bundle": "^3.0.2",
+@@ -30,6 +30,7 @@
          "incenteev/composer-parameter-handler": "^2.0",
          "friendsofsymfony/user-bundle": "~2.0@dev",
--        "stof/doctrine-extensions-bundle": "^1.2"
-+        "stof/doctrine-extensions-bundle": "^1.2",
-+        "stripe/stripe-php": "^3.15"
+         "stof/doctrine-extensions-bundle": "^1.2",
++        "stripe/stripe-php": "^3.15",
+         "doctrine/doctrine-migrations-bundle": "^1.1"
      },
      "require-dev": {
-         "sensio/generator-bundle": "^3.0",
 diff --git a/composer.lock b/composer.lock
-index 1620418..0eeb1dd 100644
+index df91156..d898519 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,8 +4,8 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
          "This file is @generated automatically"
      ],
--    "hash": "12f0d3e16456cccf2b00623be25b42ec",
--    "content-hash": "116eaf77630d0684114ffe371fc58c30",
-+    "hash": "f038be03527624beaeb0062247602bd2",
-+    "content-hash": "5092bf4c78db23ad9ab194055151b1ff",
+-    "hash": "8f2969e964b5e751ab80c823c317dc51",
+-    "content-hash": "b781a9a8a3282da4f495d592360843ab",
++    "hash": "eb985945601e5eadea0e1695838d0aca",
++    "content-hash": "c67c22e0a7f1929156e2b19c890c8ad5",
      "packages": [
          {
              "name": "behat/transliterator",
-@@ -1493,6 +1493,61 @@
+@@ -1687,6 +1687,61 @@
              "time": "2016-01-26 23:58:32"
          },
          {

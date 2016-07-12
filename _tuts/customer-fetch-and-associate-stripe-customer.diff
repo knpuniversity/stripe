@@ -1,0 +1,104 @@
+diff --git a/app/DoctrineMigrations/Version20160709170231.php b/app/DoctrineMigrations/Version20160709170231.php
+new file mode 100644
+index 0000000..2577f24
+--- /dev/null
++++ b/app/DoctrineMigrations/Version20160709170231.php
+@@ -0,0 +1,36 @@
++<?php
++
++namespace Application\Migrations;
++
++use Doctrine\DBAL\Migrations\AbstractMigration;
++use Doctrine\DBAL\Schema\Schema;
++
++/**
++ * Auto-generated Migration: Please modify to your needs!
++ */
++class Version20160709170231 extends AbstractMigration
++{
++    /**
++     * @param Schema $schema
++     */
++    public function up(Schema $schema)
++    {
++        // this up() migration is auto-generated, please modify it to your needs
++        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
++
++        $this->addSql('ALTER TABLE fos_user ADD stripe_customer_id VARCHAR(255) DEFAULT NULL');
++        $this->addSql('CREATE UNIQUE INDEX UNIQ_957A6479708DC647 ON fos_user (stripe_customer_id)');
++    }
++
++    /**
++     * @param Schema $schema
++     */
++    public function down(Schema $schema)
++    {
++        // this down() migration is auto-generated, please modify it to your needs
++        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
++
++        $this->addSql('DROP INDEX UNIQ_957A6479708DC647 ON fos_user');
++        $this->addSql('ALTER TABLE fos_user DROP stripe_customer_id');
++    }
++}
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index ca07730..7e17650 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -3,6 +3,7 @@
+ namespace AppBundle\Controller;
+ 
+ use AppBundle\Entity\Product;
++use AppBundle\Entity\User;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+@@ -37,10 +38,24 @@ class OrderController extends Controller
+             $token = $request->request->get('stripeToken');
+ 
+             \Stripe\Stripe::setApiKey($this->getParameter('stripe_secret_key'));
++
++            // todo - create (or create) the customer, then charge the customer
++            /** @var User $user */
++            $user = $this->getUser();
++            if ($user->getStripeCustomerId()) {
++                $customer = \Stripe\Customer::retrieve($user->getStripeCustomerId());
++            } else {
++                $customer = \Stripe\Customer::create([
++                    'email' => $user->getEmail(),
++                ]);
++            }
++            $customer->source = $token;
++            $customer->save();
++
+             \Stripe\Charge::create(array(
+               "amount" => $this->get('shopping_cart')->getTotal() * 100,
+               "currency" => "usd",
+-              "source" => $token,
++              "customer" => $customer->id,
+               "description" => "First test charge!"
+             ));
+ 
+diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
+index 1f2b3ea..746bac0 100644
+--- a/src/AppBundle/Entity/User.php
++++ b/src/AppBundle/Entity/User.php
+@@ -22,4 +22,19 @@ class User extends BaseUser
+     {
+         return $this->id;
+     }
++
++    /**
++     * @ORM\Column(type="string", unique=true, nullable=true)
++     */
++    private $stripeCustomerId;
++
++    public function getStripeCustomerId()
++    {
++        return $this->stripeCustomerId;
++    }
++
++    public function setStripeCustomerId($stripeCustomerId)
++    {
++        $this->stripeCustomerId = $stripeCustomerId;
++    }
+ }

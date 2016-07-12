@@ -34,7 +34,12 @@
             "id": "config-move-secret-key-to-config",
             "name": "Config: Move secret key to config",
             "description": null
+        },
+        {
+            "id": "customer-fetch-and-associate-stripe-customer",
+            "name": "Customer: Fetch and associate Stripe customer",
+            "description": null
         }
     ],
-    "sha": "195b2a14e555b0343e850a1b06f72fcbd99c7a08"
+    "sha": "ea7625100562ec77b89f3f6a6322e46005e1a919"
 }

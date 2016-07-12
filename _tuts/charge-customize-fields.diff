@@ -6,21 +6,21 @@ index 0000000..bbb7b52
 @@ -0,0 +1 @@
 +buying_products_description: Buying 1 product|Buying %count% products
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index 1e3ef63..53d2ee2 100644
+index d461ff9..005c8e0 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
-@@ -27,10 +27,11 @@
-         <script
-             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-             data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
--            data-amount="999"
-+            data-amount="{{ cart.total * 100 }}"
-             data-name="Dollar Shear Club"
--            data-description="Widget"
--            data-image="/img/documentation/checkout/marketplace.png"
-+            data-description="{{ 'buying_products_description'|transchoice(products|length) }}"
-+            data-image="{{ asset('images/logo.png') }}"
-+            data-zip-code="true"
-             data-locale="auto">
-         </script>
-     </form>
+@@ -35,10 +35,11 @@
+                     <script
+                         src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                         data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
+-                        data-amount="999"
++                        data-amount="{{ cart.total * 100 }}"
+                         data-name="Dollar Shear Club"
+-                        data-description="Widget"
+-                        data-image="/img/documentation/checkout/marketplace.png"
++                        data-description="{{ 'buying_products_description'|transchoice(products|length) }}"
++                        data-image="{{ asset('images/logo.png') }}"
++                        data-zip-code="true"
+                         data-locale="auto">
+                     </script>
+                 </form>
