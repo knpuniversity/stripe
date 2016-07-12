@@ -1,0 +1,69 @@
+<form action="" method="POST">
+    <div class="row">
+        <div class="col-xs-8 col-sm-5 col-sm-offset-2 form-group">
+            <label class="required control-label" for="card-name">
+                Card Holder Name
+                <span class="required" title="Required Field">*</span>
+            </label>
+            <input class="form-control card-name" type="text" autocomplete="off" id="card-name" required/>
+        </div>
+
+        <div class="col-xs-4 col-sm-3 form-group">
+            <label class="required control-label" for="card-zip">
+                Postal Code
+                <span class="required" title="Required Field">*</span>
+            </label>
+            <input type="text" autocomplete="off" class="form-control card-zip" id="card-zip"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-8 col-sm-6 col-sm-offset-2 form-group">
+            <label class="required control-label" for="card-number">
+                Card Number
+                <span class="required" title="Required Field">*</span>
+            </label>
+            <input type="text" autocomplete="off" class="form-control card-number" id="card-number" required/>
+        </div>
+        <div class="col-xs-4 col-sm-2 form-group cvc">
+            <label class="required control-label" for="card-cvc">
+                CVC
+                <span class="required" title="Required Field">*</span>
+            </label>
+            <input type="text" size="4" autocomplete="off" class="form-control card-cvc required" id="card-cvc" required="required"/>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-xs-6 col-sm-4 col-sm-offset-2">
+            <label class="required control-label" for="card-month">
+                Expiration Month
+                <span class="required" title="Required Field">*</span>
+            </label>
+            <br/>
+            <select class="form-control card-expiry-month js-selectpicker" id="card-month" data-live-search="true">
+            </select>
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            <label for="card-year" class="sep control-label">
+                &nbsp;
+                Expiration Year
+                <span class="required" title="Required Field">*</span>
+            </label>
+
+            <select class="form-control card-expiry-year js-selectpicker" id="card-year" data-live-search="true">
+
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-8 col-sm-offset-2 required-txt">
+            * Required Field
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 buttons text-center">
+            <button type="submit" class="center-block submit-button btn btn-lg btn-danger js-checkout-submit-button">
+                Checkout
+            </button>
+        </div>
+    </div>
+</form>
