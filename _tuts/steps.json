@@ -49,7 +49,37 @@
             "id": "invoice-one-invoiceitem-per-product",
             "name": "Invoice: One InvoiceItem per product",
             "description": null
+        },
+        {
+            "id": "organization-create-stripeclient",
+            "name": "Organization: Create StripeClient",
+            "description": null
+        },
+        {
+            "id": "organization-set-token-in-construct",
+            "name": "Organization: Set token in __construct",
+            "description": null
+        },
+        {
+            "id": "organization-stripeclient-createcustomer",
+            "name": "Organization: StripeClient::createCustomer",
+            "description": null
+        },
+        {
+            "id": "organization-stripeclient-updatecustomercard",
+            "name": "Organization: StripeClient:updateCustomerCard",
+            "description": null
+        },
+        {
+            "id": "organization-set-stripe-secret-key",
+            "name": "Organization: Set stripe secret key",
+            "description": null
+        },
+        {
+            "id": "organization-invoice-item-stuff",
+            "name": "Organization: invoice item stuff",
+            "description": null
         }
     ],
-    "sha": "b54d8a6a2cde4556c740c608b304ba8e8944e546"
+    "sha": "4eca0b7056b4c42ba4adbed3fff1ed88a77211c1"
 }

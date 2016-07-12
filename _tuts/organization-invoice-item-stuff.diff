@@ -1,0 +1,62 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index e2c3ad0..b71d117 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -47,18 +47,13 @@ class OrderController extends Controller
+             }
+ 
+             foreach ($this->get('shopping_cart')->getProducts() as $product) {
+-                \Stripe\InvoiceItem::create(array(
+-                    "amount" => $product->getPrice() * 100,
+-                    "currency" => "usd",
+-                    "customer" => $user->getStripeCustomerId(),
+-                    "description" => $product->getName()
+-                ));
++                $stripeClient->createInvoiceItem(
++                    $product->getPrice() * 100,
++                    $user,
++                    $product->getName()
++                );
+             }
+-            $invoice = \Stripe\Invoice::create(array(
+-                "customer" => $user->getStripeCustomerId()
+-            ));
+-            // guarantee it charges *right* now
+-            $invoice->pay();
++            $stripeClient->createInvoice($user, true);
+ 
+             $this->get('shopping_cart')->emptyCart();
+             $this->addFlash('success', 'Order Complete! Yay!');
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 00683f6..e900515 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -37,4 +37,28 @@ class StripeClient
+         $customer->source = $paymentToken;
+         $customer->save();
+     }
++
++    public function createInvoiceItem($amount, User $user, $description)
++    {
++        return \Stripe\InvoiceItem::create(array(
++            "amount" => $amount,
++            "currency" => "usd",
++            "customer" => $user->getStripeCustomerId(),
++            "description" => $description
++        ));
++    }
++
++    public function createInvoice(User $user, $payImmediately = true)
++    {
++        $invoice = \Stripe\Invoice::create(array(
++            "customer" => $user->getStripeCustomerId()
++        ));
++
++        if ($payImmediately) {
++            // guarantee it charges *right* now
++            $invoice->pay();
++        }
++
++        return $invoice;
++    }
+ }

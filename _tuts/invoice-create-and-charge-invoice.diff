@@ -1,20 +1,20 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 4d8c67e..5290da1 100644
+index 5099809..64110cf 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -56,12 +56,17 @@ class OrderController extends Controller
-             $customer->source = $token;
-             $customer->save();
+@@ -58,12 +58,17 @@ class OrderController extends Controller
+                 $customer->save();
+             }
  
 -            \Stripe\Charge::create(array(
 +            \Stripe\InvoiceItem::create(array(
                "amount" => $this->get('shopping_cart')->getTotal() * 100,
                "currency" => "usd",
-               "customer" => $customer->id,
+               "customer" => $user->getStripeCustomerId(),
                "description" => "First test charge!"
              ));
 +            $invoice = \Stripe\Invoice::create(array(
-+                "customer" => $customer->id
++                "customer" => $user->getStripeCustomerId()
 +            ));
 +            // guarantee it charges *right* now
 +            $invoice->pay();

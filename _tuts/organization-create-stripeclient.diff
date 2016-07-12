@@ -1,0 +1,14 @@
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+new file mode 100644
+index 0000000..99a186b
+--- /dev/null
++++ b/src/AppBundle/StripeClient.php
+@@ -0,0 +1,8 @@
++<?php
++
++namespace AppBundle;
++
++class StripeClient
++{
++
++}
