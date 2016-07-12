@@ -1,48 +1,58 @@
 <form action="" method="POST">
     <div class="row">
         <div class="col-xs-8 col-sm-6 col-sm-offset-2 form-group">
-            <label class="required control-label" for="card-name">
-                Card Holder Name
-            </label>
-            <input class="form-control card-name" type="text" autocomplete="off" id="card-name" required/>
+            <div class="input-group">
+                <span class="input-group-addon">
+                     <i class="fa fa-user"></i>
+                 </span>
+                <input data-stripe="name" class="form-control" type="text" autocomplete="off" id="card-name" required placeholder="Card Holder Name"/>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-8 col-sm-6 col-sm-offset-2 form-group">
-            <label class="required control-label" for="card-number">
-                Card Number
-            </label>
-            <input type="text" autocomplete="off" class="form-control " id="card-number" required/>
+            <div class="input-group">
+                <span class="input-group-addon">
+                     <i class="fa fa-credit-card"></i>
+                 </span>
+                <input data-stripe="number" type="text" autocomplete="off" class="form-control " id="card-number" required placeholder="Card Number"/>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-4 col-sm-3 col-sm-offset-2 form-group">
-            <label class="required control-label" for="card-expiration">
-                Expiration
-            </label>
-            <input type="text" size="4" autocomplete="off" class="form-control required" id="card-cvc" required="required" placeholder="mm/yy"/>
+            <div class="input-group">
+                <span class="input-group-addon">
+                     <i class="fa fa-calendar-o"></i>
+                 </span>
+                <input data-stripe="exp" type="text" size="4" autocomplete="off" class="form-control" id="card-expiration" required="required" placeholder="mm/yy"/>
+            </div>
         </div>
         <div class="col-xs-4 col-sm-3 form-group">
-            <label class="required control-label" for="card-cvc">
-                CVC
-            </label>
-            <input type="text" size="4" autocomplete="off" class="form-control card-cvc required" id="card-cvc" required="required"/>
+            <div class="input-group">
+                <span class="input-group-addon">
+                     <i class="fa fa-lock"></i>
+                 </span>
+                <input data-stripe="cvc" type="text" size="4" autocomplete="off" class="form-control" id="card-cvc" required="required" placeholder="CVC"/>
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="col-xs-8 col-sm-3 col-sm-offset-2 form-group">
-            <label class="required control-label" for="card-zip">
-                Postal Code
-            </label>
-            <input type="text" autocomplete="off" class="form-control" id="card-zip"/>
+            <div class="input-group">
+                <span class="input-group-addon">
+                     <i class="fa fa-map-marker"></i>
+                 </span>
+                <input type="text" autocomplete="off" class="form-control" id="card-zip" placeholder="Zip Code"/>
+            </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-xs-8 col-sm-6 col-sm-offset-2 buttons text-center">
+        <div class="col-xs-8 col-sm-6 col-sm-offset-2 text-center">
             <button type="submit" class="btn btn-lg btn-danger">
                 Checkout
             </button>
