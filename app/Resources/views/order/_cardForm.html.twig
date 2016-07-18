@@ -16,7 +16,7 @@
                 <span class="input-group-addon">
                      <i class="fa fa-credit-card"></i>
                  </span>
-                <input data-stripe="number" type="text" autocomplete="off" class="form-control " id="card-number" required placeholder="Card Number"/>
+                <input data-stripe="number" type="text" autocomplete="off" class="form-control js-cc-number" id="card-number" required placeholder="Card Number"/>
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
                 <span class="input-group-addon">
                      <i class="fa fa-calendar-o"></i>
                  </span>
-                <input data-stripe="exp" type="text" size="4" autocomplete="off" class="form-control" id="card-expiration" required="required" placeholder="mm/yy"/>
+                <input data-stripe="exp" type="text" size="4" autocomplete="off" class="form-control js-cc-exp" id="card-expiration" required="required" placeholder="mm/yy"/>
             </div>
         </div>
         <div class="col-xs-4 col-sm-3 form-group">
@@ -35,7 +35,7 @@
                 <span class="input-group-addon">
                      <i class="fa fa-lock"></i>
                  </span>
-                <input data-stripe="cvc" type="text" size="4" autocomplete="off" class="form-control" id="card-cvc" required="required" placeholder="CVC"/>
+                <input data-stripe="cvc" type="text" size="4" autocomplete="off" class="form-control js-cc-cvc" id="card-cvc" required="required" placeholder="CVC"/>
             </div>
         </div>
     </div>
