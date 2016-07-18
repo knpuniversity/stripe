@@ -34,20 +34,25 @@
         {% block body %}{% endblock %}
 
         <footer class="footer footer-styling">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <a class="footer-link" href="{{ path('homepage')}}"><p>Sheep Shear Club</p></a>
-                <div class="social-icons pull-right">
-                    <a href="#">
-                        <p class="instagram-text">Share your new look with us:</p>
-                        <img class="instagram" src="{{ asset('uploads/instagram.png') }}"/>
-                    </a>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a class="footer-link" href="{{ path('homepage')}}"><p>Sheep Shear Club</p></a>
+                        <div class="social-icons pull-right">
+                            <a href="#">
+                                <p class="instagram-text">Share your new look with us:</p>
+                                <img class="instagram" src="{{ asset('uploads/instagram.png') }}"/>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</footer>
-        {% block javascripts %}{% endblock %}
+        </footer>
+
+        {% block javascripts %}
+            <script src="https://code.jquery.com/jquery-3.1.0.js"
+                    integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="
+                    crossorigin="anonymous"></script>
+        {% endblock %}
     </body>
 </html>
