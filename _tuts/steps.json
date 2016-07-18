@@ -109,7 +109,17 @@
             "id": "custom-form-jquery-cc-formatting",
             "name": "Custom Form: jQuery CC formatting",
             "description": null
+        },
+        {
+            "id": "errors-refactor-to-private-method",
+            "name": "Errors: Refactor to private method",
+            "description": null
+        },
+        {
+            "id": "errors-handling-card-error",
+            "name": "Errors: Handling card error",
+            "description": null
         }
     ],
-    "sha": "a193b268ac376b548118a0c3577a8b37123d9de7"
+    "sha": "ecd07edf072520085e93130c100674b525efb640"
 }

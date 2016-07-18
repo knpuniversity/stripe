@@ -1,0 +1,59 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index e43f446..914e7e9 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -37,23 +37,7 @@ class OrderController extends Controller
+         if ($request->isMethod('POST')) {
+             $token = $request->request->get('stripeToken');
+ 
+-            $stripeClient = $this->get('stripe_client');
+-            /** @var User $user */
+-            $user = $this->getUser();
+-            if (!$user->getStripeCustomerId()) {
+-                $stripeClient->createCustomer($user, $token);
+-            } else {
+-                $stripeClient->updateCustomerCard($user, $token);
+-            }
+-
+-            foreach ($this->get('shopping_cart')->getProducts() as $product) {
+-                $stripeClient->createInvoiceItem(
+-                    $product->getPrice() * 100,
+-                    $user,
+-                    $product->getName()
+-                );
+-            }
+-            $stripeClient->createInvoice($user, true);
++            $this->chargeCustomer($token);
+ 
+             $this->get('shopping_cart')->emptyCart();
+             $this->addFlash('success', 'Order Complete! Yay!');
+@@ -68,4 +52,28 @@ class OrderController extends Controller
+         ));
+ 
+     }
++
++    /**
++     * @param $token
++     */
++    private function chargeCustomer($token)
++    {
++        $stripeClient = $this->get('stripe_client');
++        /** @var User $user */
++        $user = $this->getUser();
++        if (!$user->getStripeCustomerId()) {
++            $stripeClient->createCustomer($user, $token);
++        } else {
++            $stripeClient->updateCustomerCard($user, $token);
++        }
++
++        foreach ($this->get('shopping_cart')->getProducts() as $product) {
++            $stripeClient->createInvoiceItem(
++                $product->getPrice() * 100,
++                $user,
++                $product->getName()
++            );
++        }
++        $stripeClient->createInvoice($user, true);
++    }
+ }
+\ No newline at end of file
