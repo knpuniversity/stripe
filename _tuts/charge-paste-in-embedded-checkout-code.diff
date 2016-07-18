@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index 4ad1e1f..d461ff9 100644
+index 4ad1e1f..6b782fb 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
 @@ -31,7 +31,17 @@
@@ -10,7 +10,7 @@ index 4ad1e1f..d461ff9 100644
 +                <form action="" method="POST">
 +                    <script
 +                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-+                        data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
++                        data-key="pk_test_HxZzNHy8LImKK9LDtgMDRBwd"
 +                        data-amount="999"
 +                        data-name="Dollar Shear Club"
 +                        data-description="Widget"

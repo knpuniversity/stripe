@@ -1,0 +1,41 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 89bdf16..2c3a93b 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -1,6 +1,16 @@
+ {% extends 'base.html.twig' %}
+ {% block title %}SSC Checkout{% endblock %}
+ 
++{% block javascripts %}
++    {{ parent() }}
++
++    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
++
++    <script type="text/javascript">
++        Stripe.setPublishableKey('{{ stripe_public_key }}');
++    </script>
++{% endblock %}
++
+ {% block body %}
+ <div class="nav-space-checkout">
+     <div class="container">
+@@ -31,18 +41,7 @@
+                 </table>
+             </div>
+             <div class="col-xs-12 col-sm-6">
+-                <form action="" method="POST">
+-                    <script
+-                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+-                        data-key="{{ stripe_public_key }}"
+-                        data-amount="{{ cart.total * 100 }}"
+-                        data-name="Dollar Shear Club"
+-                        data-description="{{ 'buying_products_description'|transchoice(products|length) }}"
+-                        data-image="{{ asset('images/logo.png') }}"
+-                        data-zip-code="true"
+-                        data-locale="auto">
+-                    </script>
+-                </form>
++                {{ include('order/_cardForm.html.twig') }}
+             </div>
+         </div>
+     </div>

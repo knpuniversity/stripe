@@ -6,13 +6,13 @@ index 0000000..bbb7b52
 @@ -0,0 +1 @@
 +buying_products_description: Buying 1 product|Buying %count% products
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index d461ff9..005c8e0 100644
+index 6b782fb..d84004d 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
 @@ -35,10 +35,11 @@
                      <script
                          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                         data-key="pk_8sC2QZYbXIZr5bfpFZyknmfclGYxg"
+                         data-key="pk_test_HxZzNHy8LImKK9LDtgMDRBwd"
 -                        data-amount="999"
 +                        data-amount="{{ cart.total * 100 }}"
                          data-name="Dollar Shear Club"

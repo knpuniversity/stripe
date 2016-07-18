@@ -1,0 +1,46 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 733fe7c..3b8b162 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -10,30 +10,33 @@
+         Stripe.setPublishableKey('{{ stripe_public_key }}');
+ 
+         $(function () {
+-            var $form = $('#payment-form');
++            var $form = $('.js-checkout-form');
+             $form.submit(function (event) {
++                event.preventDefault();
++
+                 // Disable the submit button to prevent repeated clicks:
+-                $form.find('.submit').prop('disabled', true);
++                $form.find('.js-submit-button').prop('disabled', true);
+ 
+                 // Request a token from Stripe:
+                 Stripe.card.createToken($form, stripeResponseHandler);
+-
+-                // Prevent the form from being submitted:
+-                return false;
+             });
+         });
+ 
+         function stripeResponseHandler(status, response) {
+             // Grab the form:
+-            var $form = $('#payment-form');
++            var $form = $('.js-checkout-form');
+ 
+             if (response.error) { // Problem!
+ 
+                 // Show the errors on the form:
+-                $form.find('.payment-errors').text(response.error.message);
+-                $form.find('.submit').prop('disabled', false); // Re-enable submission
++                $form.find('.js-checkout-error')
++                    .text(response.error.message)
++                    .removeClass('hidden');
++                $form.find('.js-submit-button').prop('disabled', false); // Re-enable submission
+ 
+             } else { // Token was created!
++                $form.find('.js-checkout-error')
++                    .addClass('hidden');
+ 
+                 // Get the token ID:
+                 var token = response.id;

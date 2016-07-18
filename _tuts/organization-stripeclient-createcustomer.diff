@@ -11,7 +11,7 @@ index 538ed30..f3b8a0c 100644
 +        class: AppBundle\StripeClient
 +        autowire: true
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 1ed62cc..f1e6711 100644
+index 9a66a10..177b43e 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
 @@ -39,18 +39,11 @@ class OrderController extends Controller

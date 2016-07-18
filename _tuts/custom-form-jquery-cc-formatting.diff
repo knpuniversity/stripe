@@ -1,0 +1,23 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 3b8b162..278e3cd 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -5,12 +5,18 @@
+     {{ parent() }}
+ 
+     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
++    <script src="{{ asset('js/jquery.payment.min.js') }}"></script>
+ 
+     <script type="text/javascript">
+         Stripe.setPublishableKey('{{ stripe_public_key }}');
+ 
+         $(function () {
+             var $form = $('.js-checkout-form');
++
++            $form.find('.js-cc-number').payment('formatCardNumber');
++            $form.find('.js-cc-exp').payment('formatCardExpiry');
++            $form.find('.js-cc-cvc').payment('formatCardCVC');
++
+             $form.submit(function (event) {
+                 event.preventDefault();
+ 

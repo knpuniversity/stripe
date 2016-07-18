@@ -1,5 +1,5 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index e2c3ad0..b71d117 100644
+index ef74a62..10e4848 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
 @@ -47,18 +47,13 @@ class OrderController extends Controller

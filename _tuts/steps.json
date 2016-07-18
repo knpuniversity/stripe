@@ -89,7 +89,27 @@
             "id": "ssl-make-schemes-configurable",
             "name": "SSL: Make schemes configurable",
             "description": null
+        },
+        {
+            "id": "custom-form-add-form",
+            "name": "Custom Form: Add form",
+            "description": null
+        },
+        {
+            "id": "custom-form-add-basic-js",
+            "name": "Custom Form: Add Basic JS",
+            "description": null
+        },
+        {
+            "id": "custom-form-fix-js",
+            "name": "Custom Form: Fix JS",
+            "description": null
+        },
+        {
+            "id": "custom-form-jquery-cc-formatting",
+            "name": "Custom Form: jQuery CC formatting",
+            "description": null
         }
     ],
-    "sha": "e830433e94e2b02a580d12253e5ce211c52c04f2"
+    "sha": "a193b268ac376b548118a0c3577a8b37123d9de7"
 }
