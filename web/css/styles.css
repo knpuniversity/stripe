@@ -7,7 +7,6 @@ body {
     /* Margin bottom by footer height */
     font-family: 'Open Sans', sans-serif;
     margin-bottom: 160px;
-    color: $knp-color-black;
 }
 
 .sheep-flash {
@@ -153,10 +152,6 @@ body {
     font-size: 1.3em;
 }
 
-.not-available {
-    background-color: ;
-}
-
 .table-bordered>tbody>tr>td {
     text-align: center;
 }
@@ -170,7 +165,6 @@ body {
 
 .checkout-header {
     margin-bottom: 30px;
-    color: ;
 }
 
 .table-margin {
@@ -181,14 +175,6 @@ body {
     margin-bottom: 20px;
 }
 
-.address-space{
-    margin-bottom: 5px;
-}
-
-.add-button-margin {
-    margin-bottom: 10px;
-}
-
 .checkout-product-name {
     font-weight: normal;
 }
@@ -196,9 +182,11 @@ body {
 .checkout-total {
     font-weight: bold;
     text-align: center;
-
 }
 
+.checkout-form .input-group-addon:first-child {
+    min-width: 40px;
+}
 
 /*====================
     FOOTER
