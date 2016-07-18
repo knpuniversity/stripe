@@ -27,6 +27,7 @@ To get your database up and running, execute the following commands:
 ```php
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
+php bin/console h:d:f:l
 ```
 
 If you get any errors, check your database settings in `app/config/parameters.yml`.
