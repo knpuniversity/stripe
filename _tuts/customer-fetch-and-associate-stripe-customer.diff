@@ -85,18 +85,22 @@ index 007fbf3..a9327b2 100644
              ));
  
 diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
-index 1f2b3ea..746bac0 100644
+index 1f2b3ea..28fda44 100644
 --- a/src/AppBundle/Entity/User.php
 +++ b/src/AppBundle/Entity/User.php
-@@ -22,4 +22,19 @@ class User extends BaseUser
-     {
-         return $this->id;
-     }
-+
+@@ -18,8 +18,23 @@ class User extends BaseUser
+      */
+     protected $id;
+ 
 +    /**
 +     * @ORM\Column(type="string", unique=true, nullable=true)
 +     */
 +    private $stripeCustomerId;
++
+     public function getId()
+     {
+         return $this->id;
+     }
 +
 +    public function getStripeCustomerId()
 +    {

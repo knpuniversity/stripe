@@ -1,5 +1,5 @@
 diff --git a/app/config/parameters.yml.dist b/app/config/parameters.yml.dist
-index 69e8170..c41b8af 100644
+index 69e8170..36e74ed 100644
 --- a/app/config/parameters.yml.dist
 +++ b/app/config/parameters.yml.dist
 @@ -19,3 +19,6 @@ parameters:
@@ -8,9 +8,9 @@ index 69e8170..c41b8af 100644
      stripe_public_key: YYY_PUBLISHABLE_KEY_YYY
 +
 +    # set to https on production
-+    secure_scheme: http
++    secure_channel: http
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 9b2b209..e43f446 100644
+index 9b2b209..6484433 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
 @@ -27,7 +27,7 @@ class OrderController extends Controller
@@ -18,7 +18,14 @@ index 9b2b209..e43f446 100644
  
      /**
 -     * @Route("/checkout", name="order_checkout", schemes={"https"})
-+     * @Route("/checkout", name="order_checkout", schemes={"%secure_scheme%"})
++     * @Route("/checkout", name="order_checkout", schemes={"%secure_channel%"})
       * @Security("is_granted('ROLE_USER')")
       */
      public function checkoutAction(Request $request)
+@@ -68,4 +68,4 @@ class OrderController extends Controller
+         ));
+ 
+     }
+-}
+\ No newline at end of file
++}
