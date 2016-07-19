@@ -1,10 +1,36 @@
-# Checkout Form
+# Embedded Checkout Form
 
-Welcome brave souls that want to handle payment on the web. Actually, doing credit card payments, and all that kind of stuff, these days is a lot of fun. I was so excited to do this tutorial. We've worked with Stripe on our site for years and years, and they are a pleasure to work with.
+So you want to handle payment on the web? You *brave* soul :).
 
-Now, one of the reasons we wanted to do this tutorial is, of course tut taking payments on the web is really fun, you need to do it securely, and you need to not screw it up. You're dealing with people's money, if you mess it up, charge their card and tell them you didn't charge their card, you're going to have really, really angry customers. We're going to build a real life payment system, that is well rounded, so when things do go wrong, because they will go wrong, you're going to treat your users really, really nicely and not have any surprises.
+Nah, it's fine - these days, handling credit card payments is a *blast*. Especially
+with Stripe - an awesome service we've used for years.
 
-As always, I really want you guys to code along with me, especially in this tutorial, because they're are a lot of moving pieces. To do that, download the course code on this page, unzip it, and move into the start directory. That will give you the code that I have here, which is a Synchrony project, but we're not going to go too far in Synchrony because I want to focus mostly on Stripe. Inside there, open the readme.md file and go down to set up instructions. The last step is going to be to run the bin/console server:run command, to start up the built in web server, so let's check out our site.
+But let's be real: you're dealing with people's money, so don't muck it up! If you
+screw up or handle data insecurely, there might be real consequences. And you will
+*at least* have an angry customer. So I guess this tutorial is all about accepting
+money and having *happy* customers.
+
+So let's build a real-life, robust payment system so that when things go wrong - because
+they will - we can fail gracefully and avoid surprises.
+
+## Code Along with Me. Do it!
+
+As always, I beg you, I *implore* you to code along with me!
+To do that, download the course code on this page, unzip it, and move into the `start/`
+directory. That will give you the same code I have here.
+
+This is a Symfony project, but we'll avoid going too deep into that stuff because
+I want to focus mostly on Stripe. Inside, open the `README.md` and follow the setup
+instructions to get the project running. The last step is to open your favorite console
+app, move into the directory, and run:
+
+```bash
+php bin/console server:run
+```
+
+to start up the built-in web server.
+
+--> HERE so let's check out our site.
 
 Before we do, let me just tell you, here at Camp University, we really thought hard about what site we could create to be the next big thing. We started thinking about those services like Dollar Shave Club, which are really, really successful, and I think we came up with the next huge subscription product. We're calling it The Sheep Shear Club. That's right, sheep from everywhere can come to our site, get a subscription, and start looking dapper.
 
