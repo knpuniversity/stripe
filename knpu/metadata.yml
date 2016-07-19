@@ -26,6 +26,9 @@ tuts_hero:
     finish_step: start
 
 chapters:
+    stripe-dashboard:
+        is_finished: false
+        video_key: ~
     checkout-form:
         is_finished: false
         video_key: ~

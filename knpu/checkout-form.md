@@ -1,65 +1,101 @@
 # Embedded Checkout Form
 
-So you want to handle payment on the web? You *brave* soul :).
+Click on the documentation link at the top, and then click [Embedded Form](https://stripe.com/docs/checkout/tutorial).
+There are two ways to build a checkout-form: the easy & lazy way - via an *embedded form*
+that Stripe builds for you - or the harder way - with an HTML form that you build
+yourself. Our sheep investors want us to hoof-it and get this live, so let's do
+the easy way first - and switch to a custom form later.
 
-Nah, it's fine - these days, handling credit card payments is a *blast*. Especially
-with Stripe - an awesome service we've used for years.
+## Getting the Form Script Code
 
-But let's be real: you're dealing with people's money, so don't muck it up! If you
-screw up or handle data insecurely, there might be real consequences. And you will
-*at least* have an angry customer. So I guess this tutorial is all about accepting
-money and having *happy* customers.
+To get the embedded form, copy the form code. Then, head to the app and open the
+`app/Resources/views/order/checkout.html.twig` file. This is the template for the
+checkout page.
 
-So let's build a real-life, robust payment system so that when things go wrong - because
-they will - we can fail gracefully and avoid surprises.
+At the bottom, I already have a spot waiting for the checkout form. Paste the code
+there. Oh! And as promised: this `pk_test` value is the *public* key from *our* test
+environment.
 
-## Code Along with Me. Do it!
+## Your Stripe Public and Private Keys
 
-As always, I beg you, I *implore* you to code along with me!
-To do that, download the course code on this page, unzip it, and move into the `start/`
-directory. That will give you the same code I have here.
+Let me show you what I mean: in Stripe, open your "Account Settings" on the top and
+then select "API Keys". Each environment - Test and Live - have their own two keys:
+the secret key and the publishable or public key. Right now, we're using the public
+key for the test environment - so once we get this going, orders will show up there.
+After we deploy, we'll need to switch to the Live environment keys.
 
-This is a Symfony project, but we'll avoid going too deep into that stuff because
-I want to focus mostly on Stripe. Inside, open the `README.md` and follow the setup
-instructions to get the project running. The last step is to open your favorite console
-app, move into the directory, and run:
+Oh, and, I think it's obvious - but these secret keys need to be kept secret. The
+*last* thing you should do is create a screencast and publish them to the web. Oh
+crap.
 
-```bash
-php bin/console server:run
-```
+## Hey, A Checkout Form
 
-to start up the built-in web server.
+But anyways,  without doing any more work, go back to the browser and refresh the
+page. Hello checkout button! And hello checkout form! Obviously, $9.99 isn't the
+right price, for these amazing sheep accessories.
 
---> HERE so let's check out our site.
+To fix that, head back to the template. Everything about the form is controlled with
+these HTML attributes. Obviously, the most important one is `amount`. Set it to
+`{{ cart.total }}` - `cart` is a variable I've passed into the template - then
+the important part: `* 100`. 
 
-Before we do, let me just tell you, here at Camp University, we really thought hard about what site we could create to be the next big thing. We started thinking about those services like Dollar Shave Club, which are really, really successful, and I think we came up with the next huge subscription product. We're calling it The Sheep Shear Club. That's right, sheep from everywhere can come to our site, get a subscription, and start looking dapper.
+Whenever you talk about *amounts* in Stripe, you use the *smallest* denomination
+of the currency, so cents in USD. If you need to charge the user $5, then tell Stripe
+to charge them an amount of `500` cents.
 
-Now to start out, we're actually just going to sell individual products, and then eventually as we get further, we have a subscription service where we're going to do all the craziness to handle subscriptions. Just so you know, there's not a lot on this site now, so there's not a lot pre-built for you. We have a log in page. Password is breakingbaad. If you log in there, then you can start adding things to your cart, and then they show up in your cart here, but notice we are missing a checkout form on our page. That's what we need to do.
+Then, fill in anything else that's important to you, for example, `data-image`. I'll
+set this to our logo.
 
-To do that, first, sign up for your brand new Stripe account, which is really, really simple. I'm already signed up, so I'm going to go into my Stripe dashboard. There's a lot to look at inside the Stripe dashboard, but the first thing I want you to notice is that there is a test and live mode. We're in the test mode, so we have an entire sandbox full of users and orders and invoices, that are completely separate from once we actually from once we actually push this live. That's really cool.
+## Checking out with a Test Card
 
-Also, once you log into dashboard, when you read the Stripe documentation, it will actually pre-fill in some of your API keys because it knows who you're logged in as, so make sure you're logged in before we keep going.
+Refresh to reflect the new settings. The total should be $62, and it is! Because
+we're using the test environment, Stripe gives us fake, test cards we can use to
+checkout. I'll show you others later - but to checkout successfully, use
+`4242 4242 4242 4242`. You can use any future expiration and any CVC.
 
-Let's click on the documentation link on top, and lets add a checkout form. To start, go to embedded form. There's going to be two ways to create the checkout form. There is a built in one with Stripe, which just looks like that, and is really easy to set up, or you can make your own custom checkout form, which is what we're going to do in a little while. This is so easy, I want to start here.
+Ok, moment of truth: hit pay!
 
-To do that, copy this form down here, then go for an application and we're going to open app, resources, view, order, checkout.html.twig. This is the template that is controlling this checkout page. Down at the bottom, I already have a slot open on that page, for our checkout form. I'll paste the form [inaudible 00:04:39] right there, and you can already see as I promised, this pk_test is actually a public key that is associated with our account.
+It worked! I think... Wait, what just happened? Well, a *really* important step
+just happened - a step that's *core* to how Stripe checkout works.
 
-In Stripe, if you go up to your account, account settings on top, and you go to API keys, you're going to see ... You're going to see your secret and publishable key for your test environment, and also your secret and publishable key for your live environment, and I will be obviously changing my live environment right after I finish recording this. It's pretty cool because it's already taken this publishable key and it stuck that right there for it.
+## The Stripe Checkout Token
 
-Without doing anymore work, let's go back, refresh the page, and there is our beginning checkout form. Obviously it's 9.99 so it needs some tweaks. To customize that, you just need to fill in these attributes. The most important ones obviously amount, so I would do {{cart.total, and cart is in object I pass into my template that keeps track of what my total is. The important part is times 100. Whenever you talk about dollar amounts with Stripe, you want to talk about in terms of cents, so if you need to charge a user 5 dollars, you need to tell Stripe you're charging them 500 cents. Our cart total is in terms of dollars, so that converts it to cents.
+First, credit card information is *never* sent to our servers... which is the *greatest*
+news ever from a security standpoint. I do *not* want to handle your CC number:
+this would *greatly* increase the security requirements on my server.
 
-Then fill in anything else that's important to you, for example, data image. I'm going to change that to point at our logo.
+Instead, when you hit "Pay", this sends the credit card information to *Stripe* directly,
+via AJAX. If the card is valid, it sends back a token string, which *represents*
+that card. The Stripe JS puts that token into the form as an hidden input field and
+then submits the form like normal to our server. So the *only* thing that's sent
+to our server is this token. The customer has *not* been charged yet, but with a
+little more work - we can fetch that token in our code and ask Stripe to charge that
+credit card.
 
-Let's go back and refresh, we're expecting 62 dollars. We pay, there's 62 dollars, and lets just fill it out. To test carts ... Because we're using our public key for test mode, you can see the test mode up here, and that means we can use test cards from Stripe. The most common that you need to know about is all 42, 4242 4242 4242 4242. That's a functional Visa card in the test mode, and you can put in any valid dates after that, and then hit pay, and watch it.
+## Fetching the Stripe Token
 
-It worked. Except, what just happened? Well, a really important thing happened. You see, the key thing with Strip is that the credit card information is never ever submitted to our servers, and that's important because we do not want the credit card information submitted to our servers. That puts huge security liability on us. When you bring up this payment and hit pay, that sends the credit card information to Stripe's server, and then using AJAX, if the card is valid, it sends us back a token, and actually puts that token inside of our form field and submits the form back to our server. The only thing that's submitted to our server is this token. That's really cool because we can capture that token and then ask Strip to charge that credit card for us.
+Let's go get that token on the server. Open up `src/AppBundle/Controller/OrderController`
+and find `checkoutAction()`. This controller renders the checkout page. And because
+the HTML from has `action=""`, when Stripe submits the form, it submits *right* back
+to this same URL and controller.
 
-First, let's see that token to prove it's working. Open up SOC at bundle controller, order controller, and go down to checkout actions. This is the controller that is rendering the template that we've been working in. Because there's form action equals blank string, it's actually submitting right back to this same URL. If the method is post, I want to see if that token field is being submitted.
+To fetch the token, add a `Request` argument, and make sure you have the `use` statement
+on top. Then, inside the method, say `if ($request->isMethod('POST')`, then we know
+the form was just submitted. If so, `dump($request->get('stripeToken'))`. If you
+read Stripe's documentation, that's the `name` of the hidden input field.
 
-Get the request argument by type hinting the request object as an argument, and make sure that that added the you statement that you needed right there. Then down below it will say if request error is method post, and we know that form was just submitted and we're going to dump request arrow. Get. The Stripe token, because if you read the documentation, that's the hidden field that it adds to your form before it submits.
+Try it out! Refresh and fill in the info again: use your trusty fake credit card number,
+some fake data and Pay. The form submits and the page refreshes. But thanks to the
+`dump()` function, hover over the target icon in the web debug toolbar. Perfect! We
+were able to fetch the token.
 
-Let's try it out, refresh the page. [inaudible 00:09:36] credit card again. Put in a fake credit card number. Hit pay, and it refreshes but thanks to our dump, down here in the web [inaudible 00:09:55] toolbar, we have this token _18 blah, blah, blah things. Our checkout is already mostly working.
+In a second, we're going to send this back to Stripe and ask them to actually charge
+the credit card it represents. But before we do that, head back to the Stripe dashboard.
 
-Second, we're going to send this back to Stripe and tell Stripe to actually charge the credit card. Before we do that, one of the best parts of Stripe, is the fact that, are it's debugging tools. Even though we can already go into the logs area down here, and we can actually see all of the web requests that we've been making to Stripe. Like these ones on here actually from me testing earlier. These ones up here, actually the AJAX call that's used to submit the credit card information and get that token. Click that one right there and you can actually see, that this is what the Stripe java script sent to Stripe, and then this was the response that came back, which included the token. Then Stripe put that in a form for us and submitted it. If I actually search for that string that we just dumped in our controller, there it is.
+Stripe shows you a log of pretty much *everything* that happens. Click the Logs link:
+these are *all* the interactions we've had with Stripe's API, including a few from
+before I hit record on the screencast. Click the first one: this is the AJAX request
+that the JavaScript made to Stripe: it sent over the credit card information, and
+Stripe sent back the token. If I search for the token that was just dumped, it matches.
 
-All right, so let's take that token and let's actually charge our user.
+Ok, let's use that token to charge our customer.
