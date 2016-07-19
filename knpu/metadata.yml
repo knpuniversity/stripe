@@ -21,9 +21,8 @@ summary: |
 illustration: stripe.png
 
 tuts_hero:
-# todo - fill in the steps properly
-#    start_step: start
-    finish_step: start
+    start_step: start
+    finish_step: errors-handling-card-error
 
 chapters:
     stripe-dashboard:
