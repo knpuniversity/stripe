@@ -5,10 +5,10 @@ summary: |
     *just* need to get out there and sell it! Knowing that almost
     every payment-processor ever is a *huge* pain you choose
     Stripe (so wise).
-    
+
     In this tutorial, we'll build a full checkout system for our
     awesome product and learn all about:
-        
+
     - Handling the Stripe.js checkout process
     - Creating Stripe customers
     - Storing cards type and last-4
@@ -25,4 +25,31 @@ tuts_hero:
 #    start_step: start
     finish_step: start
 
-chapters: []
+chapters:
+    checkout-form:
+        is_finished: false
+        video_key: ~
+    charge-it:
+        is_finished: false
+        video_key: ~
+    hide-those-private-keys:
+        is_finished: false
+        video_key: ~
+    stripe-customers:
+        is_finished: false
+        video_key: ~
+    stripe-invoices:
+        is_finished: false
+        video_key: ~
+    centralize-stripe-code:
+        is_finished: false
+        video_key: ~
+    force-https-please:
+        is_finished: false
+        video_key: ~
+    custom-embedded-form:
+        is_finished: false
+        video_key: ~
+    pro-error-handling:
+        is_finished: false
+        video_key: ~        
