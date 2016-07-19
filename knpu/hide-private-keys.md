@@ -1,0 +1,13 @@
+# Hide Those Private Keys
+
+So far, you've referenced two keys from our account, so if you go to account settings and you go to API keys. You remember that your test account has a secret NA publishable key, and your live account has a secret NA publishable key, which means when we deploy this, and we're going to need to change the keys in our application from these 2 to these 2, which is kind of a bummer because right now the private key is hard coded in the middle of my controller and the public key is hard coded right in the middle of my template, so we need to move these keys somewhere to configuration so we can easily change them when we deploy. We also need to make sure we keep the private key actually private, which means you probably don't want to commit it to you repository because it's very, very sensitive.
+
+How you do this will be different based on what framework or code you're using, but in Symfony it means we're going to isolate these into a special parameters.yml file, because this file's not committed to the repository so it allows you to change these keys when you deploy them from server to server. So set this file and add a striped secret key, set to this value from the controller, and then a striped public key. We'll set that to the value from our template, and since this file isn't committed to the repository these values aren't being committed either and we can easily change them.
+
+Now in Symfony we also keep this other file called parameters.yml.dist, which is committed to the repository and we'll just put same fake values in there, that just helps future developers know that they need to actually go and put the correct values in for these.
+
+So now that we have these isolated inside parameters.yml we can take them out of the middle of our code, which is our goal, and the way you do that is by saying, "$this>getParameter", then you say, "striped_secretkey", and then we're also going to pass the public key into the template so we can get it there, so I'll pass a new variable in my template called "striped_public_key" and set that to this>getParameter striped_public_key, and finally in the template we can just render that variable.
+
+So make sure it works by selecting a product, adding to the cart, and the fact that this pay with card shows up at all means that at least our public key is working, so [inaudible 00:03:15] JavaScript widget.
+
+So that's a small step, but don't mess it up. You have to keep your private keys private, because guys, we're talking about eCommerce stuff, so just make sure you have those configuration in the right spot.
