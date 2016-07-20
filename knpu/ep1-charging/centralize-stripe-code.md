@@ -1,21 +1,111 @@
-# Centralize Stripe Code
+# Centralize your Stripe Code
 
-In Stripe we're working with these nice invoice customer charge objects, but our code's getting a little crazy right now. We just have this big long line of code that's procedurally doing things. We need to organize this because eventually our logic with Stripe is going to be so complex that we need to start reusing some of this logic. This is going to become particularly important when we have subscription and we're handling things like what happens when we failed to charge a credit card or a user updates their credit card information. Here's the goal of the next few minutes. Get all of this organized into a really, really nice set of reusable functions so that we're flexible going into the future. To do that, inside the SRC app bundle directory, I'm going to create a new [inaudible 00:00:50] class called "Stripe Client". Make sure you give this the name space app bundle. We're going to fill this with functions that help us do our work with Stripe, functions like "Create Customer" or "Update Customer Card" or "Create Invoice".
+Stripe's API is really organized. Our code that *talks* to it is getting a little
+crazy, unless you like long, procedural code that you can't re-use. Please tell me
+that's not the case.
 
-Inside of our control actually the first thing we do is create a customer, so let's move this logic into this file by creating a public function "Create Customer". What we'll do is this will accept a user object, so the currently logged in user and then we'll also accept the payment token, the Stripe token that was just submitted. We'll copy all of this code here, put that into our Stripe Client object variable payment token. Then at the bottom we'll return that customer object just in case we actually need it from the other screen, so cool.
+Let's get this organized! At the very least, we should do this because eventually
+we're going to need to re-use some of this logic - particularly with subscriptions.
 
-Now the only other problem with this function is down here with the entity manager, which we used actually update the user table with the new Stripe customer ID. This is very specific to Symphony, but in order for that to work, we need to create a new construct function, called a "Function Construct". We need to use dependency injection to inject the [inaudible 00:02:23] manager and then set that on a new EM property for Symphony people who are about to register this as a service. Then down below, we'd say EM equals this arrow EM and everything will work just fine. You're just transferring the exact same logic into this class.
+Here's the goal of the next few minutes: move each *thing* we're doing in the controller
+into a set of nice, re-usable functions. To do that, inside AppBundle, create a new
+class called `StripeClient`. Make sure this has the `AppBundle` namespace. We're
+going to fill this with functions that work with Stripe, like `createCustomer()`
+or `updateCustomerCard()`.
 
-In order to use this inside of our controller, in Symphony, we're going to go into app config services.lymel and we're going to register this nice service. It's [inaudible 00:02:57]Stripe into our clients. It needs a class key set to Stripe Clients. Then I'm going to use auto-wiring so that it will guess the arguments by controller and it does that by looking at the [inaudible 00:03:11]. If you're new to Symphony or you're not using this inside of Symphony, this is okay. The way you're going to organize your code is going to be a little bit different in your application, but ultimately I want you to build a reusable set of functions like this so you can interact with Stripe really easily.
+## Moving createCustomer()
 
-Now in our controller, we can glean all this stuff. Before the if statement, I'm going to create a new variable called Stripe Client, inside this arrow, "Get stripe [inaudible 00:03:42] to our client," which is now going to be a new stripe client object s we can very easily say stripe client arrow create customer, passive user object, and then we will pass it the token. That's it. Good to go. Let's keep going with this.
+In the controller, the first thing we do is create a Customer. In `StripeClient`,
+add a new `createCustomer()` method that will accept the User object which should
+be associated with the customer, and the `$paymentToken` that was just submitted.
 
-The second bit of logic here, it's job is to update the credit card on an existing user. In Stripe Client, let's go back and create a second public function called "Update Customer Card". You'll accept the user object who's customer needs to be updated. Then once again we;'ll put a payment token and that's the token that represents the card. Just like before, I'm going to take these three lines, remove them from order controller, put them inside of here, update that token to payment token, and then we'll call it "Customer Arrow Save". In order controller, we'll just say Stripe Client, arrow, update customer card, pass [inaudible 00:04:56] user, and the token. You can see how we're being dangerous with this Stripe Client with all these really nice reusable functions.
+Copy the logic from the controller and paste it here. Update `$token` to `$paymentToken`.
+Then, return the `$customer` at the bottom, just in case we need it. You'll see me
+do with this most functions in this class.
 
-Now there is one problem. This would work right now, but checkout this Stripe set API key thing up here. We have to call this before we make any API calls out to Stripe. If we started using this Stripe Client somewhere else in our code and we forgot to call this line, it's not going to work. I'm going to guarantee that if somebody works with our Stripe Client and calls methods like Create Customer, Update Customer, I'm going to guarantee that this line has already been called. The way we're going to do that is we're going to call this line from inside of the Stripe Client's constructor. Let's copy and remove that line, go to Stripe Client, and past this inside of construct.
+The only problem is with the entity manager - the code used to update the user record
+in the database. The way we fix this is a bit specific to Symfony. First, add a
+`public function __construct()` with an `EntityManager $em` argument. Set this
+on a new `$em` property.
 
-The only other thing that needs changed is in Symphony we don't have [escape 00:06:02] parameter function from inside this class anymore. Instead of having this, I'm actually going to add a new first constructor argument called "Secret Key". Then on here, we're going to pass it secret key. Then in order for Symphony to pass us the secret key right there, in services.lymel, I'll add an arguments key and we'll set the first argument to percent stripe secret key percent. Because of auto-wiring it will pass that as the first value and then it will auto-wire the remaining arguments. This is very Symphony-specific, but one way or another we just need to make sure in  the construct function here, we're somehow getting our secret key from our configuration. Remember this is ultimately reading from parameters [inaudible 00:06:55] and [inaudible 00:06:55] so we can make sure that set API key is called. That's really the hardest stuff.
+Down below, just say `$em = $this->em`.
 
-The last two things we can remove are a method to create an invoice item and a method to create an invoice. In Stripe Client, let's create those, public function, create invoice item. To do that we're going to need to know the amount of the invoice, we're going to need to know what use to attach that to and we'll also allow there to be an invoice item description. We'll copy the code from our controller, remove it, paste it here, and we'll just use amount and then place the description with description. Just in case, I'll add a return statement, in case we need that invoice item for some reason. In order controller, we'll just say, Stripe Client, arrow, create invoice item. We know that the amount is product error, get price, times 100. The user is our current user and I'm using product error, get name as the description. Awesome.
+## Registering the Service
 
-Then finally let's move this invoice create into our Stripe Client. You guys know it. Public function, create invoice. Remember we're always invoicing a specific user so we'll invoice that user. Then we'll add a little pay immediately argument and default it to true. There may be some times in the future when you want to create an invoice with subscriptions, but not actually have it invoice them immediately. That may never happen. That's why I defaulted it to true, but we have it there anyways. Here we'll grab the invoice code, remove that from our controller, put that into Stripe Client. Then we're at this invoice pay with, if pay immediately, then we will pay immediately and we'll return the invoice in case somebody needs it. This was a giant step sideways. I know it didn't add anything to our code but all the sudden we have a Stripe Client which is full of dangerous methods and inside of our controller we can just finish this with Stripe Client, arrow, create invoice, pass the user, and then pass it true, even though I don't have to to invoice immediately. That's it. This is going to pay off down the road. Double-check to make sure it works. Add something to your cart. Check-out. Unless we get an error, we're good. System still works and this Stripe Client is really, really dangerous
+To use the new function in our controller, we need to register it as a service. Open
+up `app/config/services.yml`. Add a service called `stripe_client`, set its `class`
+key to `AppBundle\StripeClient` and set `autowire` to true. With that, Symfony will
+guess the constructor arguments to the object.
+
+If you're not coding in Symfony, that's ok! Do whatever you need to in order to
+have a set of re-usable functions for interacting with Stripe.
+
+In the controller, clear out all the code in the `if` statement, and before it, add
+a new variable called `$stripeClient` set to `$this->get('stripe_client')`. This
+will be an instance of that `StripeClient` object.
+
+In this `if`, call `$stripeClient->createCustomer()` and pass it the `$user` object
+and the `$token`. Done.
+
+## Moving updateCustomerCard()
+
+Let's keep going!
+
+The *second* piece of logic is responsible for updating the card on an existing
+customer. In `StripeClient`, add a `public function updateCustomerCard()` with a
+`User $user` whose related Customer should be updated, and the new `$paymentToken`.
+
+In `OrderController`, call this with `$stripeClient->updateCustomerCard()` passing
+it `$user` and `$token`. Now the `StripeClient` class is getting dangerous!
+
+## Always setting the API Key
+
+But, there's one small problem. This *will* work now, but look at the `setApiKey()`
+method call that's above everything. We *must* call this before we make any API calls
+to Stripe. So, if we tried to use the `StripeClient` somewhere *else* in our code,
+but we forgot to call this line, we would have *big* problems.
+
+Instead, I want to *guarantee* that if somebody calls a method on `StripeClient`,
+`setApiKey()` will always be called first. To do that, copy that line, delete it
+and move it into StripeClient's `__construct()` method.
+
+Symfony user's will know that the `getParameter()` method won't work here. To fix
+that, add a new *first* constructor argument called `$secretKey`. Then, use that.
+
+To tell Symfony to pass this, go back to `services.yml` and add an `arguments` key
+with one entry: `%stripe_secret_key%`. Thanks to auto-wiring, Symfony will pass the
+`stripe_secret_key` parameter as the first argument, but then autowire the second,
+`EntityManager` argument.
+
+The end-result is this: when our `StripeClient` object is created, the API key is
+set immediately.
+
+## Moving Invoice Logic
+
+Ok, the hard stuff is behind us: let's move the last two pieces of logic: creating
+an `InvoiceItem` and creating an `Invoice`. In `StripeClient`, add
+`public function createInvoiceItem()` with an `$amount` variable, the `$user` to
+attach it to and a `$description`. Copy that code from our controller, remove it,
+and paste it here. Update `amount` to use `$amount` and `description` to use `$description`.
+Add a `return` statement just in case.
+
+In `OrderController`, call this `$stripeClient->createInvoiceItem()` passing it
+`$product->getPrice() * 100`, `$user` and `$product->getDescription()`.
+
+Perfect! For the last piece, add a new `public function createInvoice()` with a
+`$user` whose customer we should invoice and a `$payImmediately` argument that defaults
+to `true`. Who knows, there might be some time in the future when we *don't* want
+to pay an invoice immediately.
+
+You know the drill: copy the invoice code from the controller, remove it and paste
+it into `StripeClient`. Wrap the `pay()` method inside `if ($payImmediately)`. Finally,
+return the `$invoice`.
+
+Call that in the controller: `$stripeClient->createInvoice()` passing it `$user`
+and `true` to pay immediately.
+
+Phew! This was a giant step sideways - but not only is our code more re-usable, it
+just makes a lot more sense when you read it!
+
+Double-check to make sure it works. Add something to your cart. Check-out. Yes!
+No error! The system still works and this `StripeClient` is really, really dangerous.
