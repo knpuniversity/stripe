@@ -52,7 +52,13 @@ chapters:
     force-https-please:
         is_finished: false
         video_key: ~
-    custom-embedded-form:
+    custom-checkout-form:
+        is_finished: false
+        video_key: ~
+    checkout-form-javascript-handling:
+        is_finished: false
+        video_key: ~
+    pretty-card-formatting:
         is_finished: false
         video_key: ~
     pro-error-handling:

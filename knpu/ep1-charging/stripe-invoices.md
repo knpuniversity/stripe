@@ -50,7 +50,7 @@ past invoices and render them as a receipt.
 ## One InvoiceItem per Product
 
 This now gives us more flexibility. Since sheep love to shop, they'll often buy
-*multiple* product. In fact, let's go buy some shears, and some Sheerly Conditioned.
+*multiple* products. In fact, let's go buy some shears, and some Sheerly Conditioned.
 If we checked out right now, this would show up as one giant line item for $106.00
 on the Invoice. We can do better than that.
 

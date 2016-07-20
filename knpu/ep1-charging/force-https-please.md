@@ -1,11 +1,42 @@
 # Force HTTPS, please!
 
-Guess what? If you want to tune you can deploy right now. Other than subscriptions, and a couple of other things like discounts that we are going to talk about in the future. You've got a fully functional system but there's one thing that you cannot forget. You need to force SSL on your check out page. You can see here, you do not see the little lock icon so I'm using http to handle my checkout which is a big, big problem. Of course it's not a problem locally because I'm developing, but if I deploy this right now, that's a problem. Even though you're not handling credit card information, Stripe does pass you that token and we submit that token to our server. Now if we submit that token over a non-https connection, that's a security risk because there could be somebody in the middle who reads that token and charges the user before we can.
+Guess what? You could deploy this code *right* now. Sure - we have a lot more to
+talk about - like subscriptions & discounts - but the system is ready.
 
-How you do this is going to depend on your framework, but in Symphony it's very, very easy to handle this. In our controller right about checkoutAction, this @Route here is actually what defines the URL for this page. If you want to, you can add a little thing at the end called schemes. You set that equal to two curly braces and then inside double quotes you say https, and that's it.
+Oh, but there's just one thing that you *cannot* forget to do. And that's to *force*
+`https` to be used on your checkout page.
 
-Now if I go back and refresh, Symphony automatically redirects me to https and life is good. Except life is not good because I totally just made web development a nightmare in development mode. You can see that in my local computer I actually do have a SSL certificate set up. It's self-signed so I get the crazy warning icon here. If we don't change anything, that means everyone who works on this project is going to have to go through the hassle of getting SSL set up, which you can do but it's just kind of annoying.
+Right now, there is *no* little lock icon in my browser - this page is *not* secure.
+Of course it's not a problem now because I'm just coding locally.
 
-Here's the trick. In Symphony, instead of saying https, we're going to say %secure_channel%. This is a parameter in Symphony so we're basically reading a variable. In fact, reading the same parameters that we've been setting over in parameters.yml. This is cool because we can set this to http. Of course, any time we add something to this file, we'll add it to the dist file, kind of the template file for how things should look. If this works, then it means that if I go back to localhost:8000 in http and click to the checkout, it lets me go in http but as soon as we deploy this up to the server, you're going to change this to https and boom, magically the checkout page is going to require https.
+But on production, different story. Even though you're not handling credit card
+information, Stripe *does* submit that token to our server. If that submit happens
+over a non-https connection, that's a security risk: there *could* be somebody
+in the middle reading that token. Regardless of what they might be able to do with
+that, we need to avoid this.
 
-There's a little trick for having https without hating your life while you're developing.
+There are *a lot* of ways to force HTTPs, but let me show you my *favorite* in Symfony.
+In `OrderController`, right above `checkoutAction()`, this `@Route` annotation is
+what defines the URL to this page. At the end of this, add a new option called
+`schemes` set to two curly braces, a set of double-quotes with `https` inside.
+
+Ok, go back and refresh! Cool! Symfony automatically redirects me to https. Life
+is good.
+
+## No HTTPS in dev Please!
+
+Wait, life is *not* good. I *hate* needing to setup SSL certificates on my local
+machine. I actually have one setup already, but other developers might not. That's
+a huge pain for them... for no benefit.
+
+Fortunately, there's a trick. Replace `https`, with `%secure_channel%`. This syntax
+is referencing a *parameter* in Symfony, so basically a configuration variable.
+Open `parameters.yml`, add a new `secure_channel` parameter and set it to `http`.
+And as you know, if you add a key here, also add it to `parameters.yml.dist`.
+
+Ok, head back to the homepage: `http://localhost:8000` and click to checkout. Hey!
+We're back in `http`. When you deploy, change that setting to `https` and *boom*,
+your checkout will be secure.
+
+So there's your little trick for forcing https without being forced to hate your
+life while developing locally.

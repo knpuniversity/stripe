@@ -42,7 +42,7 @@ have a set of re-usable functions for interacting with Stripe.
 
 In the controller, clear out all the code in the `if` statement, and before it, add
 a new variable called `$stripeClient` set to `$this->get('stripe_client')`. This
-will be an instance of that `StripeClient` object.
+will be an instance of that `StripeClient` class.
 
 In this `if`, call `$stripeClient->createCustomer()` and pass it the `$user` object
 and the `$token`. Done.
@@ -84,7 +84,7 @@ set immediately.
 
 Ok, the hard stuff is behind us: let's move the last two pieces of logic: creating
 an `InvoiceItem` and creating an `Invoice`. In `StripeClient`, add
-`public function createInvoiceItem()` with an `$amount` variable, the `$user` to
+`public function createInvoiceItem()` with an `$amount` argument, the `$user` to
 attach it to and a `$description`. Copy that code from our controller, remove it,
 and paste it here. Update `amount` to use `$amount` and `description` to use `$description`.
 Add a `return` statement just in case.
@@ -108,4 +108,4 @@ Phew! This was a giant step sideways - but not only is our code more re-usable, 
 just makes a lot more sense when you read it!
 
 Double-check to make sure it works. Add something to your cart. Check-out. Yes!
-No error! The system still works and this `StripeClient` is really, really dangerous.
+No error! The system still works and this `StripeClient` is really, really sweet.
