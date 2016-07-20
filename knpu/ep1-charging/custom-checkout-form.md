@@ -14,7 +14,7 @@ are responsible for building the HTML form.
 To help communicate with Stripe, we need some JavaScript. Copy the first JavaScript
 code and then find the `checkout.html.twig` template. At the top, override
 `{% block javascripts %}` and then call the `{{ parent() }}` function. Paste the
-script tag bellow.
+script tag below.
 
 This is just the Twig way of adding some new JavaScript to our page. The base layout
 *also* has a `javascripts` block and jQuery is already included.

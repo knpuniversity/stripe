@@ -56,7 +56,7 @@ from before and modify it to re-add the `hidden` class - since now things are su
 When things work, the response comes back with a `token`, which we get via `response.id`.
 To send this to the server, we just smash it into a new input hidden field called...
 drumroll ... `stripeToken`. This is *precisely* what the embedded form did. Once
-the form is submitted, the controller will hum along like normal and keep working.
+the form is submitted, the controller will hum along like nothing ever changed.
 
 ## Testing the Error and Success
 
