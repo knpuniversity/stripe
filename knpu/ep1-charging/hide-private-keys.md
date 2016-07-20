@@ -1,13 +1,41 @@
 # Hide Those Private Keys
 
-So far, you've referenced two keys from our account, so if you go to account settings and you go to API keys. You remember that your test account has a secret NA publishable key, and your live account has a secret NA publishable key, which means when we deploy this, and we're going to need to change the keys in our application from these 2 to these 2, which is kind of a bummer because right now the private key is hard coded in the middle of my controller and the public key is hard coded right in the middle of my template, so we need to move these keys somewhere to configuration so we can easily change them when we deploy. We also need to make sure we keep the private key actually private, which means you probably don't want to commit it to you repository because it's very, very sensitive.
+We already know that our Stripe account has *two* environments, and each has its
+*own* two keys. This means that when we deploy, we'll need to update our code to
+use these *Live* keys, instead of the ones from the Test environment.
 
-How you do this will be different based on what framework or code you're using, but in Symfony it means we're going to isolate these into a special parameters.yml file, because this file's not committed to the repository so it allows you to change these keys when you deploy them from server to server. So set this file and add a striped secret key, set to this value from the controller, and then a striped public key. We'll set that to the value from our template, and since this file isn't committed to the repository these values aren't being committed either and we can easily change them.
+Well... that's going to be a bummer: the public key is hard-coded right in
+the middle of my template and the private one is stuck in the center of a controller.
+If you *love* editing random files whenever you deploy, then this is perfect!
+Have fun!
 
-Now in Symfony we also keep this other file called parameters.yml.dist, which is committed to the repository and we'll just put same fake values in there, that just helps future developers know that they need to actually go and put the correct values in for these.
+But for the rest of us, we need to move these keys to a central configuration file
+so they're easy to update on deploy. We also need to make sure that we don't commit
+this private key to our git repository... ya know... because it's private - even
+though I keep showing you mine.
 
-So now that we have these isolated inside parameters.yml we can take them out of the middle of our code, which is our goal, and the way you do that is by saying, "$this>getParameter", then you say, "striped_secretkey", and then we're also going to pass the public key into the template so we can get it there, so I'll pass a new variable in my template called "striped_public_key" and set that to this>getParameter striped_public_key, and finally in the template we can just render that variable.
+## Quick! To a Configuration File!
 
-So make sure it works by selecting a product, adding to the cart, and the fact that this pay with card shows up at all means that at least our public key is working, so [inaudible 00:03:15] JavaScript widget.
+How you do this next step will vary for different frameworks, but is philosophically
+always the same. In Symfony, we're going to move our keys to a special
+`parameters.yml` file, because our project is setup to *not* commit this to git.
 
-So that's a small step, but don't mess it up. You have to keep your private keys private, because guys, we're talking about eCommerce stuff, so just make sure you have those configuration in the right spot.
+Add a `stripe_secret_key` config and set its value to the key from the controller.
+Then add `stripe_public_key` and set that to the one from the template.
+
+In Symfony, we also maintain this other file - `parameters.yml.dist` - as a *template*
+for the original, uncommitted file. This one *is* committed to the repository.
+Add the keys here too, but give them fake values.
+
+## Using the Parameters
+
+Now that these are isolated in `parameters.yml`, we can take them out of our code.
+In the controller, add `$this->getParameter('stripe_secret_key')`. Next, pass a
+new `stripe_public_key` variable to the template set to `$this->getParameter('stripe_public_key')`.
+Finally, in the template - render that new variable.
+
+Make sure we didn't break anything by finding a product and adding it to the cart.
+The fact that this "Pay with Card" shows up means things are probably ok.
+
+This was a small step, but don't mess it up! If that secret key becomes *not* so
+secret, sheep-zombies will attack.

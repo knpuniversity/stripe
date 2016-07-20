@@ -76,7 +76,7 @@ credit card.
 
 Let's go get that token on the server. Open up `src/AppBundle/Controller/OrderController`
 and find `checkoutAction()`. This controller renders the checkout page. And because
-the HTML from has `action=""`, when Stripe submits the form, it submits *right* back
+the HTML form has `action=""`, when Stripe submits the form, it submits *right* back
 to this same URL and controller.
 
 To fetch the token, add a `Request` argument, and make sure you have the `use` statement

@@ -9,7 +9,7 @@ But first, make sure that you select PHP on the top right. Thanks to this, the d
 will show you code snippets in PHP. And those code snippets will use Stripe's PHP
 SDK library. Google for that and open its [Github Page](https://github.com/stripe/stripe-php).
 
-First, let's get this guy installed.. Copy the composer require line, move over to
+First, let's get this guy installed. Copy the composer require line, move over to
 your terminal, open a new tab and paste that:
 
 ```bash
@@ -50,7 +50,7 @@ More on that later.
 
 But before we try it, we need to finish up a few application-specific things. For
 example, after check out, we need to empty the shopping cart. The products are great,
-but they probably won't want to buy them twice in a row.
+but the customer probably doesn't want to buy them twice in a row.
 
 Next, I want to show a success message to the user. To do that in Symfony, call
 `$this->addFlash('success', 'Order Complete! yay!')`.
@@ -66,4 +66,4 @@ the Stripe Dashboard. This time, click "Payments". And there's our payment for `
 You can even see all the information that was used.
 
 Congratulations! You just added a checkout to your site in 15 minutes. Now let's
-make this things rock-solid.
+make this thing rock-solid.

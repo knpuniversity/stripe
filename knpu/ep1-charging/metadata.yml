@@ -34,7 +34,10 @@ chapters:
     charge-it:
         is_finished: false
         video_key: ~
-    hide-those-private-keys:
+    hide-private-keys:
+        is_finished: false
+        video_key: ~
+    stripe-customer-user-table:
         is_finished: false
         video_key: ~
     stripe-customers:

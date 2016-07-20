@@ -1,35 +1,66 @@
-# Stripe customers
+# We <3 Creating Stripe Customers
 
-So far the only object that we've worked with in Stripes API is the charge object and depending on what you need that may be the only one that you need to deal with, but probably you're going to want to get more complicated. The second object we're going to talk about is the customer object. Customers are really, really powerful idea. With charges if your same customer comes back over and over and over again to buy stuff, then there's two problems.
+Head back to `OrderController`. Create a `$user` variable set to `$this->getUser()`:
+this is the User object for *who* is currently logged in. I'll add some inline documentation
+to show that.
 
-First, they're going to have to enter their credit card every single time. You won't be able to store the credit card for that user. Second, inside of Stripes Admin area these are all going to look like random unconnected charges, wherein if you create a user you're going to be able to go into your Stripes Dashboard, find that user and see their entire transaction history. In other words, I just don't just want to make charges. I want to create customers and then tie the charges to those customers in Stripe.
+When the user submits the payment form, there are *two* different scenarios. First,
+`if (!$user->getStripeCustomerId())`, then this is a first-time buyer, and we need
+to create a new Stripe Customer for them.
 
-To do that, we're going to use Stripes API to create the customer object and then save the Stripe customer ID onto our user table so that when that user comes back in the future, we already know which customer in Stripe they're attached to.
+To do that, go back to their API documentation and find [Create A Customer](https://stripe.com/docs/api#create_customer).
+Oh hey, it wrote the code for us again! Steal it! And paste it right inside the
+`if` statement. 
 
-Right now, if you look at the User Table which is FOS_user, you can see that it doesn't have too many fields that are important. It has user name, email and some other fields related to resetting your password and things like that. Let's add a new column called "Start User ID." To do that open a class in the App bundle insert directory called "user" which models that user table and create a new private property called "Stripe Customer ID." Above that we're going to use annotations to say at or a column, type =string to create a bar card column. We're even going to make this a unique field, and no avoid ghoster means this can be empty because of course your users will probably register on your site before they ever actually become a Stripe customer.
+Customer has a lot of fields, but most are optional. Let's set `email` to
+`$user->getEmail()` so we can easily look up a user in Stripe's dashboard later.
 
-Down at the bottom, I'm going to go to the Coded Generate Menu or Command+N to generate gears and settings for that direct customer ID. Now that we have this in our PhD code we need to actually add a new column to our database. I'm going to keep my SQL open here, open up a new tab and run bin counsel doctrine migrations dif. This is very specific to doctrine, but all that did was create a new file which actually contains the raw SQL needed to add that new Stripe customer ID column into our table.
+The *really* important field is `source`. This refers to the *payment source* -
+so credit or debit card in our case - that you want to attach to the customer. Set
+this to the `$token` variable. This is huge: it will attach that card to their account,
+and allow us - if we want to - to charge them using that same card in the future.
 
-In that same tab you can fun doctor migrations migrate and it will actually execute that file. Perfect. Back over in my SQL land you can run the scribe again, there is our new Stripe Customer ID column ready to go. Awesome.
+Set this call to a new `$customer` variable: the  `create()` method returns a
+`Stripe\Customer` object. And we like that because *this* object has an `id` property.
 
-Now in Order Controller we have two situations. When the user comes back to our site, eventually we might store their credit card, but for now assume that even existing customers bars that have bought things before are still going to fill in this form and hit submit. First, you can get the currently logged in user by saying: user=this=getuser, or you can put a little inline documentation so you know what that is. The two situations are going to be if not user>getStripeCustomerID, it means that this is a new customer that we had never seen before. You need to create a new customer in Stripe.
+To save that on our user record, say `$user->setStripeCustomerId($customer->id)`.
+Then, I'll use Doctrine to run the UPDATE query to the database. If you're not using
+Doctrine, just make sure to update the user record in the database however you want.
 
-To do that go over to their API documentation, go down to Create A Customer and as always, you guys know the drill, we are going to steal code from this site and paste that right here. As you can see Customer has a bunch of fields. Most of them are optional. You can basically set whatever information you want on a customer. What I'm going to set is email field because we do know the email right user, it's going to make it very easy for us to look up that user later, and set that to: User>GetEmail.
+## Fetching the Existing Customer Object
 
-The second important one is Source. What Source means is the credit card that you want to attach to your user. But of course, we don't have the credit card here, but we do have the token that was just submitted. Set Source to your token variable. What that will do is attach that credit card to their account which is going to allow us to use that in the future if they ever come back and buy something.
+Now, add the `else`: this means the user *already* has a Stripe customer object.
+Repeat customer! Instead of creating a new one, just fetch the customer with
+`\Stripe\Customer::retrieve()` and pass it `$user->getStripeCustomerId()`.
 
-When you call this Stripe Customer: Call Create that is actually going to return a Stripe Customer Object which is important because we can use that to get the ID of the customer off. You can see all of this when you look at the documentation site Stripe. When you create a new customer, you end up getting back a Stripe Customer Object and that has all these properties on it include ID.
+Since this user is already in Stripe, we *might* eventually re-work our checkout
+page so that they *don't* need to re-enter their credit card. But, we haven't done
+that yet. And since they just submitted *fresh* card information, we should *update*
+their account with that. After all, this might be a different card than what they used
+the first time they ordered.
 
-We need to take the ID, set it on our User Object so we have that in the future. Very simply we'll say: User>SetStripeCustomerID, Customer>ID. Then we'll save this using the standard method in doctrine. Obviously we're not using doctrine. The important thing here is that you take that Customer ID from Stripe and update the user record so it has that property. Perfect. You've created a customer and now we know that this user in our database is associated with this direct customer.
+To do that, update the `source` field: set it to `$token`. To send that update to
+Stripe, call `$customer->save()`.
 
-Now if they already have a Stripe customer account, that's awesome. First, instead of creating a new one, let's just fetch one. We're going to use something very similar: Stripe/Customer::retrieve then we'll pass out the ID of the customer which of course is on our user as: user>getStripeCustomerID.
+So in *both* situations, the token will now be attached to the customer that's associated
+with our user. Phew!
 
-Now what we could do in the future is instead of having this repeat customer enter their password again on the checkout, we get to say: We recognize you. Do you want to check out with the existing card that we have on file. But we're not there right now, so since the user just entered their credit card information we want to update the credit card information save it on the customer. It might be a different card than what they used the first time they checked out.
+## Charging the User
 
-To do that you update the Source field and set that to token. Then finally save: customer>save and that will send the APR request over to Stripe to update that customer object. Either way at this point, the submitted token has been associated with the customer and the user object is associated with this Stripe customer.
+The last thing we need to update is the Charge: instead of passing `source`, charge
+the *customer* instead. Set `'customer' => $user->getStripeCustomerId()`. We're no
+long saying "charge this credit card", we're saying "charge this customer, using
+whatever credit card they have on file".
 
-The last thing we need to do down here is instead of passing Source when we create the charge, we're going to change this to Customer and we're going to pass it the ID of this Customer in Stripe which is: user>getStripeCustomerID. When we create this charge we're not saying charge this credit card, we're saying charge this user and use whatever credit card they have on file. Whew! Okay.
+Ok, time to try it out! Go back and reload this page. Run through the checkout with
+our fake data and hit Pay. Hey, hey - no errors!
 
-Let's try it out. Go back and enter in Check Outs. Pay with a credit card. Choose any, expiration in the future, any CVC, hit Pay and it looks good. Let's check it out in Stripe. Now when you go to payments you see the second payment right here. If you click into that, this is now associated with a customer and that is awesome. You can see the you saved the credit card on the Customer. You can see all the past payments on a Customer. Eventually you will be able to manage the subscriptions for your Customer. This is one big step to actually getting a payment system that we can actually use on our site.
+So go check your Stripe dashboard. Under Payments, you should see this new charge.
+And if you click into it, it is now associated with a *customer*. Success! The customer
+page shows even more information: the attached card, any past payments and eventually
+subscriptions. This is one big step forward.
 
-You can copy this ID and back in my SQL can verify that that actually matches our user account. Love it.
+Copy the customer's id and query for that on our `fos_user` table. Yes, it *did*
+update!
+
+Since adding a customer went so well, let's talk about *invoices*.
