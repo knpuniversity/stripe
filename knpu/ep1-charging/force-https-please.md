@@ -12,13 +12,13 @@ Of course it's not a problem now because I'm just coding locally.
 But on production, different story. Even though you're not handling credit card
 information, Stripe *does* submit that token to our server. If that submit happens
 over a non-https connection, that's a security risk: there *could* be somebody
-in the middle reading that token. Regardless of what they might be able to do with
-that, we need to avoid this.
+in the middle reading that token. Regardless of what they might or might not be able
+to do with that, we need to avoid this.
 
 There are *a lot* of ways to force HTTPs, but let me show you my *favorite* in Symfony.
 In `OrderController`, right above `checkoutAction()`, this `@Route` annotation is
 what defines the URL to this page. At the end of this, add a new option called
-`schemes` set to two curly braces, a set of double-quotes with `https` inside.
+`schemes` set to two curly braces and a set of double-quotes with `https` inside.
 
 Ok, go back and refresh! Cool! Symfony automatically redirects me to https. Life
 is good.
@@ -39,4 +39,4 @@ We're back in `http`. When you deploy, change that setting to `https` and *boom*
 your checkout will be secure.
 
 So there's your little trick for forcing https without being forced to hate your
-life while developing locally.
+life while coding.
