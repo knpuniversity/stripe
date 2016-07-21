@@ -36,7 +36,7 @@ important. When you make an API request to Stripe and it fails, Stripe will send
 back a JSON response with a `type` key. That `type` will be one of these values.
 This goes a *long* way to telling you what went wrong.
 
-So, how can we read the `typr` inside our code?
+So, how can we read the `type` inside our code?
 
 Open up the `vendor/stripe` directory to look at the SDK code. Hey, check this out:
 the library has a custom Exception class for *each* of the possible `type` values.
