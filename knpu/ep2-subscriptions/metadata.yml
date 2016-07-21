@@ -1,0 +1,31 @@
+title: Stripe Level 2: Subscriptions, Discounts, Web-hooks, oh my!
+
+summary: |
+    After [Part 1](http://knpuniversity.com/screencast/stripe) of the tutorial,
+    you are *rocking* with Stripe: Charges, Customer, Invoices and error-handling
+    are old news.
+
+    Now it's time to take our sheep-shearing startup to the next level: by offering
+    a monthly subscription service. Woh.
+
+    - Learn to create and charge subscriptions!
+    - Store the card type and last 4 to show your user
+    - Update a customer's credit card
+    - Handle cancellations
+    - Use web-hooks to handle renewal payments, cancellation, payment failures
+    - Upgrading/Downgrading a subscription
+    - Offering Coupons, Discounts and Trials
+    - Giving your user's high-quality invoices
+
+    Oh, the possibilities are endless: create a subscription service that treats
+    your customers right.
+
+illustration: stripe.png
+
+tuts_hero:
+    # todo - fill these inn
+    # start_step: start
+    # finish_step: errors-handling-card-error
+    finish_step: start
+
+chapters: [] 
