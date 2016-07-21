@@ -17,6 +17,9 @@ summary: |
     - Being *super* graceful when things go wrong
     - Organizing everything with Stripe invoices
 
+    In [Part 2](http://knpuniversity.com/screencast/stripe-level2),
+    we'll handle subscriptions, webhooks, discount and more!
+
 illustration: stripe.png
 
 tuts_hero:
