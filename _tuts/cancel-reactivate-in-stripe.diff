@@ -1,0 +1,58 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index ef4a84b..0c3cee5 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -29,6 +29,10 @@
+                                         <span class="label label-warning">Cancelled</span>
+ 
+                                         But you have access until {{ app.user.subscription.endsAt|date('F jS') }}
++
++                                        <form action="{{ path('account_subscription_reactivate') }}" method="POST" style="display: inline;">
++                                            <button type="submit" class="btn btn-success btn-xs">Reactive Subscription</button>
++                                        </form>
+                                     {% else %}
+                                         <span class="label label-success">Active</span>
+                                     {% endif %}
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index bbe754c..55e9dd0 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -38,4 +38,13 @@ class ProfileController extends BaseController
+ 
+         return $this->redirectToRoute('profile_account');
+     }
++
++    /**
++     * @Route("/profile/subscription/reactivate", name="account_subscription_reactivate")
++     */
++    public function reactivateSubscriptionAction()
++    {
++        $stripeClient = $this->get('stripe_client');
++        $stripeClient->reactivateSubscription($this->getUser());
++    }
+ }
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 4b06968..30f3bd0 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -85,4 +85,20 @@ class StripeClient
+             'at_period_end' => true,
+         ]);
+     }
++
++    public function reactivateSubscription(User $user)
++    {
++        if (!$user->hasActiveSubscription()) {
++            throw new \LogicException('Subscriptions can only be reactivated if the subscription has not actually ended yet');
++        }
++
++        $subscription = \Stripe\Subscription::retrieve(
++            $user->getSubscription()->getStripeSubscriptionId()
++        );
++        // this triggers the refresh of the subscription!
++        $subscription->plan = $user->getSubscription()->getStripePlanId();
++        $subscription->save();
++
++        return $subscription;
++    }
+ }

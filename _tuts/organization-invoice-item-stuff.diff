@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index ef74a62..10e4848 100644
+index 1117ec2..b62a54a 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -47,18 +47,13 @@ class OrderController extends Controller
+@@ -46,18 +46,13 @@ class OrderController extends BaseController
              }
  
              foreach ($this->get('shopping_cart')->getProducts() as $product) {

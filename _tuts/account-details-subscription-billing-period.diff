@@ -1,14 +1,14 @@
-diff --git a/app/Resources/views/default/profile.html.twig b/app/Resources/views/default/profile.html.twig
-index 3fa2297..e453d9a 100644
---- a/app/Resources/views/default/profile.html.twig
-+++ b/app/Resources/views/default/profile.html.twig
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 3bcdff9..32fb127 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
 @@ -26,7 +26,11 @@
                          <tr>
                              <th>Next Billing at:</th>
                              <td>
 -                                n/a
 +                                {% if app.user.subscription %}
-+                                    {{ app.user.subscription.billingPeriodEndsAt|date('M jS') }}
++                                    {{ app.user.subscription.billingPeriodEndsAt|date('F jS') }}
 +                                {% else %}
 +                                    n/a
 +                                {% endif %}

@@ -189,7 +189,32 @@
             "id": "account-details-subscription-billing-period",
             "name": "Account Details: Subscription billing period",
             "description": null
+        },
+        {
+            "id": "cancel-cancelling-in-stripe",
+            "name": "Cancel: Cancelling in Stripe",
+            "description": null
+        },
+        {
+            "id": "cancel-updating-subscription-entity",
+            "name": "Cancel: Updating Subscription entity",
+            "description": null
+        },
+        {
+            "id": "cancel-render-to-user",
+            "name": "Cancel: Render to user",
+            "description": null
+        },
+        {
+            "id": "cancel-reactivate-in-stripe",
+            "name": "Cancel: Reactivate in Stripe",
+            "description": null
+        },
+        {
+            "id": "cancel-reactivate-in-subscription-entity",
+            "name": "Cancel: Reactivate in Subscription entity",
+            "description": null
         }
     ],
-    "sha": "6e9557d82f948757392e22c495f326afe97da26a"
+    "sha": "03464a85b017680058d9b2c0b642169d1a261210"
 }

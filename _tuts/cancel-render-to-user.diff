@@ -1,0 +1,78 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 10eb988..ef4a84b 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -8,10 +8,14 @@
+                 <h1>
+                     My Account
+ 
+-                    {% if app.user.subscription %}
+-                        <form action="{{ path('account_subscription_cancel') }}" method="POST" class="pull-right">
+-                            <button type="submit" class="btn btn-danger btn-xs">Cancel Subscription</button>
+-                        </form>
++                    {% if app.user.hasActiveSubscription %}
++                        {% if app.user.subscription.isCancelled %}
++                            todo - add reactivate button
++                        {% else %}
++                            <form action="{{ path('account_subscription_cancel') }}" method="POST" class="pull-right">
++                                <button type="submit" class="btn btn-danger btn-xs">Cancel Subscription</button>
++                            </form>
++                        {% endif %}
+                     {% endif %}
+                 </h1>
+ 
+@@ -20,8 +24,14 @@
+                         <tr>
+                             <th>Subscription</th>
+                             <td>
+-                                {% if app.user.subscription %}
+-                                    <span class="label label-success">Active</span>
++                                {% if app.user.hasActiveSubscription %}
++                                    {% if app.user.subscription.isCancelled %}
++                                        <span class="label label-warning">Cancelled</span>
++
++                                        But you have access until {{ app.user.subscription.endsAt|date('F jS') }}
++                                    {% else %}
++                                        <span class="label label-success">Active</span>
++                                    {% endif %}
+                                 {% else %}
+                                     <span class="label label-default">None</span>
+                                 {% endif %}
+diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
+index add9560..724aebf 100644
+--- a/src/AppBundle/Entity/Subscription.php
++++ b/src/AppBundle/Entity/Subscription.php
+@@ -103,4 +103,19 @@ class Subscription
+         $this->endsAt = $this->billingPeriodEndsAt;
+         $this->billingPeriodEndsAt = null;
+     }
++
++    /**
++     * Subscription is active, or cancelled but still in "active" period
++     *
++     * @return bool
++     */
++    public function isActive()
++    {
++        return $this->endsAt === null || $this->endsAt > new \DateTime();
++    }
++
++    public function isCancelled()
++    {
++        return $this->endsAt !== null;
++    }
+ }
+diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
+index bb313f9..e88b06f 100644
+--- a/src/AppBundle/Entity/User.php
++++ b/src/AppBundle/Entity/User.php
+@@ -80,4 +80,9 @@ class User extends BaseUser
+     {
+         $this->cardLast4 = $cardLast4;
+     }
++
++    public function hasActiveSubscription()
++    {
++        return $this->getSubscription() && $this->getSubscription()->isActive();
++    }
+ }

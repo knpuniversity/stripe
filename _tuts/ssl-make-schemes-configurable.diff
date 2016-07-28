@@ -10,10 +10,10 @@ index 69e8170..36e74ed 100644
 +    # set to https on production
 +    secure_channel: http
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 9b2b209..6484433 100644
+index b220bac..d9627d1 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -27,7 +27,7 @@ class OrderController extends Controller
+@@ -26,7 +26,7 @@ class OrderController extends BaseController
      }
  
      /**
@@ -22,7 +22,7 @@ index 9b2b209..6484433 100644
       * @Security("is_granted('ROLE_USER')")
       */
      public function checkoutAction(Request $request)
-@@ -68,4 +68,4 @@ class OrderController extends Controller
+@@ -67,4 +67,4 @@ class OrderController extends BaseController
          ));
  
      }

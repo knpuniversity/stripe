@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index c18e5d1..5e3bd0d 100644
+index f15c4e9..d36dcec 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -105,10 +105,15 @@ class OrderController extends Controller
+@@ -104,10 +104,15 @@ class OrderController extends BaseController
  
          if ($cart->getSubscriptionPlan()) {
              // a subscription creates an invoice

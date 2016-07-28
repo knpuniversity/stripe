@@ -25,10 +25,10 @@ index 906e2c3..c146db7 100644
                  </a>
              </div>
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index a857171..b1ce7ff 100644
+index 5995275..c8dd3e8 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -27,6 +27,14 @@ class OrderController extends Controller
+@@ -26,6 +26,14 @@ class OrderController extends BaseController
      }
  
      /**
@@ -44,10 +44,10 @@ index a857171..b1ce7ff 100644
       * @Security("is_granted('ROLE_USER')")
       */
 diff --git a/src/AppBundle/Store/ShoppingCart.php b/src/AppBundle/Store/ShoppingCart.php
-index 09871bf..e00f1f9 100644
+index ff17ee1..98475ff 100644
 --- a/src/AppBundle/Store/ShoppingCart.php
 +++ b/src/AppBundle/Store/ShoppingCart.php
-@@ -3,6 +3,7 @@
+@@ -3,22 +3,26 @@
  namespace AppBundle\Store;
  
  use AppBundle\Entity\Product;
@@ -55,15 +55,18 @@ index 09871bf..e00f1f9 100644
  use Doctrine\ORM\EntityManager;
  use Symfony\Component\HttpFoundation\Session\Session;
  
-@@ -13,10 +14,15 @@ class ShoppingCart
+ class ShoppingCart
+ {
+     const CART_PRODUCTS_KEY = '_shopping_cart.products';
++    const CART_PLAN_KEY = '_shopping_cart.subscription_plan';
+ 
+     private $session;
+     private $em;
++    private $subscriptionHelper;
  
      private $products;
  
 -    public function __construct(Session $session, EntityManager $em)
-+    private $subscriptionPlanId;
-+
-+    private $subscriptionHelper;
-+
 +    public function __construct(Session $session, EntityManager $em, SubscriptionHelper $subscriptionHelper)
      {
          $this->session = $session;
@@ -72,22 +75,22 @@ index 09871bf..e00f1f9 100644
      }
  
      public function addProduct(Product $product)
-@@ -28,7 +34,13 @@ class ShoppingCart
-         }
- 
-         $this->products = $products;
--        $this->saveProductsToSession();
-+        $this->saveCartToSession();
-+    }
-+
-+    public function addSubscription($planId)
-+    {
-+        $this->subscriptionPlanId = $planId;
-+        $this->saveCartToSession();
+@@ -32,6 +36,14 @@ class ShoppingCart
+         $this->updateProducts($products);
      }
  
++    public function addSubscription($planId)
++    {
++        $this->session->set(
++            self::CART_PLAN_KEY,
++            $planId
++        );
++    }
++
      /**
-@@ -55,6 +67,20 @@ class ShoppingCart
+      * @return Product[]
+      */
+@@ -56,6 +68,17 @@ class ShoppingCart
          return $this->products;
      }
  
@@ -96,19 +99,16 @@ index 09871bf..e00f1f9 100644
 +     */
 +    public function getSubscriptionPlan()
 +    {
-+        if (!$this->subscriptionPlanId) {
-+            // initialize it in case it hasn't already
-+            $this->subscriptionPlanId = $this->session->get('subscription_plan_id');
-+        }
++        $planId = $this->session->get(self::CART_PLAN_KEY);
 +
 +        return $this->subscriptionHelper
-+            ->findPlan($this->subscriptionPlanId);
++            ->findPlan($planId);
 +    }
 +
      public function getTotal()
      {
          $total = 0;
-@@ -62,21 +88,33 @@ class ShoppingCart
+@@ -63,12 +86,20 @@ class ShoppingCart
              $total += $product->getPrice();
          }
  
@@ -124,25 +124,20 @@ index 09871bf..e00f1f9 100644
  
      public function emptyCart()
      {
-         $this->products = [];
--        $this->saveProductsToSession();
-+        $this->subscriptionPlanId = null;
-+        $this->saveCartToSession();
+         $this->updateProducts([]);
++        $this->updatePlanId(null);
      }
  
--    private function saveProductsToSession()
-+    private function saveCartToSession()
-     {
-         $ids = array_map(function(Product $item) {
-             return $item->getId();
-         }, $this->getProducts());
+     /**
+@@ -84,4 +115,9 @@ class ShoppingCart
  
-+        $subscriptionPlan = $this->getSubscriptionPlan();
-+        $planId = $subscriptionPlan ? $subscriptionPlan->getPlanId() : null;
-+
-         $this->session->set('product_ids', $ids);
-+        $this->session->set('subscription_plan_id', $planId);
+         $this->session->set(self::CART_PRODUCTS_KEY, $ids);
      }
 -}
 \ No newline at end of file
++
++    private function updatePlanId($planId)
++    {
++        $this->session->set(self::CART_PLAN_KEY, $planId);
++    }
 +}

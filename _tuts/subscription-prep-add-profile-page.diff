@@ -1,27 +1,27 @@
 diff --git a/app/Resources/views/base.html.twig b/app/Resources/views/base.html.twig
-index c782e2e..a9ca7ba 100644
+index c782e2e..496ed7a 100644
 --- a/app/Resources/views/base.html.twig
 +++ b/app/Resources/views/base.html.twig
 @@ -28,6 +28,9 @@
                      <ul class="nav navbar-nav">
                          {% if is_granted('ROLE_USER') %}
                              <li>
-+                                <a href="{{ path('user_profile') }}">Account</a>
++                                <a href="{{ path('profile_account') }}">Account</a>
 +                            </li>
 +                            <li>
                                  <a href="{{ path('fos_user_security_logout') }}">Logout</a>
                              </li>
                          {% else %}
-diff --git a/app/Resources/views/default/profile.html.twig b/app/Resources/views/default/profile.html.twig
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
 new file mode 100644
-index 0000000..c40d220
+index 0000000..e3d68eb
 --- /dev/null
-+++ b/app/Resources/views/default/profile.html.twig
++++ b/app/Resources/views/profile/account.html.twig
 @@ -0,0 +1,44 @@
 +{% extends 'base.html.twig' %}
 +
 +{% block body %}
-+<div class="nav-space">
++<div class="nav-space-checkout">
 +    <div class="container">
 +        <div class="row">
 +            <div class="col-xs-12">
@@ -62,29 +62,29 @@ index 0000000..c40d220
 +</div>
 +{% endblock %}
 +
-diff --git a/src/AppBundle/Controller/DefaultController.php b/src/AppBundle/Controller/DefaultController.php
-index c5bc447..3e80a9e 100644
---- a/src/AppBundle/Controller/DefaultController.php
-+++ b/src/AppBundle/Controller/DefaultController.php
-@@ -3,6 +3,7 @@
- namespace AppBundle\Controller;
- 
- use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
- use Symfony\Bundle\FrameworkBundle\Controller\Controller;
- use Symfony\Component\HttpFoundation\Request;
- 
-@@ -21,4 +22,13 @@ class DefaultController extends Controller
-             'products' => $products,
-         ));
-     }
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+new file mode 100644
+index 0000000..c9d2c11
+--- /dev/null
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -0,0 +1,20 @@
++<?php
 +
++namespace AppBundle\Controller;
++
++use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
++use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
++
++/**
++ * @Security("is_granted('ROLE_USER')")
++ */
++class ProfileController extends BaseController
++{
 +    /**
-+     * @Route("/profile", name="user_profile")
-+     * @Security("is_granted('ROLE_USER')")
++     * @Route("/profile", name="profile_account")
 +     */
-+    public function profileAction()
++    public function accountAction()
 +    {
-+        return $this->render('default/profile.html.twig');
++        return $this->render('profile/account.html.twig');
 +    }
- }
++}

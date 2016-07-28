@@ -1,16 +1,16 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index c32793a..cb315fc 100644
+index 746995b..752340c 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+@@ -6,6 +6,7 @@ use AppBundle\Entity\Product;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
  use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
- use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 +use Symfony\Component\HttpFoundation\Request;
  
- class OrderController extends Controller
+ class OrderController extends BaseController
  {
-@@ -28,10 +29,16 @@ class OrderController extends Controller
+@@ -27,10 +28,16 @@ class OrderController extends BaseController
       * @Route("/checkout", name="order_checkout")
       * @Security("is_granted('ROLE_USER')")
       */

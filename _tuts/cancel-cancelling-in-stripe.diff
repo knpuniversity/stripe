@@ -1,0 +1,79 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 32fb127..10eb988 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -4,13 +4,17 @@
+ <div class="nav-space-checkout">
+     <div class="container">
+         <div class="row">
+-            <div class="col-xs-12">
+-                <h1>My Account</h1>
+-            </div>
+-        </div>
+-
+-        <div class="row">
+             <div class="col-xs-6">
++                <h1>
++                    My Account
++
++                    {% if app.user.subscription %}
++                        <form action="{{ path('account_subscription_cancel') }}" method="POST" class="pull-right">
++                            <button type="submit" class="btn btn-danger btn-xs">Cancel Subscription</button>
++                        </form>
++                    {% endif %}
++                </h1>
++
+                 <table class="table">
+                     <tbody>
+                         <tr>
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index c9d2c11..1b2e799 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -2,6 +2,7 @@
+ 
+ namespace AppBundle\Controller;
+ 
++use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+ 
+@@ -17,4 +18,18 @@ class ProfileController extends BaseController
+     {
+         return $this->render('profile/account.html.twig');
+     }
++
++    /**
++     * @Route("/profile/subscription/cancel", name="account_subscription_cancel")
++     * @Method("POST")
++     */
++    public function cancelSubscriptionAction()
++    {
++        $stripeClient = $this->get('stripe_client');
++        $stripeClient->cancelSubscription($this->getUser());
++
++        $this->addFlash('success', 'Subscription Canceled :(');
++
++        return $this->redirectToRoute('profile_account');
++    }
+ }
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 411b375..4b06968 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -74,4 +74,15 @@ class StripeClient
+ 
+         return $subscription;
+     }
++
++    public function cancelSubscription(User $user)
++    {
++        $sub = \Stripe\Subscription::retrieve(
++            $user->getSubscription()->getStripeSubscriptionId()
++        );
++
++        $sub->cancel([
++            'at_period_end' => true,
++        ]);
++    }
+ }

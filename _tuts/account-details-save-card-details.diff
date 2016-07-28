@@ -1,7 +1,7 @@
-diff --git a/app/Resources/views/default/profile.html.twig b/app/Resources/views/default/profile.html.twig
-index 854e5e9..3fa2297 100644
---- a/app/Resources/views/default/profile.html.twig
-+++ b/app/Resources/views/default/profile.html.twig
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index c9dfe0e..3bcdff9 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
 @@ -32,7 +32,11 @@
                          <tr>
                              <th>Credit Card</th>
@@ -16,10 +16,10 @@ index 854e5e9..3fa2297 100644
                          </tr>
                      </tbody>
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 5e3bd0d..aca459d 100644
+index d36dcec..53abb79 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -88,11 +88,19 @@ class OrderController extends Controller
+@@ -87,11 +87,19 @@ class OrderController extends BaseController
          /** @var User $user */
          $user = $this->getUser();
          if (!$user->getStripeCustomerId()) {

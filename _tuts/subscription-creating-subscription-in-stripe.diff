@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index 85ad323..c18e5d1 100644
+index 8d21ff9..f15c4e9 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -102,7 +102,17 @@ class OrderController extends Controller
+@@ -101,7 +101,17 @@ class OrderController extends BaseController
                  $product->getName()
              );
          }
