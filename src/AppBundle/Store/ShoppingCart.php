@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class ShoppingCart
 {
+    const CART_PRODUCTS_KEY = '_shopping_cart.products';
+
     private $session;
     private $em;
 
@@ -27,8 +29,7 @@ class ShoppingCart
             $products[] = $product;
         }
 
-        $this->products = $products;
-        $this->saveProductsToSession();
+        $this->updateProducts($products);
     }
 
     /**
@@ -38,7 +39,7 @@ class ShoppingCart
     {
         if ($this->products === null) {
             $productRepo = $this->em->getRepository('AppBundle:Product');
-            $ids = $this->session->get('product_ids', []);
+            $ids = $this->session->get(self::CART_PRODUCTS_KEY, []);
             $products = [];
             foreach ($ids as $id) {
                 $product = $productRepo->find($id);
@@ -67,16 +68,20 @@ class ShoppingCart
 
     public function emptyCart()
     {
-        $this->products = [];
-        $this->saveProductsToSession();
+        $this->updateProducts([]);
     }
 
-    private function saveProductsToSession()
+    /**
+     * @param Product[] $products
+     */
+    private function updateProducts(array $products)
     {
+        $this->products = $products;
+
         $ids = array_map(function(Product $item) {
             return $item->getId();
-        }, $this->getProducts());
+        }, $products);
 
-        $this->session->set('product_ids', $ids);
+        $this->session->set(self::CART_PRODUCTS_KEY, $ids);
     }
 }
