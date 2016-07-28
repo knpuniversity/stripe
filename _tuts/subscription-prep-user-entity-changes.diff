@@ -1,0 +1,86 @@
+diff --git a/app/DoctrineMigrations/Version20160728131448.php b/app/DoctrineMigrations/Version20160728131448.php
+new file mode 100644
+index 0000000..3182687
+--- /dev/null
++++ b/app/DoctrineMigrations/Version20160728131448.php
+@@ -0,0 +1,34 @@
++<?php
++
++namespace Application\Migrations;
++
++use Doctrine\DBAL\Migrations\AbstractMigration;
++use Doctrine\DBAL\Schema\Schema;
++
++/**
++ * Auto-generated Migration: Please modify to your needs!
++ */
++class Version20160728131448 extends AbstractMigration
++{
++    /**
++     * @param Schema $schema
++     */
++    public function up(Schema $schema)
++    {
++        // this up() migration is auto-generated, please modify it to your needs
++        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
++
++        $this->addSql('ALTER TABLE fos_user ADD card_brand VARCHAR(255) DEFAULT NULL, ADD card_last4 VARCHAR(4) DEFAULT NULL');
++    }
++
++    /**
++     * @param Schema $schema
++     */
++    public function down(Schema $schema)
++    {
++        // this down() migration is auto-generated, please modify it to your needs
++        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
++
++        $this->addSql('ALTER TABLE fos_user DROP card_brand, DROP card_last4');
++    }
++}
+diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
+index f4a3356..bb313f9 100644
+--- a/src/AppBundle/Entity/User.php
++++ b/src/AppBundle/Entity/User.php
+@@ -24,6 +24,16 @@ class User extends BaseUser
+     private $stripeCustomerId;
+ 
+     /**
++     * @ORM\Column(type="string", nullable=true)
++     */
++    private $cardBrand;
++
++    /**
++     * @ORM\Column(type="string", length=4, nullable=true)
++     */
++    private $cardLast4;
++
++    /**
+      * @ORM\OneToOne(targetEntity="Subscription", mappedBy="user")
+      */
+     private $subscription;
+@@ -50,4 +60,24 @@ class User extends BaseUser
+     {
+         return $this->subscription;
+     }
++
++    public function getCardBrand()
++    {
++        return $this->cardBrand;
++    }
++
++    public function setCardBrand($cardBrand)
++    {
++        $this->cardBrand = $cardBrand;
++    }
++
++    public function getCardLast4()
++    {
++        return $this->cardLast4;
++    }
++
++    public function setCardLast4($cardLast4)
++    {
++        $this->cardLast4 = $cardLast4;
++    }
+ }

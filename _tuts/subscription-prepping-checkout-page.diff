@@ -1,8 +1,8 @@
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index 278e3cd..2eceb3d 100644
+index 352565f..ddc8a17 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
-@@ -77,6 +77,13 @@
+@@ -79,6 +79,13 @@
                                  <td class="col-xs-3">${{ product.price }}</td>
                              </tr>
                          {% endfor %}

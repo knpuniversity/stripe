@@ -19,8 +19,24 @@ index c18e5d1..5e3bd0d 100644
          } else {
              // charge the invoice!
              $stripeClient->createInvoice($user, true);
+diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
+index 2deea50..c6aab0a 100644
+--- a/src/AppBundle/Entity/Subscription.php
++++ b/src/AppBundle/Entity/Subscription.php
+@@ -88,4 +88,11 @@ class Subscription
+     {
+         return $this->billingPeriodEndsAt;
+     }
++
++    public function activateSubscription($stripePlanId, $stripeSubscriptionId)
++    {
++        $this->stripePlanId = $stripePlanId;
++        $this->stripeSubscriptionId = $stripeSubscriptionId;
++        $this->endsAt = null;
++    }
+ }
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index c2685e9..a2fae23 100644
+index c2685e9..48e394b 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -2,13 +2,21 @@
@@ -46,7 +62,7 @@ index c2685e9..a2fae23 100644
          $this->plans[] = new SubscriptionPlan(
              'farmer_brent_monthly',
              'Farmer Brent',
-@@ -34,4 +42,20 @@ class SubscriptionHelper
+@@ -34,4 +42,21 @@ class SubscriptionHelper
              }
          }
      }
@@ -59,9 +75,10 @@ index c2685e9..a2fae23 100644
 +            $subscription->setUser($user);
 +        }
 +
-+        $subscription->setStripePlanId($stripeSubscription->plan->id);
-+        $subscription->setStripeSubscriptionId($stripeSubscription->id);
-+        $subscription->setEndsAt(null);
++        $subscription->activateSubscription(
++            $stripeSubscription->plan->id,
++            $stripeSubscription->id
++        );
 +
 +        $this->em->persist($subscription);
 +        $this->em->flush($subscription);

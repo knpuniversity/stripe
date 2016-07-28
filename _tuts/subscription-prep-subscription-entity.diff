@@ -1,6 +1,6 @@
 diff --git a/app/DoctrineMigrations/Version20160726174534.php b/app/DoctrineMigrations/Version20160726174534.php
 new file mode 100644
-index 0000000..6d43597
+index 0000000..45361bb
 --- /dev/null
 +++ b/app/DoctrineMigrations/Version20160726174534.php
 @@ -0,0 +1,36 @@
@@ -26,7 +26,7 @@ index 0000000..6d43597
 +
 +        $this->addSql('CREATE TABLE subscription (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, stripe_subscription_id VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_A3C664D3A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
 +        $this->addSql('ALTER TABLE subscription ADD CONSTRAINT FK_A3C664D3A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id)');
-+        $this->addSql('ALTER TABLE subscription ADD stripe_plan_id VARCHAR(255) NOT NULL, ADD ends_at DATETIME DEFAULT NULL');
++        $this->addSql('ALTER TABLE subscription ADD stripe_plan_id VARCHAR(255) NOT NULL, ADD ends_at DATETIME DEFAULT NULL, ADD billing_period_ends_at DATETIME DEFAULT NULL');
 +    }
 +
 +    /**
@@ -42,10 +42,10 @@ index 0000000..6d43597
 +}
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
 new file mode 100644
-index 0000000..1497491
+index 0000000..2deea50
 --- /dev/null
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,91 @@
 +<?php
 +
 +namespace AppBundle\Entity;
@@ -86,6 +86,11 @@ index 0000000..1497491
 +     */
 +    private $endsAt;
 +
++    /**
++     * @ORM\Column(type="datetime", nullable=true)
++     */
++    private $billingPeriodEndsAt;
++
 +    public function getId()
 +    {
 +        return $this->id;
@@ -96,7 +101,7 @@ index 0000000..1497491
 +        return $this->user;
 +    }
 +
-+    public function setUser($user)
++    public function setUser(User $user)
 +    {
 +        $this->user = $user;
 +    }
@@ -106,21 +111,14 @@ index 0000000..1497491
 +        return $this->stripeSubscriptionId;
 +    }
 +
-+    public function setStripeSubscriptionId($stripeSubscriptionId)
-+    {
-+        $this->stripeSubscriptionId = $stripeSubscriptionId;
-+    }
-+
 +    public function getStripePlanId()
 +    {
 +        return $this->stripePlanId;
 +    }
 +
-+    public function setStripePlanId($stripePlanId)
-+    {
-+        $this->stripePlanId = $stripePlanId;
-+    }
-+
++    /**
++     * @return \DateTime
++     */
 +    public function getEndsAt()
 +    {
 +        return $this->endsAt;
@@ -130,9 +128,17 @@ index 0000000..1497491
 +    {
 +        $this->endsAt = $endsAt;
 +    }
++
++    /**
++     * @return \DateTime
++     */
++    public function getBillingPeriodEndsAt()
++    {
++        return $this->billingPeriodEndsAt;
++    }
 +}
 diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
-index 28fda44..e3ff054 100644
+index 28fda44..f4a3356 100644
 --- a/src/AppBundle/Entity/User.php
 +++ b/src/AppBundle/Entity/User.php
 @@ -23,6 +23,11 @@ class User extends BaseUser
@@ -147,11 +153,14 @@ index 28fda44..e3ff054 100644
      public function getId()
      {
          return $this->id;
-@@ -37,4 +42,9 @@ class User extends BaseUser
+@@ -37,4 +42,12 @@ class User extends BaseUser
      {
          $this->stripeCustomerId = $stripeCustomerId;
      }
 +
++    /**
++     * @return Subscription
++     */
 +    public function getSubscription()
 +    {
 +        return $this->subscription;

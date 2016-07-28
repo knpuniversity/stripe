@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index da5195b..2c3a93b 100644
+index 585e4ef..e4b9077 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
 @@ -1,6 +1,16 @@
@@ -19,7 +19,7 @@ index da5195b..2c3a93b 100644
  {% block body %}
  <div class="nav-space-checkout">
      <div class="container">
-@@ -31,18 +41,7 @@
+@@ -33,18 +43,7 @@
                  </table>
              </div>
              <div class="col-xs-12 col-sm-6">

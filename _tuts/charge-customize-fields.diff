@@ -1,8 +1,8 @@
 diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
-index 6b782fb..13f78a2 100644
+index 5eae347..24b30ab 100644
 --- a/app/Resources/views/order/checkout.html.twig
 +++ b/app/Resources/views/order/checkout.html.twig
-@@ -35,10 +35,11 @@
+@@ -37,10 +37,11 @@
                      <script
                          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                          data-key="pk_test_HxZzNHy8LImKK9LDtgMDRBwd"

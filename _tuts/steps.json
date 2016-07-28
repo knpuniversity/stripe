@@ -136,8 +136,18 @@
             "description": null
         },
         {
+            "id": "subscription-prep-add-profile-page",
+            "name": "Subscription Prep: Add profile page",
+            "description": null
+        },
+        {
             "id": "subscription-prep-minor-tweaks",
             "name": "Subscription Prep: Minor tweaks",
+            "description": null
+        },
+        {
+            "id": "subscription-prep-user-entity-changes",
+            "name": "Subscription Prep: User entity changes",
             "description": null
         },
         {
@@ -169,7 +179,17 @@
             "id": "subscription-associate-with-user",
             "name": "Subscription: Associate with user",
             "description": null
+        },
+        {
+            "id": "account-details-save-card-details",
+            "name": "Account Details: Save card details",
+            "description": null
+        },
+        {
+            "id": "account-details-subscription-billing-period",
+            "name": "Account Details: Subscription billing period",
+            "description": null
         }
     ],
-    "sha": "451cc14af7dfa69a8de6dbe5fd3d0ca677c0b2b2"
+    "sha": "6e9557d82f948757392e22c495f326afe97da26a"
 }

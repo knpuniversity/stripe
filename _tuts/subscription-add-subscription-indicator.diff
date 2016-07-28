@@ -1,22 +1,17 @@
-diff --git a/app/Resources/views/base.html.twig b/app/Resources/views/base.html.twig
-index c782e2e..5153719 100644
---- a/app/Resources/views/base.html.twig
-+++ b/app/Resources/views/base.html.twig
-@@ -28,6 +28,17 @@
-                     <ul class="nav navbar-nav">
-                         {% if is_granted('ROLE_USER') %}
-                             <li>
-+                                <p class="navbar-text">
-+                                    Subscription:
-+
-+                                    {% if app.user.subscription %}
-+                                        <span class="label label-success">Active</span>
-+                                    {% else %}
-+                                        <span class="label label-default">None</span>
-+                                    {% endif %}
-+                                </p>
-+                            </li>
-+                            <li>
-                                 <a href="{{ path('fos_user_security_logout') }}">Logout</a>
-                             </li>
-                         {% else %}
+diff --git a/app/Resources/views/default/profile.html.twig b/app/Resources/views/default/profile.html.twig
+index c40d220..854e5e9 100644
+--- a/app/Resources/views/default/profile.html.twig
++++ b/app/Resources/views/default/profile.html.twig
+@@ -16,7 +16,11 @@
+                         <tr>
+                             <th>Subscription</th>
+                             <td>
+-                                None
++                                {% if app.user.subscription %}
++                                    <span class="label label-success">Active</span>
++                                {% else %}
++                                    <span class="label label-default">None</span>
++                                {% endif %}
+                             </td>
+                         </tr>
+                         <tr>

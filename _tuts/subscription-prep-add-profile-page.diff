@@ -1,0 +1,90 @@
+diff --git a/app/Resources/views/base.html.twig b/app/Resources/views/base.html.twig
+index c782e2e..a9ca7ba 100644
+--- a/app/Resources/views/base.html.twig
++++ b/app/Resources/views/base.html.twig
+@@ -28,6 +28,9 @@
+                     <ul class="nav navbar-nav">
+                         {% if is_granted('ROLE_USER') %}
+                             <li>
++                                <a href="{{ path('user_profile') }}">Account</a>
++                            </li>
++                            <li>
+                                 <a href="{{ path('fos_user_security_logout') }}">Logout</a>
+                             </li>
+                         {% else %}
+diff --git a/app/Resources/views/default/profile.html.twig b/app/Resources/views/default/profile.html.twig
+new file mode 100644
+index 0000000..c40d220
+--- /dev/null
++++ b/app/Resources/views/default/profile.html.twig
+@@ -0,0 +1,44 @@
++{% extends 'base.html.twig' %}
++
++{% block body %}
++<div class="nav-space">
++    <div class="container">
++        <div class="row">
++            <div class="col-xs-12">
++                <h1>My Account</h1>
++            </div>
++        </div>
++
++        <div class="row">
++            <div class="col-xs-6">
++                <table class="table">
++                    <tbody>
++                        <tr>
++                            <th>Subscription</th>
++                            <td>
++                                None
++                            </td>
++                        </tr>
++                        <tr>
++                            <th>Next Billing at:</th>
++                            <td>
++                                n/a
++                            </td>
++                        </tr>
++                        <tr>
++                            <th>Credit Card</th>
++                            <td>
++                                None
++                            </td>
++                        </tr>
++                    </tbody>
++                </table>
++            </div>
++            <div class="col-xs-6">
++
++            </div>
++        </div>
++    </div>
++</div>
++{% endblock %}
++
+diff --git a/src/AppBundle/Controller/DefaultController.php b/src/AppBundle/Controller/DefaultController.php
+index c5bc447..3e80a9e 100644
+--- a/src/AppBundle/Controller/DefaultController.php
++++ b/src/AppBundle/Controller/DefaultController.php
+@@ -3,6 +3,7 @@
+ namespace AppBundle\Controller;
+ 
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
++use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+ use Symfony\Component\HttpFoundation\Request;
+ 
+@@ -21,4 +22,13 @@ class DefaultController extends Controller
+             'products' => $products,
+         ));
+     }
++
++    /**
++     * @Route("/profile", name="user_profile")
++     * @Security("is_granted('ROLE_USER')")
++     */
++    public function profileAction()
++    {
++        return $this->render('default/profile.html.twig');
++    }
+ }
