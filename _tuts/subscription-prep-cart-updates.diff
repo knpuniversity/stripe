@@ -1,0 +1,148 @@
+diff --git a/app/Resources/views/product/pricing.html.twig b/app/Resources/views/product/pricing.html.twig
+index 906e2c3..c146db7 100644
+--- a/app/Resources/views/product/pricing.html.twig
++++ b/app/Resources/views/product/pricing.html.twig
+@@ -16,7 +16,9 @@
+                     <p class="price text-center">$99</p>
+                     <p class="text-center">A fresh set of shears monthly along with our beloved after-shear in one of two fragrances!</p>
+                 </div>
+-                <a href="#" class="btn btn-warning center-block price-btn">
++                <a href="{{ path('order_add_subscription_to_cart', {
++                    'planId': 'TODO'
++                }) }}" class="btn btn-warning center-block price-btn">
+                     Shear Me!
+                 </a>
+             </div>
+@@ -29,7 +31,9 @@
+                     <p class="price text-center">$199</p>
+                     <p class="text-center">The perks of a Farmer Brent membership, but with a fresh bottle of conditioner and a comb each month!</p>
+                 </div>
+-                <a href="#" class="btn btn-warning center-block price-btn">
++                <a href="{{ path('order_add_subscription_to_cart', {
++                    'planId': 'TODO'
++                }) }}" class="btn btn-warning center-block price-btn">
+                     Get Shearing!
+                 </a>
+             </div>
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index a857171..b1ce7ff 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -27,6 +27,14 @@ class OrderController extends Controller
+     }
+ 
+     /**
++     * @Route("/cart/subscription/{planId}", name="order_add_subscription_to_cart")
++     */
++    public function addSubscriptionToCartAction($planId)
++    {
++        // todo - add the subscription plan to the cart!
++    }
++
++    /**
+      * @Route("/checkout", name="order_checkout", schemes={"%secure_channel%"})
+      * @Security("is_granted('ROLE_USER')")
+      */
+diff --git a/src/AppBundle/Store/ShoppingCart.php b/src/AppBundle/Store/ShoppingCart.php
+index 09871bf..e00f1f9 100644
+--- a/src/AppBundle/Store/ShoppingCart.php
++++ b/src/AppBundle/Store/ShoppingCart.php
+@@ -3,6 +3,7 @@
+ namespace AppBundle\Store;
+ 
+ use AppBundle\Entity\Product;
++use AppBundle\Subscription\SubscriptionHelper;
+ use Doctrine\ORM\EntityManager;
+ use Symfony\Component\HttpFoundation\Session\Session;
+ 
+@@ -13,10 +14,15 @@ class ShoppingCart
+ 
+     private $products;
+ 
+-    public function __construct(Session $session, EntityManager $em)
++    private $subscriptionPlanId;
++
++    private $subscriptionHelper;
++
++    public function __construct(Session $session, EntityManager $em, SubscriptionHelper $subscriptionHelper)
+     {
+         $this->session = $session;
+         $this->em = $em;
++        $this->subscriptionHelper = $subscriptionHelper;
+     }
+ 
+     public function addProduct(Product $product)
+@@ -28,7 +34,13 @@ class ShoppingCart
+         }
+ 
+         $this->products = $products;
+-        $this->saveProductsToSession();
++        $this->saveCartToSession();
++    }
++
++    public function addSubscription($planId)
++    {
++        $this->subscriptionPlanId = $planId;
++        $this->saveCartToSession();
+     }
+ 
+     /**
+@@ -55,6 +67,20 @@ class ShoppingCart
+         return $this->products;
+     }
+ 
++    /**
++     * @return \AppBundle\Subscription\SubscriptionPlan|null
++     */
++    public function getSubscriptionPlan()
++    {
++        if (!$this->subscriptionPlanId) {
++            // initialize it in case it hasn't already
++            $this->subscriptionPlanId = $this->session->get('subscription_plan_id');
++        }
++
++        return $this->subscriptionHelper
++            ->findPlan($this->subscriptionPlanId);
++    }
++
+     public function getTotal()
+     {
+         $total = 0;
+@@ -62,21 +88,33 @@ class ShoppingCart
+             $total += $product->getPrice();
+         }
+ 
++        if ($this->getSubscriptionPlan()) {
++            $price = $this->getSubscriptionPlan()
++                ->getPrice();
++
++            $total += $price;
++        }
++
+         return $total;
+     }
+ 
+     public function emptyCart()
+     {
+         $this->products = [];
+-        $this->saveProductsToSession();
++        $this->subscriptionPlanId = null;
++        $this->saveCartToSession();
+     }
+ 
+-    private function saveProductsToSession()
++    private function saveCartToSession()
+     {
+         $ids = array_map(function(Product $item) {
+             return $item->getId();
+         }, $this->getProducts());
+ 
++        $subscriptionPlan = $this->getSubscriptionPlan();
++        $planId = $subscriptionPlan ? $subscriptionPlan->getPlanId() : null;
++
+         $this->session->set('product_ids', $ids);
++        $this->session->set('subscription_plan_id', $planId);
+     }
+-}
+\ No newline at end of file
++}

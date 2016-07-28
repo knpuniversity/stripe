@@ -119,7 +119,57 @@
             "id": "errors-handling-card-error",
             "name": "Errors: Handling card error",
             "description": null
+        },
+        {
+            "id": "subscription-prep-add-subscriptionhelper",
+            "name": "Subscription Prep: Add SubscriptionHelper",
+            "description": null
+        },
+        {
+            "id": "subscription-prep-cart-updates",
+            "name": "Subscription Prep: Cart updates",
+            "description": null
+        },
+        {
+            "id": "subscription-prep-subscription-entity",
+            "name": "Subscription Prep: Subscription Entity",
+            "description": null
+        },
+        {
+            "id": "subscription-prep-minor-tweaks",
+            "name": "Subscription Prep: Minor tweaks",
+            "description": null
+        },
+        {
+            "id": "subscription-setup-plan-objects",
+            "name": "Subscription: Setup plan objects",
+            "description": null
+        },
+        {
+            "id": "subscription-functional-add-to-cart",
+            "name": "Subscription: Functional add to cart",
+            "description": null
+        },
+        {
+            "id": "subscription-prepping-checkout-page",
+            "name": "Subscription: Prepping checkout page",
+            "description": null
+        },
+        {
+            "id": "subscription-creating-subscription-in-stripe",
+            "name": "Subscription: Creating Subscription in Stripe",
+            "description": null
+        },
+        {
+            "id": "subscription-add-subscription-indicator",
+            "name": "Subscription: Add subscription indicator",
+            "description": null
+        },
+        {
+            "id": "subscription-associate-with-user",
+            "name": "Subscription: Associate with user",
+            "description": null
         }
     ],
-    "sha": "bfb4d2fbd1398993622987307240d9f14fe16fae"
+    "sha": "451cc14af7dfa69a8de6dbe5fd3d0ca677c0b2b2"
 }

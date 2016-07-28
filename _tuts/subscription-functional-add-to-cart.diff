@@ -1,0 +1,44 @@
+diff --git a/app/Resources/views/product/pricing.html.twig b/app/Resources/views/product/pricing.html.twig
+index c146db7..432dfca 100644
+--- a/app/Resources/views/product/pricing.html.twig
++++ b/app/Resources/views/product/pricing.html.twig
+@@ -17,7 +17,7 @@
+                     <p class="text-center">A fresh set of shears monthly along with our beloved after-shear in one of two fragrances!</p>
+                 </div>
+                 <a href="{{ path('order_add_subscription_to_cart', {
+-                    'planId': 'TODO'
++                    'planId': 'farmer_brent_monthly'
+                 }) }}" class="btn btn-warning center-block price-btn">
+                     Shear Me!
+                 </a>
+@@ -32,7 +32,7 @@
+                     <p class="text-center">The perks of a Farmer Brent membership, but with a fresh bottle of conditioner and a comb each month!</p>
+                 </div>
+                 <a href="{{ path('order_add_subscription_to_cart', {
+-                    'planId': 'TODO'
++                    'planId': 'new_zealander_monthly'
+                 }) }}" class="btn btn-warning center-block price-btn">
+                     Get Shearing!
+                 </a>
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index a6dcd13..85ad323 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -31,7 +31,16 @@ class OrderController extends Controller
+      */
+     public function addSubscriptionToCartAction($planId)
+     {
+-        // todo - add the subscription plan to the cart!
++        $subscriptionHelper = $this->get('subscription_helper');
++        $plan = $subscriptionHelper->findPlan($planId);
++
++        if (!$plan) {
++            throw $this->createNotFoundException('Bad plan id!');
++        }
++
++        $this->get('shopping_cart')->addSubscription($planId);
++
++        return $this->redirectToRoute('order_checkout');
+     }
+ 
+     /**

@@ -1,0 +1,28 @@
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 5a9ed0f..c2685e9 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -9,12 +9,17 @@ class SubscriptionHelper
+ 
+     public function __construct()
+     {
+-        // todo - add the plans
+-//        $this->plans[] = new SubscriptionPlan(
+-//            'STRIPE_PLAN_KEY',
+-//            'OUR PLAN NAME',
+-//            'PRICE'
+-//        );
++        $this->plans[] = new SubscriptionPlan(
++            'farmer_brent_monthly',
++            'Farmer Brent',
++            99
++        );
++
++        $this->plans[] = new SubscriptionPlan(
++            'new_zealander_monthly',
++            'New Zealander',
++            199
++        );
+     }
+ 
+     /**

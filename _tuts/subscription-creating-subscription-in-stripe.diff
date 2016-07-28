@@ -1,0 +1,50 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 85ad323..c18e5d1 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -102,7 +102,17 @@ class OrderController extends Controller
+                 $product->getName()
+             );
+         }
+-        $stripeClient->createInvoice($user, true);
++
++        if ($cart->getSubscriptionPlan()) {
++            // a subscription creates an invoice
++            $stripeClient->createSubscription(
++                $user,
++                $cart->getSubscriptionPlan()
++            );
++        } else {
++            // charge the invoice!
++            $stripeClient->createInvoice($user, true);
++        }
+     }
+ }
+ 
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index e900515..4784158 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -3,6 +3,7 @@
+ namespace AppBundle;
+ 
+ use AppBundle\Entity\User;
++use AppBundle\Subscription\SubscriptionPlan;
+ use Doctrine\ORM\EntityManager;
+ 
+ class StripeClient
+@@ -61,4 +62,14 @@ class StripeClient
+ 
+         return $invoice;
+     }
++
++    public function createSubscription(User $user, SubscriptionPlan $plan)
++    {
++        $subscription = \Stripe\Subscription::create(array(
++            'customer' => $user->getStripeCustomerId(),
++            'plan' => $plan->getPlanId()
++        ));
++
++        return $subscription;
++    }
+ }

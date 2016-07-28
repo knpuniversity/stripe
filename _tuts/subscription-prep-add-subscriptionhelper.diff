@@ -1,0 +1,91 @@
+diff --git a/app/config/services.yml b/app/config/services.yml
+index f615a59..3946879 100644
+--- a/app/config/services.yml
++++ b/app/config/services.yml
+@@ -12,3 +12,7 @@ services:
+         class: AppBundle\StripeClient
+         arguments: ['%stripe_secret_key%']
+         autowire: true
++
++    subscription_helper:
++        class: AppBundle\Subscription\SubscriptionHelper
++        autowire: true
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+new file mode 100644
+index 0000000..5a9ed0f
+--- /dev/null
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -0,0 +1,32 @@
++<?php
++
++namespace AppBundle\Subscription;
++
++class SubscriptionHelper
++{
++    /** @var SubscriptionPlan[] */
++    private $plans = [];
++
++    public function __construct()
++    {
++        // todo - add the plans
++//        $this->plans[] = new SubscriptionPlan(
++//            'STRIPE_PLAN_KEY',
++//            'OUR PLAN NAME',
++//            'PRICE'
++//        );
++    }
++
++    /**
++     * @param $planId
++     * @return SubscriptionPlan|null
++     */
++    public function findPlan($planId)
++    {
++        foreach ($this->plans as $plan) {
++            if ($plan->getPlanId() == $planId) {
++                return $plan;
++            }
++        }
++    }
++}
+diff --git a/src/AppBundle/Subscription/SubscriptionPlan.php b/src/AppBundle/Subscription/SubscriptionPlan.php
+new file mode 100644
+index 0000000..2d33d83
+--- /dev/null
++++ b/src/AppBundle/Subscription/SubscriptionPlan.php
+@@ -0,0 +1,34 @@
++<?php
++
++namespace AppBundle\Subscription;
++
++class SubscriptionPlan
++{
++    private $planId;
++
++    private $name;
++
++    private $price;
++
++    public function __construct($planId, $name, $price)
++    {
++        $this->planId = $planId;
++        $this->name = $name;
++        $this->price = $price;
++    }
++
++    public function getPlanId()
++    {
++        return $this->planId;
++    }
++
++    public function getName()
++    {
++        return $this->name;
++    }
++
++    public function getPrice()
++    {
++        return $this->price;
++    }
++}
+\ No newline at end of file

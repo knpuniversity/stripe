@@ -1,0 +1,15 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index b1ce7ff..a6dcd13 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -84,7 +84,9 @@ class OrderController extends Controller
+             $stripeClient->updateCustomerCard($user, $token);
+         }
+ 
+-        foreach ($this->get('shopping_cart')->getProducts() as $product) {
++        $cart = $this->get('shopping_cart');
++
++        foreach ($cart->getProducts() as $product) {
+             $stripeClient->createInvoiceItem(
+                 $product->getPrice() * 100,
+                 $user,
