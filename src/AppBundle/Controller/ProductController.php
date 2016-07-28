@@ -4,9 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
     /**
      * @Route("/products/{slug}", name="product_show")
