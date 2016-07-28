@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index c9dfe0e..3bcdff9 100644
+index 854e5e9..3fa2297 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -32,7 +32,11 @@
@@ -16,10 +16,10 @@ index c9dfe0e..3bcdff9 100644
                          </tr>
                      </tbody>
 diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
-index d36dcec..53abb79 100644
+index d36dcec..f64190c 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -87,11 +87,19 @@ class OrderController extends BaseController
+@@ -87,11 +87,15 @@ class OrderController extends BaseController
          /** @var User $user */
          $user = $this->getUser();
          if (!$user->getStripeCustomerId()) {
@@ -30,13 +30,9 @@ index d36dcec..53abb79 100644
 +            $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
          }
  
-+        // save card details!
-+        $cardDetails = $stripeCustomer->sources->data[0];
-+        $user->setCardBrand($cardDetails->brand);
-+        $user->setCardLast4($cardDetails->last4);
-+        $em = $this->getDoctrine()->getManager();
-+        $em->persist($user);
-+        $em->flush();
++        // save card details
++        $this->get('subscription_helper')
++            ->updateCardDetails($user, $stripeCustomer);
 +
          $cart = $this->get('shopping_cart');
  
@@ -54,3 +50,22 @@ index 4784158..411b375 100644
      }
  
      public function createInvoiceItem($amount, User $user, $description)
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 48e394b..99ac72b 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -59,4 +59,14 @@ class SubscriptionHelper
+         $this->em->persist($subscription);
+         $this->em->flush($subscription);
+     }
++
++    public function updateCardDetails(User $user, \Stripe\Customer $stripeCustomer)
++    {
++        $cardDetails = $stripeCustomer->sources->data[0];
++        $user->setCardBrand($cardDetails->brand);
++        $user->setCardLast4($cardDetails->last4);
++        $em = $this->getDoctrine()->getManager();
++        $em->persist($user);
++        $em->flush();
++    }
+ }

@@ -1,0 +1,62 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index af1fdaa..60b712f 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -1,5 +1,19 @@
+ {% extends 'base.html.twig' %}
+ 
++{% block javascripts %}
++    {{ parent() }}
++
++    <script>
++        jQuery(document).ready(function() {
++            $('.js-open-credit-card-form').on('click', function(e) {
++                e.preventDefault();
++
++                $('.js-update-card-wrapper').slideToggle();
++            });
++        });
++    </script>
++{% endblock %}
++
+ {% block body %}
+ <div class="nav-space">
+     <div class="container">
+@@ -54,6 +68,10 @@
+                             <td>
+                                 {% if app.user.hasActiveSubscription %}
+                                     {{ app.user.cardBrand }} ending in {{ app.user.cardLast4 }}
++
++                                    <a href="#" class="btn btn-link js-open-credit-card-form">
++                                        Update Card
++                                    </a>
+                                 {% else %}
+                                     None
+                                 {% endif %}
+@@ -63,7 +81,10 @@
+                 </table>
+             </div>
+             <div class="col-xs-6">
+-
++                <div class="js-update-card-wrapper" style="display: none;">
++                    <h2>Update Credit Card</h2>
++                    {{ include('order/_cardForm.html.twig') }}
++                </div>
+             </div>
+         </div>
+     </div>
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index d05423a..9de6a18 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -16,7 +16,9 @@ class ProfileController extends BaseController
+      */
+     public function accountAction()
+     {
+-        return $this->render('profile/account.html.twig');
++        return $this->render('profile/account.html.twig', [
++            'error' => null
++        ]);
+     }
+ 
+     /**

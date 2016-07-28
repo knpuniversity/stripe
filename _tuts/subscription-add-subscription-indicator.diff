@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index e3d68eb..c9dfe0e 100644
+index c40d220..854e5e9 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -16,7 +16,11 @@

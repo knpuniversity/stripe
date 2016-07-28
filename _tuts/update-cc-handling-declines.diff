@@ -1,0 +1,65 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 4374bc2..f1f2279 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -83,7 +83,7 @@
+                 </table>
+             </div>
+             <div class="col-xs-6">
+-                <div class="js-update-card-wrapper" style="display: none;">
++                <div class="js-update-card-wrapper" style="display: {{ error ? 'block' : 'none' }};">
+                     <h2>Update Credit Card</h2>
+                     {{ include('order/_cardForm.html.twig', {
+                         formAction: path('account_update_credit_card')
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 74764db..de95a10 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -17,10 +17,7 @@ class ProfileController extends BaseController
+      */
+     public function accountAction()
+     {
+-        return $this->render('profile/account.html.twig', [
+-            'error' => null,
+-            'stripe_public_key' => $this->getParameter('stripe_public_key'),
+-        ]);
++        return $this->renderAccountPage();
+     }
+ 
+     /**
+@@ -68,11 +65,17 @@ class ProfileController extends BaseController
+         $token = $request->request->get('stripeToken');
+         $user = $this->getUser();
+ 
+-        $stripeClient = $this->get('stripe_client');
+-        $stripeCustomer = $stripeClient->updateCustomerCard(
+-            $user,
+-            $token
+-        );
++        try {
++            $stripeClient = $this->get('stripe_client');
++            $stripeCustomer = $stripeClient->updateCustomerCard(
++                $user,
++                $token
++            );
++        } catch (\Stripe\Error\Card $e) {
++            $error = 'There was a problem charging your card: '.$e->getMessage();
++
++            return $this->renderAccountPage($error);
++        }
+ 
+         // save card details!
+         $this->get('subscription_helper')
+@@ -82,4 +85,12 @@ class ProfileController extends BaseController
+ 
+         return $this->redirectToRoute('profile_account');
+     }
++
++    private function renderAccountPage($error = null)
++    {
++        return $this->render('profile/account.html.twig', [
++            'error' => $error,
++            'stripe_public_key' => $this->getParameter('stripe_public_key'),
++        ]);
++    }
+ }

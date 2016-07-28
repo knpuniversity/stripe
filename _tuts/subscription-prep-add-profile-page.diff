@@ -14,14 +14,14 @@ index c782e2e..496ed7a 100644
                          {% else %}
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
 new file mode 100644
-index 0000000..e3d68eb
+index 0000000..c40d220
 --- /dev/null
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -0,0 +1,44 @@
 +{% extends 'base.html.twig' %}
 +
 +{% block body %}
-+<div class="nav-space-checkout">
++<div class="nav-space">
 +    <div class="container">
 +        <div class="row">
 +            <div class="col-xs-12">

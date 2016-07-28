@@ -214,7 +214,27 @@
             "id": "cancel-reactivate-in-subscription-entity",
             "name": "Cancel: Reactivate in Subscription entity",
             "description": null
+        },
+        {
+            "id": "update-cc-embed-form-with-basic-js",
+            "name": "Update CC: Embed form with basic JS",
+            "description": null
+        },
+        {
+            "id": "update-cc-sharing-javascript",
+            "name": "Update CC: Sharing JavaScript",
+            "description": null
+        },
+        {
+            "id": "update-cc-send-to-stripe",
+            "name": "Update CC: Send to Stripe",
+            "description": null
+        },
+        {
+            "id": "update-cc-handling-declines",
+            "name": "Update CC: Handling declines",
+            "description": null
         }
     ],
-    "sha": "03464a85b017680058d9b2c0b642169d1a261210"
+    "sha": "c4e44e0de8f80c96c7140fc37b87597a08ac39c2"
 }

@@ -1,9 +1,9 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index 32fb127..10eb988 100644
+index 608f91e..9ae43ca 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -4,13 +4,17 @@
- <div class="nav-space-checkout">
+ <div class="nav-space">
      <div class="container">
          <div class="row">
 -            <div class="col-xs-12">
