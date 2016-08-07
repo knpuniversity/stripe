@@ -1,0 +1,72 @@
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+index d1adb38..09d395f 100644
+--- a/src/AppBundle/Controller/WebhookController.php
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -37,6 +37,17 @@ class WebhookController extends BaseController
+                 $subscriptionHelper->fullyCancelSubscription($subscription);
+ 
+                 break;
++            case 'invoice.payment_succeeded':
++                $stripeSubscriptionId = $stripeEvent->data->object->subscription;
++
++                if ($stripeSubscriptionId) {
++                    $subscription = $this->findSubscription($stripeSubscriptionId);
++                    $stripeSubscription = $this->get('stripe_client')
++                        ->findSubscription($stripeSubscriptionId);
++
++                    $subscriptionHelper->handleSubscriptionPaid($subscription, $stripeSubscription);
++                }
++                break;
+             default:
+                 throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
+         }
+diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
+index cb453ba..2fc5d45 100644
+--- a/src/AppBundle/Entity/Subscription.php
++++ b/src/AppBundle/Entity/Subscription.php
+@@ -124,4 +124,9 @@ class Subscription
+     {
+         return $this->endsAt !== null;
+     }
++
++    public function setBillingPeriodEndsAt($billingPeriodEndsAt)
++    {
++        $this->billingPeriodEndsAt = $billingPeriodEndsAt;
++    }
+ }
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 345c769..efa9ef9 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -110,4 +110,13 @@ class StripeClient
+     {
+         return \Stripe\Event::retrieve($eventId);
+     }
++
++    /**
++     * @param $stripeSubscriptionId
++     * @return \Stripe\Subscription
++     */
++    public function findSubscription($stripeSubscriptionId)
++    {
++        return \Stripe\Subscription::retrieve($stripeSubscriptionId);
++    }
+ }
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 153192b..29661b5 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -77,4 +77,13 @@ class SubscriptionHelper
+         $this->em->persist($subscription);
+         $this->em->flush();
+     }
++
++    public function handleSubscriptionPaid(Subscription $subscription, \Stripe\Subscription $stripeSubscription)
++    {
++        $periodEnd = \DateTime::createFromFormat('U', $stripeSubscription->current_period_end);
++
++        $subscription->setBillingPeriodEndsAt($periodEnd);
++        $this->em->persist($subscription);
++        $this->em->flush($subscription);
++    }
+ }

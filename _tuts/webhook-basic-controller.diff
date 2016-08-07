@@ -1,0 +1,25 @@
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+new file mode 100644
+index 0000000..5f19741
+--- /dev/null
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -0,0 +1,18 @@
++<?php
++
++namespace AppBundle\Controller;
++
++use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++
++class WebhookController extends BaseController
++{
++    /**
++     * @Route("/webhooks/stripe", name="webhook_stripe")
++     */
++    public function stripeWebhookAction(Request $request)
++    {
++        return new Response('baaaaaa');
++    }
++}
+\ No newline at end of file

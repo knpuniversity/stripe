@@ -1,0 +1,18 @@
+diff --git a/tests/AppBundle/Controller/WebhookControllerTest.php b/tests/AppBundle/Controller/WebhookControllerTest.php
+index 347dfc7..c42db4a 100644
+--- a/tests/AppBundle/Controller/WebhookControllerTest.php
++++ b/tests/AppBundle/Controller/WebhookControllerTest.php
+@@ -37,9 +37,12 @@ class WebhookControllerTest extends WebTestCase
+             [],
+             $eventJson
+         );
+-        dump($client->getResponse()->getContent());
+         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+ 
++        $subscription = $this->em
++            ->getRepository('AppBundle:Subscription')
++            ->find($subscription->getId());
++
+         $this->assertFalse($subscription->isActive());
+     }
+ 

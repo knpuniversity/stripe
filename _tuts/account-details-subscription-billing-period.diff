@@ -33,7 +33,7 @@ index c6aab0a..ddd7aa6 100644
      }
  }
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 99ac72b..9df0be8 100644
+index 8907f76..741cc52 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -51,9 +51,11 @@ class SubscriptionHelper

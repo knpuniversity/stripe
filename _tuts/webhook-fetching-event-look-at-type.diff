@@ -1,0 +1,49 @@
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+index 5f19741..ab8f3cf 100644
+--- a/src/AppBundle/Controller/WebhookController.php
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -13,6 +13,24 @@ class WebhookController extends BaseController
+      */
+     public function stripeWebhookAction(Request $request)
+     {
+-        return new Response('baaaaaa');
++        $data = json_decode($request->getContent(), true);
++        if ($data === null) {
++            throw new \Exception('Bad JSON body from Stripe!');
++        }
++
++        $eventId = $data['id'];
++
++        $stripeEvent = $this->get('stripe_client')
++            ->findEvent($eventId);
++
++        switch ($stripeEvent->type) {
++            case 'customer.subscription.deleted':
++                // todo - fully cancel the user's subscription
++                break;
++            default:
++                throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
++        }
++
++        return new Response('Event Handled: '.$stripeEvent->type);
+     }
+ }
+\ No newline at end of file
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 30f3bd0..345c769 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -101,4 +101,13 @@ class StripeClient
+ 
+         return $subscription;
+     }
++
++    /**
++     * @param $eventId
++     * @return \Stripe\Event
++     */
++    public function findEvent($eventId)
++    {
++        return \Stripe\Event::retrieve($eventId);
++    }
+ }

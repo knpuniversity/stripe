@@ -1,0 +1,46 @@
+diff --git a/app/config/config.yml b/app/config/config.yml
+index b510090..20732f7 100644
+--- a/app/config/config.yml
++++ b/app/config/config.yml
+@@ -7,6 +7,7 @@ imports:
+ # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+ parameters:
+     locale: en
++    verify_stripe_event: true
+ 
+ framework:
+     #esi:             ~
+diff --git a/app/config/config_test.yml b/app/config/config_test.yml
+index 2f6d925..ec566f9 100644
+--- a/app/config/config_test.yml
++++ b/app/config/config_test.yml
+@@ -1,6 +1,9 @@
+ imports:
+     - { resource: config_dev.yml }
+ 
++parameters:
++    verify_stripe_event: false
++
+ framework:
+     test: ~
+     session:
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+index e09b4e4..d1adb38 100644
+--- a/src/AppBundle/Controller/WebhookController.php
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -20,8 +20,13 @@ class WebhookController extends BaseController
+ 
+         $eventId = $data['id'];
+ 
+-        $stripeEvent = $this->get('stripe_client')
+-            ->findEvent($eventId);
++        if ($this->getParameter('verify_stripe_event')) {
++            $stripeEvent = $this->get('stripe_client')
++                ->findEvent($eventId);
++        } else {
++            // fake the Stripe_Event in the test environment
++            $stripeEvent = json_decode($request->getContent());
++        }
+ 
+         $subscriptionHelper = $this->get('subscription_helper');
+         switch ($stripeEvent->type) {

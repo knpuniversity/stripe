@@ -1,0 +1,79 @@
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+index ab8f3cf..e09b4e4 100644
+--- a/src/AppBundle/Controller/WebhookController.php
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -23,9 +23,14 @@ class WebhookController extends BaseController
+         $stripeEvent = $this->get('stripe_client')
+             ->findEvent($eventId);
+ 
++        $subscriptionHelper = $this->get('subscription_helper');
+         switch ($stripeEvent->type) {
+             case 'customer.subscription.deleted':
+-                // todo - fully cancel the user's subscription
++                $stripeSubscriptionId = $stripeEvent->data->object->id;
++                $subscription = $this->findSubscription($stripeSubscriptionId);
++
++                $subscriptionHelper->fullyCancelSubscription($subscription);
++
+                 break;
+             default:
+                 throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
+@@ -33,4 +38,24 @@ class WebhookController extends BaseController
+ 
+         return new Response('Event Handled: '.$stripeEvent->type);
+     }
++
++    /**
++     * @param $stripeSubscriptionId
++     * @return \AppBundle\Entity\Subscription
++     * @throws \Exception
++     */
++    private function findSubscription($stripeSubscriptionId)
++    {
++        $subscription = $this->getDoctrine()
++            ->getRepository('AppBundle:Subscription')
++            ->findOneBy([
++                'stripeSubscriptionId' => $stripeSubscriptionId
++            ]);
++
++        if (!$subscription) {
++            throw new \Exception('Somehow we have no subscription id ' . $stripeSubscriptionId);
++        }
++
++        return $subscription;
++    }
+ }
+\ No newline at end of file
+diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
+index 724aebf..cb453ba 100644
+--- a/src/AppBundle/Entity/Subscription.php
++++ b/src/AppBundle/Entity/Subscription.php
+@@ -104,6 +104,12 @@ class Subscription
+         $this->billingPeriodEndsAt = null;
+     }
+ 
++    public function cancel()
++    {
++        $this->endsAt = new \DateTime();
++        $this->billingPeriodEndsAt = null;
++    }
++
+     /**
+      * Subscription is active, or cancelled but still in "active" period
+      *
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 741cc52..153192b 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -70,4 +70,11 @@ class SubscriptionHelper
+         $this->em->persist($user);
+         $this->em->flush($user);
+     }
++
++    public function fullyCancelSubscription(Subscription $subscription)
++    {
++        $subscription->cancel();
++        $this->em->persist($subscription);
++        $this->em->flush();
++    }
+ }

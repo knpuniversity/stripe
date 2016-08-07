@@ -1,0 +1,20 @@
+diff --git a/tests/AppBundle/Controller/WebhookControllerTest.php b/tests/AppBundle/Controller/WebhookControllerTest.php
+index 5806cbf..f0215a8 100644
+--- a/tests/AppBundle/Controller/WebhookControllerTest.php
++++ b/tests/AppBundle/Controller/WebhookControllerTest.php
+@@ -20,6 +20,15 @@ class WebhookControllerTest extends WebTestCase
+         $this->em = $this->container->get('doctrine')->getManager();
+     }
+ 
++    public function testStripeCustomerSubscriptionDeleted()
++    {
++        $subscription = $this->createSubscription();
++
++        // todo - send the cancellation webhook
++
++        $this->assertFalse($subscription->isActive());
++    }
++
+     private function createSubscription()
+     {
+         $user = new User();

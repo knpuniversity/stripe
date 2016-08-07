@@ -51,10 +51,10 @@ index 4784158..411b375 100644
  
      public function createInvoiceItem($amount, User $user, $description)
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 48e394b..99ac72b 100644
+index 48e394b..8907f76 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
-@@ -59,4 +59,14 @@ class SubscriptionHelper
+@@ -59,4 +59,13 @@ class SubscriptionHelper
          $this->em->persist($subscription);
          $this->em->flush($subscription);
      }
@@ -64,8 +64,7 @@ index 48e394b..99ac72b 100644
 +        $cardDetails = $stripeCustomer->sources->data[0];
 +        $user->setCardBrand($cardDetails->brand);
 +        $user->setCardLast4($cardDetails->last4);
-+        $em = $this->getDoctrine()->getManager();
-+        $em->persist($user);
-+        $em->flush();
++        $this->em->persist($user);
++        $this->em->flush($user);
 +    }
  }

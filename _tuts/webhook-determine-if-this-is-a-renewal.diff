@@ -1,0 +1,19 @@
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 29661b5..8763291 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -80,9 +80,12 @@ class SubscriptionHelper
+ 
+     public function handleSubscriptionPaid(Subscription $subscription, \Stripe\Subscription $stripeSubscription)
+     {
+-        $periodEnd = \DateTime::createFromFormat('U', $stripeSubscription->current_period_end);
++        $newPeriodEnd = \DateTime::createFromFormat('U', $stripeSubscription->current_period_end);
++
++        // you can use this to send emails to new or renewal customers
++        $isRenewal = $newPeriodEnd > $subscription->getBillingPeriodEndsAt();
+ 
+-        $subscription->setBillingPeriodEndsAt($periodEnd);
++        $subscription->setBillingPeriodEndsAt($newPeriodEnd);
+         $this->em->persist($subscription);
+         $this->em->flush($subscription);
+     }
