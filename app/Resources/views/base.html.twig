@@ -6,6 +6,7 @@
         {% block stylesheets %}
             <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
             <link href="{{ asset('css/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('js/sweetalert/sweetalert.css') }}" rel="stylesheet">
             <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
             <link href='https://fonts.googleapis.com/css?family=Lobster+Two' rel='stylesheet' type='text/css'>
         {% endblock %}
@@ -70,6 +71,8 @@
             <script src="https://code.jquery.com/jquery-3.1.0.js"
                     integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="
                     crossorigin="anonymous"></script>
+
+            <script src="{{ asset('js/sweetalert/sweetalert.min.js') }}"></script>
         {% endblock %}
     </body>
 </html>
