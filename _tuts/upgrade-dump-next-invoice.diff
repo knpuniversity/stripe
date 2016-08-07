@@ -1,0 +1,88 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 85b30f7..7716fa2 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -17,6 +17,15 @@
+                 e.preventDefault();
+ 
+                 swal('Loading Plan Details...');
++
++                var previewUrl = $(this).data('preview-url');
++                var planName = $(this).data('plan-name');
++
++                $.ajax({
++                    url: previewUrl
++                }).done(function(data) {
++                    swal('Total $'+data.total);
++                });
+             })
+         });
+     </script>
+@@ -58,7 +67,10 @@
+ 
+                                         <span class="label label-success">Active</span>
+ 
+-                                        <button class="btn btn-xs btn-link pull-right js-change-plan-button" data-plan-id="{{ otherPlan.planId }}" data-plan-name="{{ otherPlan.name }}">
++                                        <button class="btn btn-xs btn-link pull-right js-change-plan-button"
++                                            data-preview-url="{{ path('account_preview_plan_change', {'planId': otherPlan.planId}) }}"
++                                            data-plan-name="{{ otherPlan.name }}"
++                                        >
+                                             Change to "{{ otherPlan.name }}"
+                                         </button>
+                                     {% endif %}
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 663a1a9..2a87988 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
++use Symfony\Component\HttpFoundation\JsonResponse;
+ use Symfony\Component\HttpFoundation\Request;
+ 
+ /**
+@@ -86,6 +87,25 @@ class ProfileController extends BaseController
+         return $this->redirectToRoute('profile_account');
+     }
+ 
++    /**
++     * @Route("/profile/plan/change/preview/{planId}", name="account_preview_plan_change")
++     */
++    public function previewPlanChangeAction($planId)
++    {
++        $plan = $this->get('subscription_helper')
++            ->findPlan($planId);
++
++        $stripeInvoice = $this->get('stripe_client')
++            ->getUpcomingInvoiceForChangedSubscription(
++                $this->getUser(),
++                $plan
++            );
++
++        dump($stripeInvoice);
++
++        return new JsonResponse(['total' => 50]);
++    }
++
+     private function renderAccountPage($error = null)
+     {
+         $currentPlan = null;
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index efa9ef9..5f57e42 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -119,4 +119,13 @@ class StripeClient
+     {
+         return \Stripe\Subscription::retrieve($stripeSubscriptionId);
+     }
++
++    public function getUpcomingInvoiceForChangedSubscription(User $user, SubscriptionPlan $newPlan)
++    {
++        return \Stripe\Invoice::upcoming([
++            'customer' => $user->getStripeCustomerId(),
++            'subscription' => $user->getSubscription()->getStripeSubscriptionId(),
++            'subscription_plan' => $newPlan->getPlanId(),
++        ]);
++    }
+ }

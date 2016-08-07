@@ -45,7 +45,7 @@ index ab8f3cf..e09b4e4 100644
  }
 \ No newline at end of file
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 724aebf..cb453ba 100644
+index 815c7a0..97e2632 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -104,6 +104,12 @@ class Subscription

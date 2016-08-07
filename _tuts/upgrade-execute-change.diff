@@ -1,0 +1,110 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 724d666..75b4384 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -19,6 +19,7 @@
+                 swal('Loading Plan Details...');
+ 
+                 var previewUrl = $(this).data('preview-url');
++                var changeUrl = $(this).data('change-url');
+                 var planName = $(this).data('plan-name');
+ 
+                 $.ajax({
+@@ -26,9 +27,9 @@
+                 }).done(function(data) {
+                     var message;
+                     if (data.total > 0) {
+-                        message = 'You will be charged $'+data.total +' immediately';
++                        message = 'You will be charged approximately $'+data.total +' immediately';
+                     } else {
+-                        message = 'You will have a balance of $'+(Math.abs(data.total))+' that will be automatically applied to future invoices!';
++                        message = 'You will have an approximate balance of $'+(Math.abs(data.total))+' that will be automatically applied to future invoices!';
+                     }
+ 
+                     swal({
+@@ -39,6 +40,17 @@
+                         closeOnConfirm: false,
+                         showLoaderOnConfirm: true
+                     }, function () {
++                        $.ajax({
++                            url: changeUrl,
++                            method: 'POST'
++                        }).done(function() {
++                            swal({
++                                title: 'Plan changed!',
++                                type: 'success'
++                            }, function() {
++                                location.reload();
++                            });
++                        });
+                         // todo - actually change the plan!
+                     });
+                 });
+@@ -86,6 +98,7 @@
+                                         <button class="btn btn-xs btn-link pull-right js-change-plan-button"
+                                             data-preview-url="{{ path('account_preview_plan_change', {'planId': otherPlan.planId}) }}"
+                                             data-plan-name="{{ otherPlan.name }}"
++                                            data-change-url="{{ path('account_execute_plan_change', {'planId': otherPlan.planId}) }}"
+                                         >
+                                             Change to "{{ otherPlan.name }}"
+                                         </button>
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 804af73..6f83a97 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+ use Symfony\Component\HttpFoundation\JsonResponse;
+ use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
+ 
+ /**
+  * @Security("is_granted('ROLE_USER')")
+@@ -110,6 +111,25 @@ class ProfileController extends BaseController
+         return new JsonResponse(['total' => $total/100]);
+     }
+ 
++    /**
++     * @Route("/profile/plan/change/execute/{planId}", name="account_execute_plan_change")
++     * @Method("POST")
++     */
++    public function changePlanAction($planId)
++    {
++        $plan = $this->get('subscription_helper')
++            ->findPlan($planId);
++
++        $stripeClient = $this->get('stripe_client');
++        $stripeSubscription = $stripeClient->changePlan($this->getUser(), $plan);
++
++        // causes the planId to be updated on the user's subscription
++        $this->get('subscription_helper')
++            ->addSubscriptionToUser($stripeSubscription, $this->getUser());
++
++        return new Response(null, 204);
++    }
++
+     private function renderAccountPage($error = null)
+     {
+         $currentPlan = null;
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 5f57e42..730e53a 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -128,4 +128,17 @@ class StripeClient
+             'subscription_plan' => $newPlan->getPlanId(),
+         ]);
+     }
++
++    public function changePlan(User $user, SubscriptionPlan $newPlan)
++    {
++        $stripeSubscription = $this->findSubscription($user->getSubscription()->getStripeSubscriptionId());
++
++        $stripeSubscription->plan = $newPlan->getPlanId();
++        $stripeSubscription->save();
++
++        // immediately invoice them
++        $this->createInvoice($user);
++
++        return $stripeSubscription;
++    }
+ }

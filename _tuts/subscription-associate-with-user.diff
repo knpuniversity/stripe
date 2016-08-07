@@ -20,7 +20,7 @@ index f15c4e9..d36dcec 100644
              // charge the invoice!
              $stripeClient->createInvoice($user, true);
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 2deea50..c6aab0a 100644
+index 0ed3b63..9242904 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -88,4 +88,11 @@ class Subscription

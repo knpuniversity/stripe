@@ -57,7 +57,7 @@ index 9ae43ca..5f3395a 100644
                                  {% else %}
                                      None
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index add9560..724aebf 100644
+index 3a1111c..815c7a0 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -103,4 +103,19 @@ class Subscription

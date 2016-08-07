@@ -16,7 +16,7 @@ index 1b2e799..bbe754c 100644
  
          return $this->redirectToRoute('profile_account');
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index ddd7aa6..add9560 100644
+index 1bd3083..3a1111c 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -96,4 +96,11 @@ class Subscription

@@ -294,7 +294,37 @@
             "id": "webhook-prevent-replay-attack",
             "name": "Webhook: Prevent replay attack",
             "description": null
+        },
+        {
+            "id": "upgrade-print-current-plan",
+            "name": "Upgrade: Print current plan",
+            "description": null
+        },
+        {
+            "id": "upgrade-add-change-button",
+            "name": "Upgrade: Add change button",
+            "description": null
+        },
+        {
+            "id": "upgrade-dump-next-invoice",
+            "name": "Upgrade: Dump next invoice",
+            "description": null
+        },
+        {
+            "id": "upgrade-show-change-price",
+            "name": "Upgrade: Show change price",
+            "description": null
+        },
+        {
+            "id": "upgrade-prettier-popup",
+            "name": "Upgrade: Prettier popup",
+            "description": null
+        },
+        {
+            "id": "upgrade-execute-change",
+            "name": "Upgrade: Execute change",
+            "description": null
         }
     ],
-    "sha": "ee7896cc12ed0da3943066054de655f9fefc56e0"
+    "sha": "bb679a689094eaffb0aff45feb3a2d652bd4ecd9"
 }

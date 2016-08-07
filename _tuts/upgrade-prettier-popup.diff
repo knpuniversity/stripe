@@ -1,0 +1,29 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 7716fa2..724d666 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -24,7 +24,23 @@
+                 $.ajax({
+                     url: previewUrl
+                 }).done(function(data) {
+-                    swal('Total $'+data.total);
++                    var message;
++                    if (data.total > 0) {
++                        message = 'You will be charged $'+data.total +' immediately';
++                    } else {
++                        message = 'You will have a balance of $'+(Math.abs(data.total))+' that will be automatically applied to future invoices!';
++                    }
++
++                    swal({
++                        title: 'Change to '+planName,
++                        text: message,
++                        type: "info",
++                        showCancelButton: true,
++                        closeOnConfirm: false,
++                        showLoaderOnConfirm: true
++                    }, function () {
++                        // todo - actually change the plan!
++                    });
+                 });
+             })
+         });

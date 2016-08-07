@@ -1,0 +1,78 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index e9f436a..85b30f7 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -12,6 +12,12 @@
+ 
+                 $('.js-update-card-wrapper').slideToggle();
+             });
++
++            $('.js-change-plan-button').on('click', function(e) {
++                e.preventDefault();
++
++                swal('Loading Plan Details...');
++            })
+         });
+     </script>
+ {% endblock %}
+@@ -51,6 +57,10 @@
+                                         {{ currentPlan.name }}
+ 
+                                         <span class="label label-success">Active</span>
++
++                                        <button class="btn btn-xs btn-link pull-right js-change-plan-button" data-plan-id="{{ otherPlan.planId }}" data-plan-name="{{ otherPlan.name }}">
++                                            Change to "{{ otherPlan.name }}"
++                                        </button>
+                                     {% endif %}
+                                 {% else %}
+                                     <span class="label label-default">None</span>
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 2249069..663a1a9 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -89,15 +89,20 @@ class ProfileController extends BaseController
+     private function renderAccountPage($error = null)
+     {
+         $currentPlan = null;
++        $otherPlan = null;
+         if ($this->getUser()->hasActiveSubscription()) {
+             $currentPlan = $this->get('subscription_helper')
+                 ->findPlan($this->getUser()->getSubscription()->getStripePlanId());
++
++            $otherPlan = $this->get('subscription_helper')
++                ->findPlanToChangeTo($currentPlan->getPlanId());
+         }
+ 
+         return $this->render('profile/account.html.twig', [
+             'error' => $error,
+             'stripe_public_key' => $this->getParameter('stripe_public_key'),
+-            'currentPlan' => $currentPlan
++            'currentPlan' => $currentPlan,
++            'otherPlan' => $otherPlan,
+         ]);
+     }
+ }
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 8763291..58837bd 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -43,6 +43,19 @@ class SubscriptionHelper
+         }
+     }
+ 
++    /**
++     * @param $currentPlanId
++     * @return SubscriptionPlan
++     */
++    public function findPlanToChangeTo($currentPlanId)
++    {
++        foreach ($this->plans as $plan) {
++            if ($plan->getPlanId() != $currentPlanId) {
++                return $plan;
++            }
++        }
++    }
++
+     public function addSubscriptionToUser(\Stripe\Subscription $stripeSubscription, User $user)
+     {
+         $subscription = $user->getSubscription();

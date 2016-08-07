@@ -21,7 +21,7 @@ index d1adb38..09d395f 100644
                  throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
          }
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index cb453ba..2fc5d45 100644
+index 97e2632..51f5305 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -124,4 +124,9 @@ class Subscription

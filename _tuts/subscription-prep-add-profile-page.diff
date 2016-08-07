@@ -1,8 +1,8 @@
 diff --git a/app/Resources/views/base.html.twig b/app/Resources/views/base.html.twig
-index c782e2e..496ed7a 100644
+index cfe6b0f..4131c18 100644
 --- a/app/Resources/views/base.html.twig
 +++ b/app/Resources/views/base.html.twig
-@@ -28,6 +28,9 @@
+@@ -29,6 +29,9 @@
                      <ul class="nav navbar-nav">
                          {% if is_granted('ROLE_USER') %}
                              <li>

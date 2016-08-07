@@ -1,6 +1,6 @@
 diff --git a/app/DoctrineMigrations/Version20160726174534.php b/app/DoctrineMigrations/Version20160726174534.php
 new file mode 100644
-index 0000000..45361bb
+index 0000000..77aca96
 --- /dev/null
 +++ b/app/DoctrineMigrations/Version20160726174534.php
 @@ -0,0 +1,36 @@
@@ -25,7 +25,7 @@ index 0000000..45361bb
 +        $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 +
 +        $this->addSql('CREATE TABLE subscription (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, stripe_subscription_id VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_A3C664D3A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
-+        $this->addSql('ALTER TABLE subscription ADD CONSTRAINT FK_A3C664D3A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id)');
++        $this->addSql('ALTER TABLE subscription ADD CONSTRAINT FK_A3C664D3A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id) ON DELETE CASCADE');
 +        $this->addSql('ALTER TABLE subscription ADD stripe_plan_id VARCHAR(255) NOT NULL, ADD ends_at DATETIME DEFAULT NULL, ADD billing_period_ends_at DATETIME DEFAULT NULL');
 +    }
 +
@@ -42,7 +42,7 @@ index 0000000..45361bb
 +}
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
 new file mode 100644
-index 0000000..2deea50
+index 0000000..0ed3b63
 --- /dev/null
 +++ b/src/AppBundle/Entity/Subscription.php
 @@ -0,0 +1,91 @@
@@ -67,7 +67,7 @@ index 0000000..2deea50
 +
 +    /**
 +     * @ORM\OneToOne(targetEntity="User", inversedBy="subscription")
-+     * @ORM\JoinColumn(nullable=false)
++     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
 +     */
 +    private $user;
 +
