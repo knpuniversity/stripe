@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+{% import _self as macros %}
+
+{% macro currency(rawStripeAmount) %}
+    {% if rawStripeAmount < 0 %}-{% endif %}${{ (rawStripeAmount/100)|abs }}
+{% endmacro %}
+
+{% block body %}
+
+<div class="nav-space">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6">
+                <h1>Invoice {{ invoice.date|date('Y-m-d') }}</h1>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>To</th>
+                            {# or put company information here #}
+                            <th>{{ app.user.email }}</th>
+                        </tr>
+                        <tr>
+                            <th>Invoice Number</th>
+                            <th>
+                                {{ invoice.id }}
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+
+                <table class="table table-striped">
+                    <tbody>
+                        {% if invoice.starting_balance %}
+                            <tr>
+                                <td>Starting Balance</td>
+                                <td>
+                                    {{ macros.currency(invoice.starting_balance) }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% for lineItem in invoice.lines.data %}
+                            <tr>
+                                <td>
+                                    {% if lineItem.description %}
+                                        {{ lineItem.description }}
+                                    {% elseif (lineItem.plan) %}
+                                        Subscription to {{ lineItem.plan.name }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ macros.currency(lineItem.amount) }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        {% if invoice.discount %}
+                            <tr>
+                                <td>Discount: {{ invoice.discount.coupon.id }}</td>
+                                <td>
+                                    {{ macros.currency(invoice.discount.coupon.amount_off * -1) }}
+                                </td>
+                            </tr>
+                        {% endif %}
+
+                        <tr>
+                            <th>Total</th>
+                            <th>
+                                {{ macros.currency(invoice.amount_due) }}
+                            </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
