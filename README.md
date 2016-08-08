@@ -14,7 +14,7 @@ into *this* directory, and then (from this directory), run:
 php composer.phar install
 ```
 
-This will iteractively ask you for some settings - like `database_host`.
+This will interactively ask you for some settings - like `database_host`.
 Fill those in. If you make a mistake - just modify `app/config/parameters.yml`
 afterwards!
 
