@@ -1,0 +1,28 @@
+diff --git a/app/Resources/views/order/_cardForm.html.twig b/app/Resources/views/order/_cardForm.html.twig
+index 5c343da..500276e 100644
+--- a/app/Resources/views/order/_cardForm.html.twig
++++ b/app/Resources/views/order/_cardForm.html.twig
+@@ -60,7 +60,7 @@
+     <div class="row">
+         <div class="col-xs-8 col-sm-6 col-sm-offset-2 text-center">
+             <button type="submit" class="js-submit-button btn btn-lg btn-danger">
+-                Checkout
++                {{ buttonText|default('Checkout') }}
+             </button>
+         </div>
+     </div>
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index e0a7eec..ffd237f 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -83,7 +83,9 @@
+             <div class="col-xs-6">
+                 <div class="js-update-card-wrapper" style="display: none;">
+                     <h2>Update Credit Card</h2>
+-                    {{ include('order/_cardForm.html.twig') }}
++                    {{ include('order/_cardForm.html.twig', {
++                        buttonText: 'Update Card'
++                    }) }}
+                 </div>
+             </div>
+         </div>

@@ -221,6 +221,11 @@
             "description": null
         },
         {
+            "id": "update-cc-customize-button",
+            "name": "Update CC: Customize Button",
+            "description": null
+        },
+        {
             "id": "update-cc-sharing-javascript",
             "name": "Update CC: Sharing JavaScript",
             "description": null
@@ -346,5 +351,5 @@
             "description": null
         }
     ],
-    "sha": "3ae0313b83bcaa03b95c2827da8cf083a8ad80ee"
+    "sha": "c2f52c251acff9773740ad44b8c2e0d8dcbd651b"
 }
