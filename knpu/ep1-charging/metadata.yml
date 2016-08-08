@@ -36,14 +36,11 @@ chapters:
     hide-private-keys:
         video_key: 178037613
     stripe-customer-user-table:
-        is_finished: false
-        video_key: ~
+        video_key: 178043724
     stripe-customers:
-        is_finished: false
-        video_key: ~
+        video_key: 178045585
     stripe-invoices:
-        is_finished: false
-        video_key: ~
+        video_key: 178045797
     centralize-stripe-code:
         is_finished: false
         video_key: ~
