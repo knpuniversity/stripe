@@ -28,26 +28,19 @@ tuts_hero:
 
 chapters:
     stripe-dashboard:
-        is_finished: false
-        video_key: ~
+        video_key: 178034979
     checkout-form:
-        is_finished: false
-        video_key: ~
+        video_key: 178037785
     charge-it:
-        is_finished: false
-        video_key: ~
+        video_key: 178038044
     hide-private-keys:
-        is_finished: false
-        video_key: ~
+        video_key: 178037613
     stripe-customer-user-table:
-        is_finished: false
-        video_key: ~
+        video_key: 178043724
     stripe-customers:
-        is_finished: false
-        video_key: ~
+        video_key: 178045585
     stripe-invoices:
-        is_finished: false
-        video_key: ~
+        video_key: 178045797
     centralize-stripe-code:
         is_finished: false
         video_key: ~
@@ -65,4 +58,4 @@ chapters:
         video_key: ~
     pro-error-handling:
         is_finished: false
-        video_key: ~        
+        video_key: ~
