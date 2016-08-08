@@ -17,6 +17,10 @@
             <div class="sheep-flash alert alert-success">{{ msg }}</div>
         {% endfor %}
 
+        {% for msg in app.session.flashBag.get('error') %}
+            <div class="sheep-flash alert alert-danger">{{ msg }}</div>
+        {% endfor %}
+
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header navbar-left">
