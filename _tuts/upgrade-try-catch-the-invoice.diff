@@ -1,0 +1,83 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 889c58f..db1237d 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -50,6 +50,12 @@
+                             }, function() {
+                                 location.reload();
+                             });
++                        }).fail(function(jqXHR) {
++                            swal({
++                                title: 'Plan change failed!',
++                                text: jqXHR.responseJSON.message,
++                                type: 'error'
++                            });
+                         });
+                         // todo - actually change the plan!
+                     });
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 6f83a97..9440fff 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -121,7 +121,14 @@ class ProfileController extends BaseController
+             ->findPlan($planId);
+ 
+         $stripeClient = $this->get('stripe_client');
+-        $stripeSubscription = $stripeClient->changePlan($this->getUser(), $plan);
++
++        try {
++            $stripeSubscription = $stripeClient->changePlan($this->getUser(), $plan);
++        } catch (\Stripe\Error\Card $e) {
++            return new JsonResponse([
++                'message' => $e->getMessage()
++            ], 400);
++        }
+ 
+         // causes the planId to be updated on the user's subscription
+         $this->get('subscription_helper')
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 730e53a..b9331bd 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -59,7 +59,16 @@ class StripeClient
+ 
+         if ($payImmediately) {
+             // guarantee it charges *right* now
+-            $invoice->pay();
++            try {
++                $invoice->pay();
++            } catch (\Stripe\Error\Card $e) {
++                // paying failed, close this invoice so we don't
++                // keep trying to pay it
++                $invoice->closed = true;
++                $invoice->save();
++
++                throw $e;
++            }
+         }
+ 
+         return $invoice;
+@@ -133,11 +142,21 @@ class StripeClient
+     {
+         $stripeSubscription = $this->findSubscription($user->getSubscription()->getStripeSubscriptionId());
+ 
++        $originalPlanId = $stripeSubscription->plan->id;
+         $stripeSubscription->plan = $newPlan->getPlanId();
+         $stripeSubscription->save();
+ 
+-        // immediately invoice them
+-        $this->createInvoice($user);
++        try {
++            // immediately invoice them
++            $this->createInvoice($user);
++        } catch (\Stripe\Error\Card $e) {
++            $stripeSubscription->plan = $originalPlanId;
++            // prevent prorations discounts/charges from changing back
++            $stripeSubscription->prorate = false;
++            $stripeSubscription->save();
++
++            throw $e;
++        }
+ 
+         return $stripeSubscription;
+     }

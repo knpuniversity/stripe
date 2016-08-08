@@ -1,0 +1,27 @@
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index b52389e..3c57352 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -101,13 +101,18 @@ class ProfileController extends BaseController
+                 $this->getUser(),
+                 $plan
+             );
+-        dump($stripeInvoice);
+ 
+-        // contains the pro-rations *plus* the next cycle's amount
++        $currentUserPlan = $this->get('subscription_helper')
++            ->findPlan($this->getUser()->getSubscription()->getStripePlanId());
++
+         $total = $stripeInvoice->amount_due;
+ 
+-        // subtract plan price to *remove* next the next cycle's total
+-        $total -= $plan->getPrice() * 100;
++        // contains the pro-rations
++        // *plus* - if the duration matches - next cycle's amount
++        if ($plan->getDuration() == $currentUserPlan->getDuration()) {
++            // subtract plan price to *remove* next the next cycle's total
++            $total -= $plan->getPrice() * 100;
++        }
+ 
+         return new JsonResponse(['total' => $total/100]);
+     }

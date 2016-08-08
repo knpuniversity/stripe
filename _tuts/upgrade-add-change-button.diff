@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index e9f436a..85b30f7 100644
+index e9f436a..a81f467 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -12,6 +12,12 @@
@@ -21,7 +21,7 @@ index e9f436a..85b30f7 100644
                                          <span class="label label-success">Active</span>
 +
 +                                        <button class="btn btn-xs btn-link pull-right js-change-plan-button" data-plan-id="{{ otherPlan.planId }}" data-plan-name="{{ otherPlan.name }}">
-+                                            Change to "{{ otherPlan.name }}"
++                                            Change to {{ otherPlan.name }}
 +                                        </button>
                                      {% endif %}
                                  {% else %}
@@ -53,10 +53,10 @@ index 2249069..663a1a9 100644
      }
  }
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 8763291..58837bd 100644
+index 8763291..bea3834 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
-@@ -43,6 +43,19 @@ class SubscriptionHelper
+@@ -43,6 +43,21 @@ class SubscriptionHelper
          }
      }
  
@@ -66,11 +66,13 @@ index 8763291..58837bd 100644
 +     */
 +    public function findPlanToChangeTo($currentPlanId)
 +    {
-+        foreach ($this->plans as $plan) {
-+            if ($plan->getPlanId() != $currentPlanId) {
-+                return $plan;
-+            }
++        if (strpos($currentPlanId, 'farmer_brent') !== false) {
++            $newPlanId = str_replace('farmer_brent', 'new_zealander', $currentPlanId);
++        } else {
++            $newPlanId = str_replace('new_zealander', 'farmer_brent', $currentPlanId);
 +        }
++
++        return $this->findPlan($newPlanId);
 +    }
 +
      public function addSubscriptionToUser(\Stripe\Subscription $stripeSubscription, User $user)

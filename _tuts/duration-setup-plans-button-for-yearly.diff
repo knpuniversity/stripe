@@ -1,0 +1,139 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index db1237d..b7708ed 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -119,6 +119,14 @@
+                             <td>
+                                 {% if app.user.hasActiveSubscription %}
+                                     {{ app.user.subscription.billingPeriodEndsAt|date('F jS') }}
++
++                                    <button class="btn btn-xs btn-link pull-right js-change-plan-button"
++                                        data-preview-url="{{ path('account_preview_plan_change', {'planId': otherDurationPlan.planId}) }}"
++                                        data-plan-name="{{ otherDurationPlan.name }} {{ otherDurationPlan.duration }}"
++                                        data-change-url="{{ path('account_execute_plan_change', {'planId': otherDurationPlan.planId}) }}"
++                                    >
++                                        Bill {{ otherDurationPlan.duration }}
++                                    </button>
+                                 {% else %}
+                                     n/a
+                                 {% endif %}
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 9440fff..b52389e 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -101,6 +101,7 @@ class ProfileController extends BaseController
+                 $this->getUser(),
+                 $plan
+             );
++        dump($stripeInvoice);
+ 
+         // contains the pro-rations *plus* the next cycle's amount
+         $total = $stripeInvoice->amount_due;
+@@ -141,12 +142,16 @@ class ProfileController extends BaseController
+     {
+         $currentPlan = null;
+         $otherPlan = null;
++        $otherDurationPlan = null;
+         if ($this->getUser()->hasActiveSubscription()) {
+             $currentPlan = $this->get('subscription_helper')
+                 ->findPlan($this->getUser()->getSubscription()->getStripePlanId());
+ 
+             $otherPlan = $this->get('subscription_helper')
+                 ->findPlanToChangeTo($currentPlan->getPlanId());
++
++            $otherDurationPlan = $this->get('subscription_helper')
++                ->findPlanForOtherDuration($currentPlan->getPlanId());
+         }
+ 
+         return $this->render('profile/account.html.twig', [
+@@ -154,6 +159,7 @@ class ProfileController extends BaseController
+             'stripe_public_key' => $this->getParameter('stripe_public_key'),
+             'currentPlan' => $currentPlan,
+             'otherPlan' => $otherPlan,
++            'otherDurationPlan' => $otherDurationPlan,
+         ]);
+     }
+ }
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index bea3834..2fe46a9 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -28,6 +28,20 @@ class SubscriptionHelper
+             'New Zealander',
+             199
+         );
++
++        $this->plans[] = new SubscriptionPlan(
++            'farmer_brent_yearly',
++            'Farmer Brent',
++            990,
++            SubscriptionPlan::DURATION_YEARLY
++        );
++
++        $this->plans[] = new SubscriptionPlan(
++            'new_zealander_yearly',
++            'New Zealander',
++            1990,
++            SubscriptionPlan::DURATION_YEARLY
++        );
+     }
+ 
+     /**
+@@ -58,6 +72,17 @@ class SubscriptionHelper
+         return $this->findPlan($newPlanId);
+     }
+ 
++    public function findPlanForOtherDuration($currentPlanId)
++    {
++        if (strpos($currentPlanId, 'monthly') !== false) {
++            $newPlanId = str_replace('monthly', 'yearly', $currentPlanId);
++        } else {
++            $newPlanId = str_replace('yearly', 'monthly', $currentPlanId);
++        }
++
++        return $this->findPlan($newPlanId);
++    }
++
+     public function addSubscriptionToUser(\Stripe\Subscription $stripeSubscription, User $user)
+     {
+         $subscription = $user->getSubscription();
+diff --git a/src/AppBundle/Subscription/SubscriptionPlan.php b/src/AppBundle/Subscription/SubscriptionPlan.php
+index 2d33d83..a2b373b 100644
+--- a/src/AppBundle/Subscription/SubscriptionPlan.php
++++ b/src/AppBundle/Subscription/SubscriptionPlan.php
+@@ -4,17 +4,23 @@ namespace AppBundle\Subscription;
+ 
+ class SubscriptionPlan
+ {
++    const DURATION_MONTHLY = 'monthly';
++    const DURATION_YEARLY = 'yearly';
++
+     private $planId;
+ 
+     private $name;
+ 
+     private $price;
+ 
+-    public function __construct($planId, $name, $price)
++    private $duration;
++
++    public function __construct($planId, $name, $price, $duration = self::DURATION_MONTHLY)
+     {
+         $this->planId = $planId;
+         $this->name = $name;
+         $this->price = $price;
++        $this->duration = $duration;
+     }
+ 
+     public function getPlanId()
+@@ -31,4 +37,9 @@ class SubscriptionPlan
+     {
+         return $this->price;
+     }
++
++    public function getDuration()
++    {
++        return $this->duration;
++    }
+ }
+\ No newline at end of file

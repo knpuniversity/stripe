@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index 85b30f7..7716fa2 100644
+index a81f467..9febc09 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -17,6 +17,15 @@
@@ -27,7 +27,7 @@ index 85b30f7..7716fa2 100644
 +                                            data-preview-url="{{ path('account_preview_plan_change', {'planId': otherPlan.planId}) }}"
 +                                            data-plan-name="{{ otherPlan.name }}"
 +                                        >
-                                             Change to "{{ otherPlan.name }}"
+                                             Change to {{ otherPlan.name }}
                                          </button>
                                      {% endif %}
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php

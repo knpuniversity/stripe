@@ -324,7 +324,27 @@
             "id": "upgrade-execute-change",
             "name": "Upgrade: Execute change",
             "description": null
+        },
+        {
+            "id": "upgrade-try-catch-the-invoice",
+            "name": "Upgrade: Try-catch the invoice",
+            "description": null
+        },
+        {
+            "id": "duration-setup-plans-button-for-yearly",
+            "name": "Duration: Setup plans+button for yearly",
+            "description": null
+        },
+        {
+            "id": "duration-fix-preview-amount",
+            "name": "Duration: Fix preview amount",
+            "description": null
+        },
+        {
+            "id": "duration-don-t-invoice-on-duration-change",
+            "name": "Duration: Don't invoice on duration change",
+            "description": null
         }
     ],
-    "sha": "bb679a689094eaffb0aff45feb3a2d652bd4ecd9"
+    "sha": "3ae0313b83bcaa03b95c2827da8cf083a8ad80ee"
 }
