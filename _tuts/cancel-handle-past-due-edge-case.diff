@@ -1,0 +1,69 @@
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index d05423a..e41ea84 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -26,10 +26,17 @@ class ProfileController extends BaseController
+     public function cancelSubscriptionAction()
+     {
+         $stripeClient = $this->get('stripe_client');
+-        $stripeClient->cancelSubscription($this->getUser());
++        $stripeSubscription = $stripeClient->cancelSubscription($this->getUser());
+ 
+         $subscription = $this->getUser()->getSubscription();
+-        $subscription->deactivateSubscription();
++
++        if ($stripeSubscription->status == 'canceled') {
++            // the subscription was cancelled immediately
++            $subscription->cancel();
++        } else {
++            $subscription->deactivateSubscription();
++        }
++
+         $em = $this->getDoctrine()->getManager();
+         $em->persist($subscription);
+         $em->flush();
+diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
+index 815c7a0..97e2632 100644
+--- a/src/AppBundle/Entity/Subscription.php
++++ b/src/AppBundle/Entity/Subscription.php
+@@ -104,6 +104,12 @@ class Subscription
+         $this->billingPeriodEndsAt = null;
+     }
+ 
++    public function cancel()
++    {
++        $this->endsAt = new \DateTime();
++        $this->billingPeriodEndsAt = null;
++    }
++
+     /**
+      * Subscription is active, or cancelled but still in "active" period
+      *
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 30f3bd0..e2f6af5 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -81,9 +81,22 @@ class StripeClient
+             $user->getSubscription()->getStripeSubscriptionId()
+         );
+ 
++        $currentPeriodEnd = new \DateTime('@'.$sub->current_period_end);
++        $cancelAtPeriodEnd = true;
++
++        if ($sub->status == 'past_due') {
++            // past due? Cancel immediately, don't try charging again
++            $cancelAtPeriodEnd = false;
++        } elseif ($currentPeriodEnd < new \DateTime('+1 hour')) {
++            // within 1 hour of the end? Cancel so the invoice isn't charged
++            $cancelAtPeriodEnd = false;
++        }
++
+         $sub->cancel([
+-            'at_period_end' => true,
++            'at_period_end' => $cancelAtPeriodEnd,
+         ]);
++
++        return $sub;
+     }
+ 
+     public function reactivateSubscription(User $user)

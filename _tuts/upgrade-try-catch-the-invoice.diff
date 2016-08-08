@@ -16,10 +16,10 @@ index 0f97814..8bf5fe4 100644
                          // todo - actually change the plan!
                      });
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 6f83a97..9440fff 100644
+index 314cde7..09aa186 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -121,7 +121,14 @@ class ProfileController extends BaseController
+@@ -128,7 +128,14 @@ class ProfileController extends BaseController
              ->findPlan($planId);
  
          $stripeClient = $this->get('stripe_client');
@@ -36,7 +36,7 @@ index 6f83a97..9440fff 100644
          // causes the planId to be updated on the user's subscription
          $this->get('subscription_helper')
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
-index 730e53a..b9331bd 100644
+index 054d840..1338959 100644
 --- a/src/AppBundle/StripeClient.php
 +++ b/src/AppBundle/StripeClient.php
 @@ -59,7 +59,16 @@ class StripeClient
@@ -57,7 +57,7 @@ index 730e53a..b9331bd 100644
          }
  
          return $invoice;
-@@ -133,11 +142,21 @@ class StripeClient
+@@ -146,11 +155,21 @@ class StripeClient
      {
          $stripeSubscription = $this->findSubscription($user->getSubscription()->getStripeSubscriptionId());
  

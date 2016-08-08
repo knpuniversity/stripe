@@ -27,10 +27,10 @@ index c3627db..e785f32 100644
                                  {% else %}
                                      <span class="label label-default">None</span>
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 2249069..663a1a9 100644
+index cdc7418..60bbe84 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -89,15 +89,20 @@ class ProfileController extends BaseController
+@@ -96,15 +96,20 @@ class ProfileController extends BaseController
      private function renderAccountPage($error = null)
      {
          $currentPlan = null;

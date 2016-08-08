@@ -30,10 +30,10 @@ index 5f19741..ab8f3cf 100644
  }
 \ No newline at end of file
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
-index 30f3bd0..345c769 100644
+index e2f6af5..e976c6c 100644
 --- a/src/AppBundle/StripeClient.php
 +++ b/src/AppBundle/StripeClient.php
-@@ -101,4 +101,13 @@ class StripeClient
+@@ -114,4 +114,13 @@ class StripeClient
  
          return $subscription;
      }

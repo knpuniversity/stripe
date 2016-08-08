@@ -18,10 +18,10 @@ index 8bf5fe4..a63fe6e 100644
                                      n/a
                                  {% endif %}
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 9440fff..b52389e 100644
+index 09aa186..d2c5aaa 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -101,6 +101,7 @@ class ProfileController extends BaseController
+@@ -108,6 +108,7 @@ class ProfileController extends BaseController
                  $this->getUser(),
                  $plan
              );
@@ -29,7 +29,7 @@ index 9440fff..b52389e 100644
  
          // contains the pro-rations *plus* the next cycle's amount
          $total = $stripeInvoice->amount_due;
-@@ -141,12 +142,16 @@ class ProfileController extends BaseController
+@@ -148,12 +149,16 @@ class ProfileController extends BaseController
      {
          $currentPlan = null;
          $otherPlan = null;
@@ -46,7 +46,7 @@ index 9440fff..b52389e 100644
          }
  
          return $this->render('profile/account.html.twig', [
-@@ -154,6 +159,7 @@ class ProfileController extends BaseController
+@@ -161,6 +166,7 @@ class ProfileController extends BaseController
              'stripe_public_key' => $this->getParameter('stripe_public_key'),
              'currentPlan' => $currentPlan,
              'otherPlan' => $otherPlan,

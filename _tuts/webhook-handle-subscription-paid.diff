@@ -35,10 +35,10 @@ index 97e2632..51f5305 100644
 +    }
  }
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
-index 345c769..efa9ef9 100644
+index e976c6c..2ef26fe 100644
 --- a/src/AppBundle/StripeClient.php
 +++ b/src/AppBundle/StripeClient.php
-@@ -110,4 +110,13 @@ class StripeClient
+@@ -123,4 +123,13 @@ class StripeClient
      {
          return \Stripe\Event::retrieve($eventId);
      }

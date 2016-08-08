@@ -31,7 +31,7 @@ index e785f32..cae80e3 100644
                                          </button>
                                      {% endif %}
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 663a1a9..2a87988 100644
+index 60bbe84..cfb4341 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
 @@ -5,6 +5,7 @@ namespace AppBundle\Controller;
@@ -42,7 +42,7 @@ index 663a1a9..2a87988 100644
  use Symfony\Component\HttpFoundation\Request;
  
  /**
-@@ -86,6 +87,25 @@ class ProfileController extends BaseController
+@@ -93,6 +94,25 @@ class ProfileController extends BaseController
          return $this->redirectToRoute('profile_account');
      }
  
@@ -69,10 +69,10 @@ index 663a1a9..2a87988 100644
      {
          $currentPlan = null;
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
-index efa9ef9..5f57e42 100644
+index 2ef26fe..76f2eff 100644
 --- a/src/AppBundle/StripeClient.php
 +++ b/src/AppBundle/StripeClient.php
-@@ -119,4 +119,13 @@ class StripeClient
+@@ -132,4 +132,13 @@ class StripeClient
      {
          return \Stripe\Subscription::retrieve($stripeSubscriptionId);
      }

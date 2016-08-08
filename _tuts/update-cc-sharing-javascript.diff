@@ -133,7 +133,7 @@ index ffd237f..0e18a9b 100644
          jQuery(document).ready(function() {
              $('.js-open-credit-card-form').on('click', function(e) {
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 9de6a18..e251f6a 100644
+index f798cdf..ca6135a 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
 @@ -17,7 +17,8 @@ class ProfileController extends BaseController

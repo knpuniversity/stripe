@@ -23,7 +23,7 @@ index 0e18a9b..50f9b6f 100644
                  </div>
              </div>
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index e251f6a..74764db 100644
+index ca6135a..0389357 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
 @@ -5,6 +5,7 @@ namespace AppBundle\Controller;
@@ -34,7 +34,7 @@ index e251f6a..74764db 100644
  
  /**
   * @Security("is_granted('ROLE_USER')")
-@@ -57,4 +58,28 @@ class ProfileController extends BaseController
+@@ -64,4 +65,28 @@ class ProfileController extends BaseController
  
          return $this->redirectToRoute('profile_account');
      }

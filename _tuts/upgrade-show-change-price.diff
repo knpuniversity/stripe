@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 2a87988..804af73 100644
+index cfb4341..5dc5684 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -101,9 +101,13 @@ class ProfileController extends BaseController
+@@ -108,9 +108,13 @@ class ProfileController extends BaseController
                  $plan
              );
  

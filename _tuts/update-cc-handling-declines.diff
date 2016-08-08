@@ -12,7 +12,7 @@ index 50f9b6f..7e9816a 100644
                      {{ include('order/_cardForm.html.twig', {
                          buttonText: 'Update Card',
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 74764db..de95a10 100644
+index 0389357..824d26e 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
 @@ -17,10 +17,7 @@ class ProfileController extends BaseController
@@ -27,7 +27,7 @@ index 74764db..de95a10 100644
      }
  
      /**
-@@ -68,11 +65,17 @@ class ProfileController extends BaseController
+@@ -75,11 +72,17 @@ class ProfileController extends BaseController
          $token = $request->request->get('stripeToken');
          $user = $this->getUser();
  
@@ -50,7 +50,7 @@ index 74764db..de95a10 100644
  
          // save card details!
          $this->get('subscription_helper')
-@@ -82,4 +85,12 @@ class ProfileController extends BaseController
+@@ -89,4 +92,12 @@ class ProfileController extends BaseController
  
          return $this->redirectToRoute('profile_account');
      }

@@ -46,7 +46,7 @@ index af1fdaa..e0a7eec 100644
          </div>
      </div>
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index d05423a..9de6a18 100644
+index e41ea84..f798cdf 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
 @@ -16,7 +16,9 @@ class ProfileController extends BaseController

@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
-index b9331bd..44b5f6e 100644
+index 1338959..8b14bdd 100644
 --- a/src/AppBundle/StripeClient.php
 +++ b/src/AppBundle/StripeClient.php
-@@ -142,20 +142,27 @@ class StripeClient
+@@ -155,20 +155,27 @@ class StripeClient
      {
          $stripeSubscription = $this->findSubscription($user->getSubscription()->getStripeSubscriptionId());
  

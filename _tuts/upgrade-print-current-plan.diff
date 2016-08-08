@@ -12,10 +12,10 @@ index 7e9816a..c3627db 100644
                                      {% endif %}
                                  {% else %}
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index de95a10..2249069 100644
+index 824d26e..cdc7418 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -88,9 +88,16 @@ class ProfileController extends BaseController
+@@ -95,9 +95,16 @@ class ProfileController extends BaseController
  
      private function renderAccountPage($error = null)
      {

@@ -44,23 +44,6 @@ index ab8f3cf..e09b4e4 100644
 +    }
  }
 \ No newline at end of file
-diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 815c7a0..97e2632 100644
---- a/src/AppBundle/Entity/Subscription.php
-+++ b/src/AppBundle/Entity/Subscription.php
-@@ -104,6 +104,12 @@ class Subscription
-         $this->billingPeriodEndsAt = null;
-     }
- 
-+    public function cancel()
-+    {
-+        $this->endsAt = new \DateTime();
-+        $this->billingPeriodEndsAt = null;
-+    }
-+
-     /**
-      * Subscription is active, or cancelled but still in "active" period
-      *
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
 index 741cc52..153192b 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
