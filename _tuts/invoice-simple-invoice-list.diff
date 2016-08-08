@@ -1,0 +1,77 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index a63fe6e..596fafe 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -146,6 +146,20 @@
+                                 {% endif %}
+                             </td>
+                         </tr>
++                        <tr>
++                            <th>Invoices</th>
++                            <td>
++                                <div class="list-group">
++                                    {% for invoice in invoices %}
++                                        <a href="" class="list-group-item">
++                                            Date: {{ invoice.date|date('Y-m-d') }}
++
++                                            <span class="label label-success pull-right">${{ invoice.amount_due/100 }} </span>
++                                        </a>
++                                    {% endfor %}
++                                </div>
++                            </td>
++                        </tr>
+                     </tbody>
+                 </table>
+             </div>
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 7f1bdc7..5e6f67e 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -166,12 +166,16 @@ class ProfileController extends BaseController
+                 ->findPlanForOtherDuration($currentPlan->getPlanId());
+         }
+ 
++        $invoices = $this->get('stripe_client')
++            ->findPaidInvoices($this->getUser());
++
+         return $this->render('profile/account.html.twig', [
+             'error' => $error,
+             'stripe_public_key' => $this->getParameter('stripe_public_key'),
+             'currentPlan' => $currentPlan,
+             'otherPlan' => $otherPlan,
+             'otherDurationPlan' => $otherDurationPlan,
++            'invoices' => $invoices
+         ]);
+     }
+ }
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 3af1060..e1f4fde 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -199,4 +199,26 @@ class StripeClient
+     {
+         return \Stripe\Coupon::retrieve($code);
+     }
++
++    /**
++     * @param User $user
++     * @return \Stripe\Invoice[]
++     */
++    public function findPaidInvoices(User $user)
++    {
++        $allInvoices = \Stripe\Invoice::all([
++            'customer' => $user->getStripeCustomerId()
++        ]);
++
++        $iterator = $allInvoices->autoPagingIterator();
++
++        $invoices = [];
++        foreach ($iterator as $invoice) {
++            if ($invoice->paid) {
++                $invoices[] = $invoice;
++            }
++        }
++
++        return $invoices;
++    }
+ }

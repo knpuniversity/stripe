@@ -394,7 +394,17 @@
             "id": "discount-tweak-webhook-email",
             "name": "Discount: Tweak webhook email",
             "description": null
+        },
+        {
+            "id": "invoice-simple-invoice-list",
+            "name": "Invoice: Simple invoice list",
+            "description": null
+        },
+        {
+            "id": "invoice-render-single-invoice",
+            "name": "Invoice: Render single invoice",
+            "description": null
         }
     ],
-    "sha": "1a68758b3aa6e7273f8599f81166f6f3c55ae3de"
+    "sha": "173ed75b7b15fe947f6a72d143de42d5941e776c"
 }

@@ -1,0 +1,135 @@
+diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
+index 596fafe..8406bc1 100644
+--- a/app/Resources/views/profile/account.html.twig
++++ b/app/Resources/views/profile/account.html.twig
+@@ -151,7 +151,7 @@
+                             <td>
+                                 <div class="list-group">
+                                     {% for invoice in invoices %}
+-                                        <a href="" class="list-group-item">
++                                        <a href="{{ path('account_invoice_show', {invoiceId: invoice.id}) }}" class="list-group-item">
+                                             Date: {{ invoice.date|date('Y-m-d') }}
+ 
+                                             <span class="label label-success pull-right">${{ invoice.amount_due/100 }} </span>
+diff --git a/app/Resources/views/profile/invoice.html.twig b/app/Resources/views/profile/invoice.html.twig
+new file mode 100644
+index 0000000..e9caf73
+--- /dev/null
++++ b/app/Resources/views/profile/invoice.html.twig
+@@ -0,0 +1,78 @@
++{% extends 'base.html.twig' %}
++{% import _self as macros %}
++
++{% macro currency(rawStripeAmount) %}
++    {% if rawStripeAmount < 0 %}-{% endif %}${{ (rawStripeAmount/100)|abs }}
++{% endmacro %}
++
++{% block body %}
++
++<div class="nav-space">
++    <div class="container">
++        <div class="row">
++            <div class="col-xs-6">
++                <h1>Invoice {{ invoice.date|date('Y-m-d') }}</h1>
++
++                <table class="table">
++                    <thead>
++                        <tr>
++                            <th>To</th>
++                            {# or put company information here #}
++                            <th>{{ app.user.email }}</th>
++                        </tr>
++                        <tr>
++                            <th>Invoice Number</th>
++                            <th>
++                                {{ invoice.id }}
++                            </th>
++                        </tr>
++                    </thead>
++                </table>
++
++                <table class="table table-striped">
++                    <tbody>
++                        {% if invoice.starting_balance %}
++                            <tr>
++                                <td>Starting Balance</td>
++                                <td>
++                                    {{ macros.currency(invoice.starting_balance) }}
++                                </td>
++                            </tr>
++                        {% endif %}
++                        {% for lineItem in invoice.lines.data %}
++                            <tr>
++                                <td>
++                                    {% if lineItem.description %}
++                                        {{ lineItem.description }}
++                                    {% elseif (lineItem.plan) %}
++                                        Subscription to {{ lineItem.plan.name }}
++                                    {% endif %}
++                                </td>
++                                <td>
++                                    {{ macros.currency(lineItem.amount) }}
++                                </td>
++                            </tr>
++                        {% endfor %}
++
++                        {% if invoice.discount %}
++                            <tr>
++                                <td>Discount: {{ invoice.discount.coupon.id }}</td>
++                                <td>
++                                    {{ macros.currency(invoice.discount.coupon.amount_off * -1) }}
++                                </td>
++                            </tr>
++                        {% endif %}
++
++                        <tr>
++                            <th>Total</th>
++                            <th>
++                                {{ macros.currency(invoice.amount_due) }}
++                            </th>
++                        </tr>
++                    </tbody>
++                </table>
++            </div>
++        </div>
++    </div>
++</div>
++{% endblock %}
+diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
+index 5e6f67e..4aadf02 100644
+--- a/src/AppBundle/Controller/ProfileController.php
++++ b/src/AppBundle/Controller/ProfileController.php
+@@ -150,6 +150,19 @@ class ProfileController extends BaseController
+         return new Response(null, 204);
+     }
+ 
++    /**
++     * @Route("/profile/invoices/{invoiceId}", name="account_invoice_show")
++     */
++    public function showInvoiceAction($invoiceId)
++    {
++        $stripeInvoice = $this->get('stripe_client')
++            ->findInvoice($invoiceId);
++
++        return $this->render('profile/invoice.html.twig', array(
++            'invoice' => $stripeInvoice
++        ));
++    }
++
+     private function renderAccountPage($error = null)
+     {
+         $currentPlan = null;
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index e1f4fde..02fbe2c 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -221,4 +221,9 @@ class StripeClient
+ 
+         return $invoices;
+     }
++
++    public function findInvoice($invoiceId)
++    {
++        return \Stripe\Invoice::retrieve($invoiceId);
++    }
+ }
