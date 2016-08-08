@@ -354,7 +354,47 @@
             "id": "duration-don-t-invoice-on-duration-change",
             "name": "Duration: Don't invoice on duration change",
             "description": null
+        },
+        {
+            "id": "discount-add-basic-form",
+            "name": "Discount: Add basic form",
+            "description": null
+        },
+        {
+            "id": "discount-find-and-dump-stripe-discount",
+            "name": "Discount: Find and Dump Stripe Discount",
+            "description": null
+        },
+        {
+            "id": "discount-save-into-cart-render",
+            "name": "Discount: Save into cart & render",
+            "description": null
+        },
+        {
+            "id": "discount-checkout-with-code",
+            "name": "Discount: Checkout with code",
+            "description": null
+        },
+        {
+            "id": "discount-handle-bad-code",
+            "name": "Discount: Handle bad code",
+            "description": null
+        },
+        {
+            "id": "discount-handling-expired",
+            "name": "Discount: Handling expired",
+            "description": null
+        },
+        {
+            "id": "discount-free-checkout",
+            "name": "Discount: Free Checkout",
+            "description": null
+        },
+        {
+            "id": "discount-tweak-webhook-email",
+            "name": "Discount: Tweak webhook email",
+            "description": null
         }
     ],
-    "sha": "16091d4fb374da615536f6d52eaacb7d1c1f33a6"
+    "sha": "1a68758b3aa6e7273f8599f81166f6f3c55ae3de"
 }

@@ -23,10 +23,10 @@ index d05423a..e41ea84 100644
          $em->persist($subscription);
          $em->flush();
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 815c7a0..97e2632 100644
+index 19d3d38..2c6a897 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -104,6 +104,12 @@ class Subscription
+@@ -107,6 +107,12 @@ class Subscription
          $this->billingPeriodEndsAt = null;
      }
  

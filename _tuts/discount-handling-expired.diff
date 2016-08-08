@@ -1,0 +1,17 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 03f55bb..7517188 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -100,6 +100,12 @@ class OrderController extends BaseController
+             return $this->redirectToRoute('order_checkout');
+         }
+ 
++        if (!$stripeCoupon->valid) {
++            $this->addFlash('error', 'Coupon expired');
++
++            return $this->redirectToRoute('order_checkout');
++        }
++
+         $this->get('shopping_cart')
+             ->setCouponCode($code, $stripeCoupon->amount_off / 100);
+ 

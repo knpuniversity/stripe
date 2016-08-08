@@ -44,10 +44,10 @@ index 5995275..c8dd3e8 100644
       * @Security("is_granted('ROLE_USER')")
       */
 diff --git a/src/AppBundle/Store/ShoppingCart.php b/src/AppBundle/Store/ShoppingCart.php
-index ff17ee1..98475ff 100644
+index ff17ee1..6063cce 100644
 --- a/src/AppBundle/Store/ShoppingCart.php
 +++ b/src/AppBundle/Store/ShoppingCart.php
-@@ -3,22 +3,26 @@
+@@ -3,22 +3,28 @@
  namespace AppBundle\Store;
  
  use AppBundle\Entity\Product;
@@ -59,6 +59,8 @@ index ff17ee1..98475ff 100644
  {
      const CART_PRODUCTS_KEY = '_shopping_cart.products';
 +    const CART_PLAN_KEY = '_shopping_cart.subscription_plan';
++    const CART_COUPON_CODE_KEY = '_shopping_cart.coupon_code';
++    const CART_COUPON_VALUE_KEY = '_shopping_cart.coupon_value';
  
      private $session;
      private $em;
@@ -75,7 +77,7 @@ index ff17ee1..98475ff 100644
      }
  
      public function addProduct(Product $product)
-@@ -32,6 +36,14 @@ class ShoppingCart
+@@ -32,6 +38,14 @@ class ShoppingCart
          $this->updateProducts($products);
      }
  
@@ -90,7 +92,7 @@ index ff17ee1..98475ff 100644
      /**
       * @return Product[]
       */
-@@ -56,6 +68,17 @@ class ShoppingCart
+@@ -56,6 +70,17 @@ class ShoppingCart
          return $this->products;
      }
  
@@ -108,7 +110,7 @@ index ff17ee1..98475ff 100644
      public function getTotal()
      {
          $total = 0;
-@@ -63,12 +86,20 @@ class ShoppingCart
+@@ -63,12 +88,49 @@ class ShoppingCart
              $total += $product->getPrice();
          }
  
@@ -122,14 +124,43 @@ index ff17ee1..98475ff 100644
          return $total;
      }
  
++    public function getTotalWithDiscount()
++    {
++        return max($this->getTotal() - $this->getCouponCodeValue(), 0);
++    }
++
++    public function setCouponCode($code, $value)
++    {
++        $this->session->set(
++            self::CART_COUPON_CODE_KEY,
++            $code
++        );
++
++        $this->session->set(
++            self::CART_COUPON_VALUE_KEY,
++            $value
++        );
++    }
++
++    public function getCouponCode()
++    {
++        return $this->session->get(self::CART_COUPON_CODE_KEY);
++    }
++
++    public function getCouponCodeValue()
++    {
++        return $this->session->get(self::CART_COUPON_VALUE_KEY);
++    }
++
      public function emptyCart()
      {
          $this->updateProducts([]);
 +        $this->updatePlanId(null);
++        $this->setCouponCode(null, null);
      }
  
      /**
-@@ -84,4 +115,9 @@ class ShoppingCart
+@@ -84,4 +146,9 @@ class ShoppingCart
  
          $this->session->set(self::CART_PRODUCTS_KEY, $ids);
      }

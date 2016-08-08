@@ -42,10 +42,10 @@ index 0000000..77aca96
 +}
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
 new file mode 100644
-index 0000000..0ed3b63
+index 0000000..438f62c
 --- /dev/null
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,94 @@
 +<?php
 +
 +namespace AppBundle\Entity;
@@ -96,6 +96,9 @@ index 0000000..0ed3b63
 +        return $this->id;
 +    }
 +
++    /**
++     * @return User
++     */
 +    public function getUser()
 +    {
 +        return $this->user;

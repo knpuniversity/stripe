@@ -57,10 +57,10 @@ index 9ae43ca..5f3395a 100644
                                  {% else %}
                                      None
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 3a1111c..815c7a0 100644
+index 5bdc706..19d3d38 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -103,4 +103,19 @@ class Subscription
+@@ -106,4 +106,19 @@ class Subscription
          $this->endsAt = $this->billingPeriodEndsAt;
          $this->billingPeriodEndsAt = null;
      }

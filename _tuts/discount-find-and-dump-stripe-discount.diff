@@ -1,0 +1,62 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index a871998..0a55b54 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -60,7 +60,7 @@
+                 </button>
+ 
+                 <div class="js-code-form" style="display: none;">
+-                    <form action="" method="POST" class="form-inline">
++                    <form action="{{ path('order_add_coupon') }}" method="POST" class="form-inline">
+                         <div class="form-group">
+                             <div class="input-group">
+                                 <span class="input-group-addon">
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index f64190c..41f0ad7 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -78,6 +78,26 @@ class OrderController extends BaseController
+     }
+ 
+     /**
++     * @Route("/checkout/coupon", name="order_add_coupon")
++     * @Method("POST")
++     */
++    public function addCouponAction(Request $request)
++    {
++        $code = $request->request->get('code');
++
++        if (!$code) {
++            $this->addFlash('error', 'Missing coupon code!');
++
++            return $this->redirectToRoute('order_checkout');
++        }
++
++        $stripeCoupon = $this->get('stripe_client')
++            ->findCoupon($code);
++
++        dump($stripeCoupon);die;
++    }
++
++    /**
+      * @param $token
+      * @throws \Stripe\Error\Card
+      */
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index 8b14bdd..fb89ae0 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -180,4 +180,13 @@ class StripeClient
+ 
+         return $stripeSubscription;
+     }
++
++    /**
++     * @param $code
++     * @return \Stripe\Coupon
++     */
++    public function findCoupon($code)
++    {
++        return \Stripe\Coupon::retrieve($code);
++    }
+ }

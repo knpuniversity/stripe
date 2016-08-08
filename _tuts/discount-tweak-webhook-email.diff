@@ -1,0 +1,18 @@
+diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
+index 651531b..0af666d 100644
+--- a/src/AppBundle/Controller/WebhookController.php
++++ b/src/AppBundle/Controller/WebhookController.php
+@@ -68,7 +68,13 @@ class WebhookController extends BaseController
+ 
+                     if ($stripeEvent->data->object->attempt_count == 1) {
+                         $user = $subscription->getUser();
++                        $stripeCustomer = $this->get('stripe_client')
++                            ->findCustomer($user->getStripeCustomerId());
++
++                        $hasCardOnFile = count($stripeCustomer->sources->data) > 0;
++
+                         // todo - send the user an email about the problem
++                        // use hasCardOnFile to customize this
+                     }
+                 }
+ 

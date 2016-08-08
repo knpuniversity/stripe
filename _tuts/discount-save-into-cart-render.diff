@@ -1,0 +1,42 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index 0a55b54..ce27f23 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -46,11 +46,18 @@
+                                 <td class="col-xs-3">${{ cart.subscriptionPlan.price }} / month</td>
+                             </tr>
+                         {% endif %}
++
++                        {% if cart.couponCode %}
++                            <tr>
++                                <th class="col-xs-6 checkout-product-name">Coupon {{ cart.couponCode }}</th>
++                                <td class="col-xs-3">${{ cart.couponCodeValue }}</td>
++                            </tr>
++                        {% endif %}
+                     </tbody>
+                     <tfoot>
+                         <tr>
+                             <th class="col-xs-6 info">Total</th>
+-                            <td class="col-xs-3 info checkout-total">${{ cart.total }}</td>
++                            <td class="col-xs-3 info checkout-total">${{ cart.totalWithDiscount }}</td>
+                         </tr>
+                     </tfoot>
+                 </table>
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 41f0ad7..4c8562f 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -94,7 +94,12 @@ class OrderController extends BaseController
+         $stripeCoupon = $this->get('stripe_client')
+             ->findCoupon($code);
+ 
+-        dump($stripeCoupon);die;
++        $this->get('shopping_cart')
++            ->setCouponCode($code, $stripeCoupon->amount_off / 100);
++
++        $this->addFlash('success', 'Coupon applied!');
++
++        return $this->redirectToRoute('order_checkout');
+     }
+ 
+     /**

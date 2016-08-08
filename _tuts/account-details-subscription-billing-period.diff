@@ -16,10 +16,10 @@ index 3fa2297..608f91e 100644
                          </tr>
                          <tr>
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 9242904..1bd3083 100644
+index d81cd06..6265a00 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -89,10 +89,11 @@ class Subscription
+@@ -92,10 +92,11 @@ class Subscription
          return $this->billingPeriodEndsAt;
      }
  

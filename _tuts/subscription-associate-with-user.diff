@@ -20,10 +20,10 @@ index f15c4e9..d36dcec 100644
              // charge the invoice!
              $stripeClient->createInvoice($user, true);
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
-index 0ed3b63..9242904 100644
+index 438f62c..d81cd06 100644
 --- a/src/AppBundle/Entity/Subscription.php
 +++ b/src/AppBundle/Entity/Subscription.php
-@@ -88,4 +88,11 @@ class Subscription
+@@ -91,4 +91,11 @@ class Subscription
      {
          return $this->billingPeriodEndsAt;
      }

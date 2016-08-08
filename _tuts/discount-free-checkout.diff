@@ -1,0 +1,100 @@
+diff --git a/app/Resources/views/order/checkout.html.twig b/app/Resources/views/order/checkout.html.twig
+index ce27f23..3e4db47 100644
+--- a/app/Resources/views/order/checkout.html.twig
++++ b/app/Resources/views/order/checkout.html.twig
+@@ -82,7 +82,15 @@
+                 </div>
+             </div>
+             <div class="col-xs-12 col-sm-6">
+-                {{ include('order/_cardForm.html.twig') }}
++                {% if cart.totalWithDiscount > 0 %}
++                    {{ include('order/_cardForm.html.twig') }}
++                {% else %}
++                    <form action="" method="POST">
++                        <button type="submit" class="btn btn-lg btn-danger">
++                            Checkout for Free!
++                        </button>
++                    </form>
++                {% endif %}
+             </div>
+         </div>
+     </div>
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 7517188..f6bebe8 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -120,13 +120,22 @@ class OrderController extends BaseController
+      */
+     private function chargeCustomer($token)
+     {
++        if (!$token && $this->get('shopping_cart')->getTotalWithDiscount() > 0) {
++            throw new \Exception('Somehow the order is non-free, but we have no token!?');
++        }
++
+         $stripeClient = $this->get('stripe_client');
+         /** @var User $user */
+         $user = $this->getUser();
+         if (!$user->getStripeCustomerId()) {
+             $stripeCustomer = $stripeClient->createCustomer($user, $token);
+         } else {
+-            $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
++            // don't need to update it if the order is fre
++            if ($token) {
++                $stripeCustomer = $stripeClient->updateCustomerCard($user, $token);
++            } else {
++                $stripeCustomer = $stripeClient->findCustomer($user);
++            }
+         }
+ 
+         // save card details
+diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
+index fb89ae0..3af1060 100644
+--- a/src/AppBundle/StripeClient.php
++++ b/src/AppBundle/StripeClient.php
+@@ -19,10 +19,15 @@ class StripeClient
+ 
+     public function createCustomer(User $user, $paymentToken)
+     {
+-        $customer = \Stripe\Customer::create([
++        $data = [
+             'email' => $user->getEmail(),
+-            'source' => $paymentToken,
+-        ]);
++        ];
++
++        if ($paymentToken) {
++            $data['source'] = $paymentToken;
++        }
++
++        $customer = \Stripe\Customer::create($data);
+         $user->setStripeCustomerId($customer->id);
+ 
+         $this->em->persist($user);
+@@ -41,6 +46,11 @@ class StripeClient
+         return $customer;
+     }
+ 
++    public function findCustomer(User $user)
++    {
++        return \Stripe\Customer::retrieve($user->getStripeCustomerId());
++    }
++
+     public function createInvoiceItem($amount, User $user, $description)
+     {
+         return \Stripe\InvoiceItem::create(array(
+diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
+index 2fe46a9..5c5ebb6 100644
+--- a/src/AppBundle/Subscription/SubscriptionHelper.php
++++ b/src/AppBundle/Subscription/SubscriptionHelper.php
+@@ -104,6 +104,11 @@ class SubscriptionHelper
+ 
+     public function updateCardDetails(User $user, \Stripe\Customer $stripeCustomer)
+     {
++        if (!$stripeCustomer->sources->data) {
++            // the customer may not have a card on file
++            return;
++        }
++
+         $cardDetails = $stripeCustomer->sources->data[0];
+         $user->setCardBrand($cardDetails->brand);
+         $user->setCardLast4($cardDetails->last4);

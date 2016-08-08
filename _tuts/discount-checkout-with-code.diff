@@ -1,0 +1,16 @@
+diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Controller/OrderController.php
+index 4c8562f..a700780 100644
+--- a/src/AppBundle/Controller/OrderController.php
++++ b/src/AppBundle/Controller/OrderController.php
+@@ -123,6 +123,11 @@ class OrderController extends BaseController
+ 
+         $cart = $this->get('shopping_cart');
+ 
++        if ($cart->getCouponCodeValue()) {
++            $stripeCustomer->coupon = $cart->getCouponCode();
++            $stripeCustomer->save();
++        }
++
+         foreach ($cart->getProducts() as $product) {
+             $stripeClient->createInvoiceItem(
+                 $product->getPrice() * 100,
