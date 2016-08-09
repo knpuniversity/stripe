@@ -18,7 +18,7 @@ though I keep showing you mine.
 
 How you do this next step will vary for different frameworks, but is philosophically
 always the same. In Symfony, we're going to move our keys to a special
-`parameters.yml` file, because our project is setup to *not* commit this to git.
+`parameters.yml` file, because our project is setup to *not* commit this to Git.
 
 Add a `stripe_secret_key` config and set its value to the key from the controller.
 Then add `stripe_public_key` and set that to the one from the template.
