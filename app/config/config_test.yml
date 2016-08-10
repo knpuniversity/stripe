@@ -18,4 +18,4 @@ swiftmailer:
 doctrine:
     dbal:
         # use a separate test database
-        dbname:   "%database_name%"_test
+        dbname:   "%database_name%_test"
