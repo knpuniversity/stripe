@@ -1,24 +1,24 @@
 # Stripe Invoices
 
-The first two important objects in Stripe are Charge and Customer.
+The first two important objects in Stripe are `Charge` and `Customer`.
 
-Let's talk about the *third* important object: Invoice. Here's the idea: right
-now, we simply charge the Customer. But instead of doing that, we *could* add
-invoice items to the Customer, create an Invoice for those items, and then pay
-that Invoice.
+Let's talk about the *third* important object: `Invoice`. Here's the idea: right
+now, we simply charge the `Customer`. But instead of doing that, we *could* add
+invoice items to the `Customer`, create an `Invoice` for those items, and then pay
+that `Invoice`.
 
 To the user, this feels the same. But in Stripe, instead of having a charge, you
-will have an Invoice full of invoice items, and a charge to pay that invoice. Why
+will have an `Invoice` full of invoice items, and a charge to pay that invoice. Why
 do we care? Well first, it let's you have detailed line-items - like two separate
 items if our customer orders 2 products.
 
 And second, invoices are *central* to handling *subscriptions*. In fact, you'll find
-the Invoice API documentation under the subscription area. But, it can be used for
+the `Invoice` API documentation under the subscription area. But, it can be used for
 any charges.
 
 ## Creating & Paying the Invoice
 
-Let's hook this up. First, instead of creating a Stripe Charge, create a Stripe
+Let's hook this up. First, instead of creating a Stripe `Charge`, create a Stripe
 `InvoiceItem`:
 
 [[[ code('c74f1943b4') ]]]
@@ -77,7 +77,7 @@ on this Stripe invoice and see exactly what we charged them for.
 
 Test time! Put in our awesome fake information, hit ENTER... and no errors.
 
-In Stripe, click back to the Customer page and find the new invoice - for `$106`.
+In Stripe, click back to the customer page and find the new invoice - for `$106`.
 Click on that. Yes! 2 crystal clear invoice line items.
 
 So yes, you can just charge customers. But if you create an `Invoice` with detailed

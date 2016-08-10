@@ -1,14 +1,14 @@
 # Stripe: Killer Payment Processing + ??? = Profit
 
 This repository holds the script, code and secrets to getting
-rich quick (hint: lottery) for the KnpUniversity [Stripe Tutorial](http://knpuniversity.com/screencast/stripe).
+rich quick (hint: lottery) for the KnpUniversity [Stripe Tutorial][stripe_tuts].
 
 ## Setup
 
 ### 1) Install the vendor libs with Composer!
 
-[Download Composer](https://getcomposer.org/) either globally or right
-into *this* directory, and then (from this directory), run:
+[Download Composer][composer] either globally or right into *this* directory,
+and then (from this directory), run:
 
 ```bash
 php composer.phar install
@@ -43,3 +43,7 @@ php bin/console server:run
 Then, load the site at:
 
     http://localhost:8000
+
+
+[stripe_tuts]: https://knpuniversity.com/screencast/stripe
+[composer]: https://getcomposer.org/
