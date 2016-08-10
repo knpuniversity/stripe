@@ -1,10 +1,10 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index 8bf5fe4..a63fe6e 100644
+index c170851..0ac5f6b 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -119,6 +119,14 @@
                              <td>
-                                 {% if app.user.hasActiveSubscription %}
+                                 {% if app.user.hasActiveNonCancelledSubscription %}
                                      {{ app.user.subscription.billingPeriodEndsAt|date('F jS') }}
 +
 +                                    <button class="btn btn-xs btn-link pull-right js-change-plan-button"
@@ -18,18 +18,10 @@ index 8bf5fe4..a63fe6e 100644
                                      n/a
                                  {% endif %}
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index 09aa186..d2c5aaa 100644
+index 9339b27..e70f019 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -108,6 +108,7 @@ class ProfileController extends BaseController
-                 $this->getUser(),
-                 $plan
-             );
-+        dump($stripeInvoice);
- 
-         // contains the pro-rations *plus* the next cycle's amount
-         $total = $stripeInvoice->amount_due;
-@@ -148,12 +149,16 @@ class ProfileController extends BaseController
+@@ -21,12 +21,16 @@ class ProfileController extends BaseController
      {
          $currentPlan = null;
          $otherPlan = null;
@@ -46,16 +38,24 @@ index 09aa186..d2c5aaa 100644
          }
  
          return $this->render('profile/account.html.twig', [
-@@ -161,6 +166,7 @@ class ProfileController extends BaseController
+@@ -34,6 +38,7 @@ class ProfileController extends BaseController
              'stripe_public_key' => $this->getParameter('stripe_public_key'),
              'currentPlan' => $currentPlan,
              'otherPlan' => $otherPlan,
 +            'otherDurationPlan' => $otherDurationPlan,
          ]);
      }
- }
+ 
+@@ -125,6 +130,7 @@ class ProfileController extends BaseController
+                 $this->getUser(),
+                 $plan
+             );
++        dump($stripeInvoice);
+ 
+         // contains the pro-rations *plus* the next cycle's amount
+         $total = $stripeInvoice->amount_due;
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index bea3834..2fe46a9 100644
+index 35524dc..d59d37a 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -28,6 +28,20 @@ class SubscriptionHelper

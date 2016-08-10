@@ -120,7 +120,7 @@ index ddc8a17..9d26e1b 100644
  
  {% block body %}
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index ffd237f..0e18a9b 100644
+index 3790832..f576b12 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -3,6 +3,8 @@

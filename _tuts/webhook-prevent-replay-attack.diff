@@ -39,7 +39,7 @@ index 0000000..3a9e393
 +    }
 +}
 diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
-index 4143897..651531b 100644
+index 1dd1534..4115480 100644
 --- a/src/AppBundle/Controller/WebhookController.php
 +++ b/src/AppBundle/Controller/WebhookController.php
 @@ -2,6 +2,7 @@
@@ -63,7 +63,7 @@ index 4143897..651531b 100644
 +
 +        $log = new StripeEventLog($eventId);
 +        $em->persist($log);
-+        $em->flush();
++        $em->flush($log);
 +
          if ($this->getParameter('verify_stripe_event')) {
              $stripeEvent = $this->get('stripe_client')

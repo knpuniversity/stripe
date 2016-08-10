@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index c3627db..e785f32 100644
+index 2804dac..c681756 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -12,6 +12,12 @@
@@ -27,11 +27,11 @@ index c3627db..e785f32 100644
                                  {% else %}
                                      <span class="label label-default">None</span>
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index cdc7418..60bbe84 100644
+index 5d6ec40..87db981 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -96,15 +96,20 @@ class ProfileController extends BaseController
-     private function renderAccountPage($error = null)
+@@ -18,15 +18,20 @@ class ProfileController extends BaseController
+     public function accountAction()
      {
          $currentPlan = null;
 +        $otherPlan = null;
@@ -44,16 +44,16 @@ index cdc7418..60bbe84 100644
          }
  
          return $this->render('profile/account.html.twig', [
-             'error' => $error,
+             'error' => null,
              'stripe_public_key' => $this->getParameter('stripe_public_key'),
 -            'currentPlan' => $currentPlan
 +            'currentPlan' => $currentPlan,
 +            'otherPlan' => $otherPlan,
          ]);
      }
- }
+ 
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 8763291..bea3834 100644
+index 3f9fe07..35524dc 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -43,6 +43,21 @@ class SubscriptionHelper

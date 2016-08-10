@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
-index cfb4341..5dc5684 100644
+index 7ea9d27..09f87bf 100644
 --- a/src/AppBundle/Controller/ProfileController.php
 +++ b/src/AppBundle/Controller/ProfileController.php
-@@ -108,9 +108,13 @@ class ProfileController extends BaseController
+@@ -125,8 +125,12 @@ class ProfileController extends BaseController
                  $plan
              );
  
@@ -16,5 +16,4 @@ index cfb4341..5dc5684 100644
 +
 +        return new JsonResponse(['total' => $total/100]);
      }
- 
-     private function renderAccountPage($error = null)
+ }

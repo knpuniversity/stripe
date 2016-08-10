@@ -1,18 +1,18 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index 5f3395a..dea0b15 100644
+index f9a82ac..f309e9e 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
-@@ -29,6 +29,10 @@
-                                         <span class="label label-warning">Cancelled</span>
+@@ -10,7 +10,9 @@
  
-                                         But you have access until {{ app.user.subscription.endsAt|date('F jS') }}
-+
-+                                        <form action="{{ path('account_subscription_reactivate') }}" method="POST" style="display: inline;">
-+                                            <button type="submit" class="btn btn-success btn-xs">Reactive Subscription</button>
-+                                        </form>
-                                     {% else %}
-                                         <span class="label label-success">Active</span>
-                                     {% endif %}
+                     {% if app.user.hasActiveSubscription %}
+                         {% if app.user.subscription.isCancelled %}
+-                            todo - add reactivate button
++                            <form action="{{ path('account_subscription_reactivate') }}" method="POST" class="pull-right">
++                                <button type="submit" class="btn btn-success btn-xs">Reactivate Subscription</button>
++                            </form>
+                         {% else %}
+                             <form action="{{ path('account_subscription_cancel') }}" method="POST" class="pull-right">
+                                 <button type="submit" class="btn btn-danger btn-xs">Cancel Subscription</button>
 diff --git a/src/AppBundle/Controller/ProfileController.php b/src/AppBundle/Controller/ProfileController.php
 index bbe754c..55e9dd0 100644
 --- a/src/AppBundle/Controller/ProfileController.php

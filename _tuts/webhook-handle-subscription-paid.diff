@@ -1,8 +1,8 @@
 diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Controller/WebhookController.php
-index d1adb38..09d395f 100644
+index d1adb38..3abade3 100644
 --- a/src/AppBundle/Controller/WebhookController.php
 +++ b/src/AppBundle/Controller/WebhookController.php
-@@ -37,6 +37,17 @@ class WebhookController extends BaseController
+@@ -37,8 +37,20 @@ class WebhookController extends BaseController
                  $subscriptionHelper->fullyCancelSubscription($subscription);
  
                  break;
@@ -18,8 +18,19 @@ index d1adb38..09d395f 100644
 +                }
 +                break;
              default:
-                 throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
+-                throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
++                // allow this - we'll have Stripe send us everything
++                // throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
          }
+ 
+         return new Response('Event Handled: '.$stripeEvent->type);
+@@ -63,4 +75,4 @@ class WebhookController extends BaseController
+ 
+         return $subscription;
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/src/AppBundle/Entity/Subscription.php b/src/AppBundle/Entity/Subscription.php
 index 2c6a897..e3b75be 100644
 --- a/src/AppBundle/Entity/Subscription.php
@@ -53,19 +64,19 @@ index e976c6c..2ef26fe 100644
 +    }
  }
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 153192b..29661b5 100644
+index 1b921a2..141c6d0 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -77,4 +77,13 @@ class SubscriptionHelper
          $this->em->persist($subscription);
-         $this->em->flush();
+         $this->em->flush($subscription);
      }
 +
 +    public function handleSubscriptionPaid(Subscription $subscription, \Stripe\Subscription $stripeSubscription)
 +    {
-+        $periodEnd = \DateTime::createFromFormat('U', $stripeSubscription->current_period_end);
++        $newPeriodEnd = \DateTime::createFromFormat('U', $stripeSubscription->current_period_end);
 +
-+        $subscription->setBillingPeriodEndsAt($periodEnd);
++        $subscription->setBillingPeriodEndsAt($newPeriodEnd);
 +        $this->em->persist($subscription);
 +        $this->em->flush($subscription);
 +    }

@@ -12,7 +12,7 @@ index 5c343da..500276e 100644
          </div>
      </div>
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index e0a7eec..ffd237f 100644
+index 4030a72..3790832 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -83,7 +83,9 @@

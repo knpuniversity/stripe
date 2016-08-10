@@ -45,7 +45,7 @@ index ab8f3cf..e09b4e4 100644
  }
 \ No newline at end of file
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 741cc52..153192b 100644
+index 741cc52..1b921a2 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -70,4 +70,11 @@ class SubscriptionHelper
@@ -57,6 +57,6 @@ index 741cc52..153192b 100644
 +    {
 +        $subscription->cancel();
 +        $this->em->persist($subscription);
-+        $this->em->flush();
++        $this->em->flush($subscription);
 +    }
  }

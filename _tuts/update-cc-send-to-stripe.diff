@@ -9,7 +9,7 @@ index 500276e..364e6e7 100644
          <div class="col-xs-8 col-sm-6 col-sm-offset-2 form-group">
              <div class="input-group">
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index 0e18a9b..50f9b6f 100644
+index f576b12..48597a3 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -86,7 +86,8 @@

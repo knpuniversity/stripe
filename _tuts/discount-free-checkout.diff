@@ -83,7 +83,7 @@ index fb89ae0..3af1060 100644
      {
          return \Stripe\InvoiceItem::create(array(
 diff --git a/src/AppBundle/Subscription/SubscriptionHelper.php b/src/AppBundle/Subscription/SubscriptionHelper.php
-index 2fe46a9..5c5ebb6 100644
+index d59d37a..142f5ce 100644
 --- a/src/AppBundle/Subscription/SubscriptionHelper.php
 +++ b/src/AppBundle/Subscription/SubscriptionHelper.php
 @@ -104,6 +104,11 @@ class SubscriptionHelper

@@ -1,5 +1,5 @@
 diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views/profile/account.html.twig
-index af1fdaa..e0a7eec 100644
+index f309e9e..4030a72 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
 @@ -1,5 +1,19 @@
@@ -24,7 +24,7 @@ index af1fdaa..e0a7eec 100644
      <div class="container">
 @@ -54,6 +68,10 @@
                              <td>
-                                 {% if app.user.hasActiveSubscription %}
+                                 {% if app.user.hasActiveNonCancelledSubscription %}
                                      {{ app.user.cardBrand }} ending in {{ app.user.cardLast4 }}
 +
 +                                    <button class="btn btn-xs btn-link pull-right js-open-credit-card-form">
