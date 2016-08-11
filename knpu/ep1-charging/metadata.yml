@@ -45,17 +45,13 @@ chapters:
         is_finished: false
         video_key: ~
     force-https-please:
-        is_finished: false
-        video_key: ~
+        video_key: 178504992
     custom-checkout-form:
-        is_finished: false
-        video_key: ~
+        video_key: 178505592
     checkout-form-javascript-handling:
-        is_finished: false
-        video_key: ~
+        video_key: 178505776
     pretty-card-formatting:
-        is_finished: false
-        video_key: ~
+        video_key: 178505935
     pro-error-handling:
         is_finished: false
         video_key: ~
