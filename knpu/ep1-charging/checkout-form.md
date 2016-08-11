@@ -1,6 +1,6 @@
 # Embedded Checkout Form
 
-Click on the documentation link at the top, and then click [Embedded Form](https://stripe.com/docs/checkout/tutorial).
+Click on the documentation link at the top, and then click [Embedded Form][1].
 There are two ways to build a checkout-form: the easy & lazy way - via an *embedded form*
 that Stripe builds for you - or the harder way - with an HTML form that you build
 yourself. Our sheep investors want us to hoof-it and get this live, so let's do
@@ -13,8 +13,11 @@ To get the embedded form, copy the form code. Then, head to the app and open the
 checkout page.
 
 At the bottom, I already have a spot waiting for the checkout form. Paste the code
-there. Oh! And as promised: this `pk_test` value is the *public* key from *our* test
-environment.
+there:
+
+[[[ code('4101d72520') ]]]
+
+Oh! And as promised: this `pk_test` value is the *public* key from *our* test environment.
 
 ## Your Stripe Public and Private Keys
 
@@ -37,21 +40,25 @@ right price, for these amazing sheep accessories.
 To fix that, head back to the template. Everything about the form is controlled with
 these HTML attributes. Obviously, the most important one is `amount`. Set it to
 `{{ cart.total }}` - `cart` is a variable I've passed into the template - then
-the important part: `* 100`. 
+the important part: `* 100`:
+
+[[[ code('49d5c5faf7') ]]]
 
 Whenever you talk about *amounts* in Stripe, you use the *smallest* denomination
 of the currency, so cents in USD. If you need to charge the user $5, then tell Stripe
 to charge them an amount of `500` cents.
 
 Then, fill in anything else that's important to you, for example, `data-image`. I'll
-set this to our logo.
+set this to our logo:
+
+[[[ code('7dc4538d24') ]]]
 
 ## Checking out with a Test Card
 
 Refresh to reflect the new settings. The total should be $62, and it is! Because
 we're using the test environment, Stripe gives us fake, test cards we can use to
 checkout. I'll show you others later - but to checkout successfully, use
-`4242 4242 4242 4242`. You can use any future expiration and any CVC.
+`4242 4242 4242 4242`. You can use any valid future expiration and any CVC.
 
 Ok, moment of truth: hit pay!
 
@@ -74,15 +81,28 @@ credit card.
 
 ## Fetching the Stripe Token
 
-Let's go get that token on the server. Open up `src/AppBundle/Controller/OrderController`
-and find `checkoutAction()`. This controller renders the checkout page. And because
-the HTML form has `action=""`, when Stripe submits the form, it submits *right* back
-to this same URL and controller.
+Let's go get that token on the server. Open up `src/AppBundle/Controller/OrderController.php`
+and find `checkoutAction()`:
+
+[[[ code('8f5cbb7fe9') ]]]
+
+This controller renders the checkout page. And because the HTML form has `action=""`:
+
+[[[ code('f89f39624f') ]]]
+
+When Stripe submits the form, it submits *right* back to this same URL and controller.
 
 To fetch the token, add a `Request` argument, and make sure you have the `use` statement
-on top. Then, inside the method, say `if ($request->isMethod('POST')`, then we know
-the form was just submitted. If so, `dump($request->get('stripeToken'))`. If you
-read Stripe's documentation, that's the `name` of the hidden input field.
+on top:
+
+[[[ code('35a19b6b91') ]]]
+
+Then, inside the method, say `if ($request->isMethod('POST')`, then we know
+the form was just submitted. If so, `dump($request->get('stripeToken'))`:
+
+[[[ code('88bc0ae669') ]]]
+
+If you read Stripe's documentation, that's the `name` of the hidden input field.
 
 Try it out! Refresh and fill in the info again: use your trusty fake credit card number,
 some fake data and Pay. The form submits and the page refreshes. But thanks to the
@@ -99,3 +119,6 @@ that the JavaScript made to Stripe: it sent over the credit card information, an
 Stripe sent back the token. If I search for the token that was just dumped, it matches.
 
 Ok, let's use that token to charge our customer.
+
+
+[1]: https://stripe.com/docs/checkout/tutorial

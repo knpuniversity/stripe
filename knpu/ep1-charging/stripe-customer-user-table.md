@@ -25,13 +25,20 @@ some basic fields, like email, username and few others related to things like re
 your password.
 
 Let's add a new column called `stripeUserId`. To do that, open a class in AppBundle
-called `User`. Create a new private property called `stripeCustomerId`. Above that,
-we're going to use annotations to say `@ORM\Column(type="string")` to create a varchar
-column. Let's even add a unique index on this field and add `nullable=true` to allow
-the field to be empty in the database.
+called `User`. Create a new private property called `stripeCustomerId`:
 
-At the bottom of the class, I'll use the Code->Generate menu - or Command+N on a
-Mac - to generate the getters and setters for the new property.
+[[[ code('e3e64814e0') ]]]
+
+Above that, we're going to use annotations to say `@ORM\Column(type="string")` to create
+a varchar column. Let's even add a unique index on this field and add `nullable=true`
+to allow the field to be empty in the database:
+
+[[[ code('cb17b496b5') ]]]
+
+At the bottom of the class, I'll use the "Code"->"Generate" menu - or `Command`+`N` on a
+Mac - to generate the getters and setters for the new property:
+
+[[[ code('8882c44fc3') ]]]
 
 Now that our PHP code is updated, we need to actually add the new column to our table.
 Since this project uses Doctrine migrations, open a new tab and run:
@@ -41,7 +48,11 @@ php bin/console doctrine:migrations:diff
 ```
 
 All that did was create a new file that contains the raw SQL needed to add this
-new `stripe_customer_id` column. To execute that, run another command:
+new `stripe_customer_id` column:
+
+[[[ code('e3719bc2b5') ]]]
+
+To execute that, run another command:
 
 ```bash
 php bin/console doctrine:migrations:migrate
