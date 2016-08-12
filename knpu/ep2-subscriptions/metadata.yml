@@ -28,4 +28,78 @@ tuts_hero:
     # finish_step: errors-handling-card-error
     finish_step: start
 
-chapters: [] 
+chapters:
+
+
+    creating-plans:
+        is_finished: false
+        video_key: ~
+    make-the-subcription:
+        is_finished: false
+        video_key: ~
+    user-has-subscription:
+        is_finished: false
+        video_key: ~
+    card-last-billing-period:
+        is_finished: false
+        video_key: ~
+    canceling-stripe-subscription:
+        is_finished: false
+        video_key: ~
+    canceling-on-our-site:
+        is_finished: false
+        video_key: ~
+    reactivate-subscription:
+        is_finished: false
+        video_key: ~
+    cancelation-edge-case-bugs:
+        is_finished: false
+        video_key: ~
+    update-credit-card:
+        is_finished: false
+        video_key: ~
+    stripe-events-webhook:
+        is_finished: false
+        video_key: ~
+    subscription-canceled-webhook:
+        is_finished: false
+        video_key: ~
+    testing-webhooks:
+        is_finished: false
+        video_key: ~
+    subscription-renewal-webhook:
+        is_finished: false
+        video_key: ~
+    payment-failed-webhook:
+        is_finished: false
+        video_key: ~
+    replay-attacks:
+        is_finished: false
+        video_key: ~
+    plan-upgrade-ui:
+        is_finished: false
+        video_key: ~
+    calculate-upgrade-cost:
+        is_finished: false
+        video_key: ~
+    execute-plan-upgrade:
+        is_finished: false
+        video_key: ~
+    plan-change-payment-failure:
+        is_finished: false
+        video_key: ~
+    monthly-to-yearly:
+        is_finished: false
+        video_key: ~
+    coupon-code-form:
+        is_finished: false
+        video_key: ~
+    apply-coupon-checkout:
+        is_finished: false
+        video_key: ~
+    free-checkout:
+        is_finished: false
+        video_key: ~
+    invoices:
+        is_finished: false
+        video_key: ~
