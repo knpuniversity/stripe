@@ -1,4 +1,4 @@
-# Force HTTPS, please!
+# Force HTTPS ... please
 
 Guess what? You could deploy this code *right* now. Sure - we have a lot more to
 talk about - like subscriptions & discounts - but the system is ready.

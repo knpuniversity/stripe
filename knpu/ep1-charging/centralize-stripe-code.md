@@ -55,6 +55,8 @@ The *second* piece of logic is responsible for updating the card on an existing
 customer. In `StripeClient`, add a `public function updateCustomerCard()` with a
 `User $user` whose related Customer should be updated, and the new `$paymentToken`.
 
+Go copy the logic from the controller, and paste it here. Update `$token` to `$paymentToken`.
+
 In `OrderController`, call this with `$stripeClient->updateCustomerCard()` passing
 it `$user` and `$token`. Now the `StripeClient` class is getting dangerous!
 
@@ -90,7 +92,7 @@ and paste it here. Update `amount` to use `$amount` and `description` to use `$d
 Add a `return` statement just in case.
 
 In `OrderController`, call this `$stripeClient->createInvoiceItem()` passing it
-`$product->getPrice() * 100`, `$user` and `$product->getDescription()`.
+`$product->getPrice() * 100`, `$user` and `$product->getName()`.
 
 Perfect! For the last piece, add a new `public function createInvoice()` with a
 `$user` whose customer we should invoice and a `$payImmediately` argument that defaults
