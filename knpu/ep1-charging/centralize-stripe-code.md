@@ -141,7 +141,7 @@ just in case:
 [[[ code('625d0ddeef') ]]]
 
 In `OrderController`, call this `$stripeClient->createInvoiceItem()` passing it
-`$product->getPrice() * 100`, `$user` and `$product->getDescription()`:
+`$product->getPrice() * 100`, `$user` and `$product->getName()`:
 
 [[[ code('3e95f0b612') ]]]
 
