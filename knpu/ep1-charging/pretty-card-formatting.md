@@ -37,7 +37,7 @@ Don't forget to update that class name too:
 
 Try it out! So sweet! The card field gets pretty auto-spacing and even *more* importantly,
 the library adds the slash automatically for the expiration field. It also limits
-the CVC field to a maximum of 3 numbers.
+the CVC field to a maximum of 4 numbers.
 
 So custom forms are a little bit more work. But they fundamentally work the same.
 
