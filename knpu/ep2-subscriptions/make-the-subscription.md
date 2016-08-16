@@ -1,15 +1,87 @@
-# Make the Subscription
+# Creating the Subscription in Stripe
 
-Open up the Stripe docs and go down the page until you find subscriptions. There's a nice little getting started section which is cool, but I'm going to go straight down to the detailed guide. There's a lot of stuff here that you're going to reference in the future. We'll cover a lot of it, but let's just start with the basics. First, step one is done, we've already created our plan so we're going down to step two which I subscribing your customers. If you look at the code that does this, it's pretty interesting. Subscribing one of your Strip customers to a plan is as simple as, when you create the customer, passing a plan key set to that plan ID. Now we're actually going to do it a slightly different way, but the most important thing to realize is that this creates a new object in Stripe called a subscription.
+Open up the Stripe docs and go down the page until you find subscriptions. There's
+a nice little "Getting Started" section but the detailed guide is the place to go
+if you've got serious questions.
 
-If you keep reading down here, you'll eventually learn more about the lifecycle of a subscription. The most important thing that I want you to realize now is that when you create a subscription, Stripe creates an invoice and charges that invoice immediately. Now, you might remember from our first part in Stripe that we also created invoices whenever we were creating charges for individual products. Let's look at which important objects we have in play at this point. Open up the Stripe API docs. So far, when we check out with individual products we do a couple things. First, we create a customer. Second, we create some invoice items. Then finally, we create an invoice and pay that invoice. When you create an invoice it automatically adds any unpaid invoice items to it.
+But let's start with the basics! Step one...done! Step 2: subscribing your customers.
+Apparently all we need to do is set the plan on the Customer and save! Cool!
 
-Now with subscriptions there's two new things coming in. We already have plans and now we're going to create a subscription and this subscription will use invoices behind the scenes. We'll talk all about that as we go, right now we just need to create a subscription object. Click subscriptions and go down to create a subscription. You see, it's really simple. A subscription is just between a customer and a specific plan. When we submit out checkout form here with our credit card information it goes to order controller check out action. In here we can see ... Ultimately, we do all of the work of charging the customer inside of this charge customer method which is down here. In here you can see we are creating the customer, adding the invoice items, and creating the invoice. Simple.
+## The Players: Subscription, Customer, Invoice
 
-Now that we might have a subscription plan we need to create that. Down here, before we create the invoice, let's say if cart, arrow, get subscription plan, then we know we need to create a subscription. Anytime that we do something across Stripe's API, we use this hand Stripe client object that I have set up because it takes care of setting our API key for us. Inside of here let's create a new public function called create invoice. We'll pass it the user ... Create subscription, we'll pass it the user. Also the subscription plan object that we want to subscribe them to. Now, if we go back to the Stripe API docs, let's steal the code here for creating a subscription and go back, paste that, and sign that to a subscription variable. Then for the customer we can say user, arrow, get Stripe customer ID. That's something we set up in the first episode. Whenever we create a Stripe customer we save it on our user table. For the plan, we'll just plan, arrow, get plan ID, then we'll return that subscription.
+But actually, there's more going on behind the scenes. In reality, this will create
+a new object in Stripe: a `Subscription`. And actually, we're going to subscribe
+a user with slightly different code than this.
 
-Now, order controller. We can simply say Stripe client, which is a variable we have up here already, arrow, create subscription. We'll pass it user, which is our current user object, and then cart, arrow, get subscription plan and that's it. It's that simple to create a subscription, but there's a little bit of a gotcha here. Remember, we just looked at how subscriptions create invoices. When you create an invoice, an invoice will automatically collect any existing invoice items that haven't been paid yet. If the user has a subscription plan, then an invoice will be created right here which means that if we create another invoice below that, that invoice will be empty and you'll actually get an error because there's nothing left to pay.
+Keep reading below, the docs describe the *lifecycle* of a Subscription. For now,
+there's one *really* important thing to notice: when you create a Subscription,
+Stripe automatically creates an `Invoice` and charges that invoice immediately.
 
-What we actually want to do here is put the create invoice into the else so that if there is a subscription plan, it will create the invoice and if there is not a subscription plan, then we still need to create the invoice. This will allow us to actually buy a subscription plan and individual products. Let's go back to our homepage. Let's actually also add some sheer shears to our cart, so now we have a mixture of an individual product and a subscription. Let's fill in our fake credit card information, hit check out, and ... Cool, no errors. The real proof is inside of our dashboard. Let's hit payments, perfect, you can see the one for $124. Take a more interesting look, let's click into our customer. When we checked out, it created our customer, it associated the card with it, we now have an active subscription and this was all done via this one invoice, which itself was the subscription plus the one-time product. This is awesome.
+Open up the Stripe API docs so we can look at all the important objects so far.
+From part 1 of the tutorial, when someone buys individual products, we do a few things:
+we create or fetch a `Customer`, we create an `InvoiceItem` for each product and
+finally we create an `Invoice` and pay it. When you create an `Invoice`, Stripe
+automatically adds all unpaid invoice items to it.
 
-Now that our subscription has successfully saved in Stripe, we also need to update our user on our site so that we know that the currently logged in user is subscribed to one of our subscription plans.
+With a `Subscription`, there are two new players: Plans and Subscriptions. Click
+Subscriptions and go down to "Create a Subscription". Ah, so simple: a Subscription
+is between a Customer and a specific Plan. This is the code we will use.
+
+## Coding up the Stripe Subscription
+
+Back on our site, after we fill out the checkout form, the whole thing submits to
+`OrderController::checkoutAction()`. And *this* passes the submitted Stripe token
+to `chargeCustomer()`. Ah that's where the magic happens: it creates or gets
+the Customer, adds InvoiceItems and creates the Invoice. Beautiful.
+
+All *we* need to do is create a `Subscription` - via Stripe's API - if they have a plan
+in their cart. Before we create the `Invoice`, add `if $cart->getSubscriptionPlan()`.
+Next, open `StripeClient`: we've designed this class to hold all Stripe API setup
+and interactions. Add a new method: `createSubscription()` and give it a `User` argument
+and a `SubscriptionPlan` argument that the User wants to subscribe to.
+
+Now, go back to the Stripe API docs, steal the code that creates a Subscription,
+and paste it here. Set that to a new `$subscription` variable. For the customer,
+use `$user->getStripeCustomerId()` to get the id for *this* user. For the plan, just
+`$plan->getPlanId()`. Return the `$subscription` at the bottom.
+
+To use this in the controller, use the `$stripeClient` variable we setup earlier:
+`$stripeClient->createSubscription()` and pass it the current `$user` variable and
+then `$cart->getSubscriptionPlan()`.
+
+And that's *all* you need to create a subscription!
+
+## Don't Invoice Twice!
+
+And there are no gotchas at all... oh except for this big one. Remember: when you
+create a Subscription, Stripe automatically creates an Invoice. And when you create
+an Invoice, Stripe automatically attaches all existing InvoiceItems that haven't
+been paid yet to that Invoice.
+
+So, if the user has a Subscription, then an Invoice will be created when we call
+`createSubscriptionPlan()`. And *that* invoice will contain any InvoiceItems for
+individual products that are also in the cart. If you try to create *another* invoice
+below, it'll be empty... and you'll actually get an error.
+
+What we actually want to do is move `createInvoice()` into the `else` so that if
+there *is* a subscription plan, *it* will create the invoice, else, *we* will create
+it manually. Yep, the user can buy a subscription *and* some extra, amazing products
+all at the same time.
+
+## Try out the Whole Flow
+
+Try the *whole* thing out: add some sheep shears to the cart so we have a product
+and a subscription. Fill in our fake credit card information, hit check out, and
+... Cool! No errors.
+
+But the real proof is in the dashboard. Click "Payments". Perfect! Here it is, for
+$124. But look closer at it, and click to view the Customer. 
+
+When we checked out, it created the customer, associated the card with it, and created
+an active subscription. And this was all done in this *one* invoice. It contains
+the subscription *plus* the one-time product purchase. In other words, this kicks
+butt. In one month, Stripe will automatically invoice the customer again, charge
+their card, and keep the subscription active.
+
+Now that our subscription is active in Stripe, we also need to update *our* database.
+We need to record that this user is actively subscribed to this plan.

@@ -1,29 +1,57 @@
-# Creating Plans
+# Create those Subscription Plans
 
-Welcome back for Stripe level two. This is where things get serious. The first part of Stripe, it was all about charges and customers, which is cool, but it's not that hard compared to what we're about the talk about, which is stuff like subscriptions, handling cancellations, webhook, upgrades, changing your credit card. As soon as you have recurring payments, life gets a lot more difficult. We need to tread very carefully. There's a lot to cover. Let's get right to it.
+Yes! You're back! You survived Stripe part 1. Ok... that's cool, but now we have
+bigger fish to fry. So fasten your seat belts, put on a pot of coffee, and get ready
+to sharpen your Stripe subscription skills.
 
-As always, I want you guys to code along with me. If you code along with the first part of this tutorial, download a fresh copy of the code and use the start directory. We made a few changes between episode one and episode two, and I want you to have all the code.
+## Wake up the Sheep
 
-Once you've got the code, you'll have the exact same thing that I have here. Open up the read-me file for all of the set up instructions. The last step will be to go to your terminal and run bin console server colon run. That will allow us to pull up the site at local host colon 8000. As you remember, we have products on the site and we worked on checking those out in the first episode. Now if you click pricing, we want to work on these subscription models. Two subscriptions, the 99 dollar per month plan, and the 199 dollar per month plan. Other than what you guys see here on this page, we haven't coded any of this stuff yet.
+To become my best friend, just code along with me! If you coded with part one of
+the tutorial, you'll need a fresh copy of the code: we made a few tweaks. Download
+it from this page, unzip it, and then move into the `start/` directory.
 
-The first step of getting this going is to tell Stripe about our two subscription plans, the Farmer Brent plan, and the New Zealander plan. Open up your Stripe dashboard, and in the test environment, I'll go down here to plans, and quite literally, we're going to create our two plans by hand. For ID, this will be the unique key of the plan, and we're going to refer to that in our code. The name is less important. Farmer Brent monthly. Make sure you have the price set correctly. 99 dollars per month, and then we'll hit create plan. Later in the tutorial, we're also going to create yearly plans for both of our plans. Do the same thing for the New Zealander. New Zealander monthly. Give it a name. Make sure its price is set, and its interval is monthly. Perfect.
+That'll give you the same code I have here. Open the README file for the setup instructions.
+The last step will be to open a terminal, move into the project directory, and run:
 
-Now in our project, inside the [inaudible 00:03:38] app bundle subscription directory, I've created a couple of classes just to get us started. The first one is called subscription helper, and as you can see, it doesn't really have a lot of stuff in it. The subscription helper is going to help us keep track of our subscription plans, in other words, the first two plans that we just created right now. Each plan is going to represented by this object. This isn't something that gets [persisted 00:04:05] in the database, it's just going to be an object that holds the plan's ID, the plan's name and the plan's price so that we can work with our plans inside the system.
+```bash
+bin/console server:run
+```
 
-Step one is I'm going to [inaudible 00:04:17] this code here, inside the subscription helper, and we're just going step up those two plans inside of our code so that our subscription helper is aware of the two plans that we currently have. Use Farmer Brent monthly for the key, call the name use Farmer Brent, and we use 99 for the price, then repeat the same thing for the New Zealander at 199 per month. Awesome. The plan is now Stripe, and the plan is now in our code, at least in a way that we can work with it.
+to start the built-in web server. Now for the magic: pull up the site at
+`http://localhost:8000`.
 
-The next thing we need to do is actually be able to add these subscriptions to our cart. Right now we can add products to our cart, and they'll show up on checkout, but we also need to take care of that for subscriptions. Now in order controller, which is where we've been handling all kinds of things related to adding products to our cart and also the checkout itself, I've already started a new page called add subscription to cart action. If we go to the URL/cart/subscription/farmerbrentmonthly, then this code should add the Farmer Brent monthly code to our subscription, but of course, we need to do that work.
+Oh yea, it's the Sheep Shear Club: thanks to part 1, it's already possible to buy
+individual products. Now, click "Pricing". The *real* point of the site is to get
+a *subscription* that'll send you awesome sheep awesome shearing accessories monthly.
+After vigorous meetings with our investors, we've decided to offer 2 plans: the
+Farmer Brent at $99/month and the New Zealander at $199/month. But other than this
+fancy looking page, we haven't coded anything for this yet.
 
-First, let's hook up these links here, the Shear Me, and Get Shearing links, so that they go to this page. To find that template, go to app resources views, product, pricing.[inaudible 00:06:23] twig, and you'll see I've already set up these links here. This ones for the Farmer Brent, but I've left the plan ideas [inaudible 00:06:31]. Fill that in with Farmer Brent monthly, and then down here on the second link, we'll fill this in with New Zealander monthly, using that plan ID that we created. Now if you go back and refresh the pricing page, you hover over the link you'll see that it goes to /cart/subscription/farmerbrentmontly, so if we click that, that will take us to our order controller.
+## Tell Stripe about the Plans
 
-Inside of this controller, we're going to do two things. First, I'm going to look up to make sure that that plan ID is one of these two valid plans that we have inside of our subscription helper to make sure somebody's not trying to do something weird. Second, I'm going to add this to our shopping cart. You might remember from the first episode, that we do have a shopping cart class. It's not something that we're talking about in this tutorial, it basically helps you hold products or different subscription plans in the session so that as your user goes around the site, we know what products or subscription plans they have.
+Our first step is to tell Stripe about these two plans. To do that, open your trusty
+Stripe dashboard, make sure you're in the test environment, and find "Plans" on the
+left. We're going to create the two plans in Stripe by hand. The ID can be any unique
+string and we'll use this forever after to refer to the plan. Use, `farmer_brent_monthly`.
+Then, fill in a name - that's less important and set the price as $99 per month.
+Create that plan!
 
-First, to get an instance of our subscription helper. The subscription helper equals this arrow get subscription underscore helper. I have this class registered as a service and symphony, so we can just fetch it out and use it. Second, we'll get our subscription plan object by saying, plan equals subscription helper find plan. Pass it the plan ID. We pass that Farmer Brent monthly, and subscription in the find a plan method will actually return us that subscription plan object if there is one. If there's not a plan, then we'll throw a [inaudible 00:08:54] by saying throw this create not found exception, bad plan ID. It shouldn't happen, but if a bad user comes through and tries to do something, we'll catch them.
+And yes, later, we'll add *yearly* versions of each plan... but one step at a time!
+Repeat that whole process for the New Zealander: set its id to `new_zealander_monthly`,
+give it a name and set its price and interval. Perfect!
 
-Finally to add it to our cart, say this arrow get shopping underscore cart arrow add subscription, pass it to the plan ID. That will put that into the session, and now our shopping cart will be aware that we have this subscription added to it.
+## Manage the Plans in Our Code
 
-Finally, let's redirect to the checkout. Return, this arrow redirect, order underscore checkout, which is the name of our route that is our checkout action. Okay, let's give that a try. Let's add the Farmer Brent to our plan. It's going to force us to log in. Use the email that's provided in there, and breaking bad as the password. That kind of looks right, you can see the total is 99 dollars, the shopping cart is accurately saying that there is a 99 dollar subscription in there, but you don't see any of the actual line items in there, and that's up to us.
+Now, head back to our code and open the `src/AppBundle/Subscription` directory.
+I added two classes to help us stay organized. The first is called `SubscriptionHelper`,
+and as you can see... it's not very helpful... yet. But pretty soon, it will keep
+track of the two plans we just added. We'll use the second class - `SubscriptionPlan` -
+to hold the data for each plan: the plan id, name and price. But we won't save these
+to the database.
 
-Open the order/checkout [inaudible 00:10:12] twig template. If you scroll down, you'll see inside of this checkout table, we loop over the products, we show the total, but there's not actually a spot where we show the subscription that you might have. Inside the [T body 00:10:24], let's add a new if there. For if cart, which is the shopping cart object.subscription plan. If we have a subscription plan added to our cart, that will return our subscription plan object, otherwise it will return null. I'll copy the TR from the products. Let's print out cart.subscriptionplan.price, and remember that subscription plan is an instance of this object right here, so we can give the plan ID the name or the price off of it. Down here for the price, we'll say, cart.subscriptionplan.price. We'll say per month. Oh and of course, I should've said name, that makes more sense right there. Perfect. Now it looks really good.
+In `SubscriptionHelper`, setup the two plans. For the first, use `farmer_brent_monthly`
+for the key, name it `Farmer Brent` and use 99 as the price. Copy that and repeat
+the same thing: `new_zealander_monthly`, `New Zealander` and 199.
 
-We have plans in Stripe. We have plans in our system. When we get to our checkout page, we know the user wants the Farmer Brent plan, so let's create a subscription for this user.
+Love it! The 2 plans live in Stripe *and* in our code. Time to make it possible
+to add these to our cart, and then checkout.

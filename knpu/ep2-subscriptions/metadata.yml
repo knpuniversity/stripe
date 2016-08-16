@@ -32,6 +32,9 @@ chapters:
     creating-plans:
         is_finished: false
         video_key: ~
+    add-plan-to-cart:
+        is_finished: false
+        video_key: ~
     make-the-subcription:
         is_finished: false
         video_key: ~

@@ -1,27 +1,100 @@
-# User Has Subscription
+# Give the User a Subscription (in our Database)
 
-Whether you're buying products or you're doing subscriptions, Stripe handles most of the heavy lifting for us, but there are a few things that we want to keep in our database. For example, in our user table, which is modeled by this user class, we store the Stripe customer ID. We create the customer in Stripe and that has most of the informations, but we keep a reference back to our user so we can look up that Stripe customer through the Stripe API later.
+Ok, congrats on creating the subscription in Stripe! But now, the real work starts.
+Even though Stripe stores everything about the Customer and Subscription, there are
+always going to be a few things that we need to keep in *our* database, like whether
+or not a user has an active subscription, and to which plan.
 
-We need to do the same thing for the subscription. We just created a subscription object. It has an ID, and we need to associate that Stripe subscription ID with our user, so that we know that our user is subscribed to that particular plan. There are a number of different ways to do that. I created a new subscription table. I'm going to open up a new tab in my Terminal ... and use MySQL to login to my database, just to show you what it looks like. Notice I have the fos_user table. That's the user table, and I now have a new subscription table. A couple of important things here. The subscription table has a relationship back to the user table, so that's a foreign key. Each subscription belongs to exactly one user. In the subscription table we keep track of a few things. First, we keep track of the Stripe subscription ID, so that's the individual instance of this user's subscription. Also, the Stripe plan ID so that we know, really quickly, which of the two plans they're subscribed to, and also a couple of other pieces of information that are going to help us manage what happens when a subscription is cancelled or expires.
+We're already doing this in one spot. The user table - which is modeled by this
+`User` class - has a `stripeCustomerId` field. Stripe holds the customer data, but
+we keep track of the customer id.
 
-When a user completes a subscription, we need to create a new row in this table and make sure that this information is updated correctly. That means we need to create a new subscription object and save it to the database. As convenience, once we create the subscription object and associate it with our user, if we have our user object, we can very easily fetch their subscription if they have one via this subscription property. Let me show you what I mean.
+We need to do the same thing for the Stripe Subscription. It also has an id, so if
+we can associate that with the User, we can quickly fetch a User's Subscription info.
 
-When you're logged in you have a new Account section that I created. This is going to contain information about our subscription, but right now it's just a bunch of hard-coded information. It says Subscription, None. Open up this template in app, resources, views, profile, account.html.twig. Instead of just saying none for the subscription, let's add an if statement. If app.user, that would be the currently logged-in user, .subscription, then we know they have a subscription, else we know they don't have a subscription. If they do, let's create a new little label that says Active. If they don't, let's create a label that says None. If we refresh right now, that's going to say None, because when we just checked that a second ago, we did not create the subscription in our subscription table, so even though our customer technically has a subscription Stripe, we didn't actually record that on our database yet. That's what we need to fix.
+## The subscription Table
 
-Where do we need to fix it? It needs to get fixed right here. This is charge customer that we've been working on, and right after we create the subscription in Stripe, we need to associate that ... We need to update our database to show that the user has a subscription. Instead of putting the code right here, I'm actually going to put this inside of our subscription helper. This class is going to take care of everything that has to do with doing work on subscriptions. We'll be adding more and more helper methods to it. Let's set a new one at the bottom called public function addSubscriptionToUser. The idea is that this will accept a Stripe slash ... Come on in. This is raw audio so I can talk right through it.
+There are a few good ways to store this, but I chose to create a brand new `subscription`
+table. I'll open up a new tab in my terminal and use mysql to login to the database.
+The `fos_user` table is the user table and I also added a new table: `subscription`.
 
-Okay.
+There are a few important things. First, the `subscription` table has a relationship
+back to the user table via a `user_id` foreign key column. Second, the `subscription`
+table stores more than *just* the Stripe subscription id, it will also hold the
+`planId` so we can instantly know which plan they have. It also holds a few other
+things that will help us manage cancellations.
 
-Yeah, yeah. Thank you. This will take in a Stripe\Subscription object and a User object and it'll update the database to associate those. In other words, it will create that new record in the subscription table with the foreign key back to the user table. The Stripe\Subscription is what we're going to get back after we create a new subscription, so it's going to have all kinds of information on it like its ID and information about the plan that it's associated with, so that's really important.
+So our mission is clear: when a user buys a subscription, we need to create a new
+row in this table, associate it with the user, and set its information properly.
+This will ultimately let *us* quickly determine if a user has an active subscription
+and to which plan.
 
-Now inside of here, the user might already be associated with an expired subscription. First we're going to check for that. We're going to say subscription equals user arrow getSubscription. If there's already a subscription on the table, then we're just going to update that instead of creating a new one. If they don't have a past subscription, then let's create a new one. Subscription equals newSubscription, subscription setUser User.
+## Prepping the Account Page
 
-The only other thing we need to is actually update the fields on this subscription object. In other words, we need to make sure that the Stripe subscription ID is set and the Stripe plan ID is set. To do that, I'm actually going to add a new method instead of the Subscription class itself called public function activateSubscription. This will take in the information it needs, specifically the Stripe plan ID and the Stripe subscription ID. Then we'll say this arrow stripePlanId equals stripePlanId. This arrow stripeSubscriptionId equals stripeSubscriptionID. I'm also going to say this arrow endsAt equals null. We're going to talk more about this later, but by setting endsAt to null, that's going to mean that this subscription is currently active. It's not cancelled or anything like that.
+And that's cool because we'll be able to fill in this fancy account page I created!
+All this info: yep, it's just hardcoded right now. Open up the template for this page
+at `app/Resources/views/profile/account.html.twig`. Instead of "None", add an `if`
+statement: `if app.user` - that's the currently-logged-in user `app.user.subscription`,
+then we know they have a Subscription. Add a label that says "Active". If they don't
+have a subscription, say "None".
 
-Back in subscription helper, we can say subscription arrow activateSubscription. We need to pass it the Stripe plan ID and the Stripe subscription ID. Remember, we're dealing with the Stripe subscription object, which is going to look like this. It has an ID property which is the subscription ID. It also has a plan property with an ID sub-property, which will be the plan ID. In other words, we can use stripeSubscription arrow plan arrow id for the plan ID, and stripeSubscription arrow id to get the Stripe subscription ID. It's that simple.
+If you refresh now... it says None. We actually *do* have a Subscription in Stripe
+from a minute ago, but our database doesn't know about it. That's what we need to
+fix.
 
-Finally, now that we have this subscription object updated with the correct information, we just need to actually make the insert or update query to the database. Since we're using Doctrine, I'm going to use dependency injection to inject the entity manager. I'll create an entity manager argument and then set a new em property on it. For Symphony users, this service is using auto-wiring, so because I type-hinted this with entity manager, it's going to automatically inject that entity manager in here. Finally in the bottom we're going to say this arrow em arrow persist subscription, and I'm saying this arrow em arrow flush subscription. I'm passing the subscription to flush specifically so that it only saves that entity. It doesn't also save any other entities that might currently be modified.
+## Updating the Database
 
-Finally, with all of this set up, we can go back to order controller and call this method. First, we actually need the Stripe subscription. Remember, the Stripe client here, when we call createSubscription, it creates that Stripe subscription and actually returns it. Inside order controller when we call that method, we can set it to stripeSubscription. Below, we'll say this arrow get subscription arrow helper, and then we'll call that new addSubscriptionToUser method, passing it the Stripe subscription object and the currently logged-in user. That is it.
+Since we need to update the database during checkout, go back to `OrderController`
+and find the `chargeCustomer()` method that holds all the magic. 
 
-We've organized our code in a few different places, but ultimately this simply makes sure that there is a new subscription row in our table that's associated with this user, and that that row has the most up-to-date information about the subscription. Let's go try it out ... by grabbing another subscription. In real life, once a user has a subscription, you would probably prevent them from getting another one ... but for simplicity we're going to let our customers get many subscriptions. Fill out your fake credit card information. Hit checkout. No errors and in Account, our subscription is now active, or said differently, we now have a row in our subscription table linked back to our user ID with our correct subscription ID and our Stripe plan ID. We have a subscription in Stripe and we know that the user has a subscription in our database.
+But instead of putting the code to update the database right here, let's add it
+to `SubscriptionHelper`: this class will do all the work related to subscriptions.
+Add a new method at the bottom called `public function addSubscriptionToUser()`
+with two arguments: a `\Stripe\Subscription` object that was just created and the
+`User` that the Subscription belongs to.
+
+Inside, start with `$subscription = $user->getSubscription()`. The user may *already*
+have a row in the `subscription` table for an expired subscription. If they do,
+we'll just update that row instead of creating a second row.
+
+But if they *don't* have a previous subscription, let's create a new one:
+`$subscription = new Subscription()`. Then, `$subscription->setUser($user)`.
+
+The only other thing we need to is update the fields on the `Subscription` object:
+`stripeSubscriptionId` and `stripePlanId`. To keep things clean, open `Subscription`
+and add a new method on teh bottom: `public function activateSubscription()` with
+two arguments: the `$stripePlanId` and `$stripeSubscriptionId`. Set each of these
+onto the corresponding properties. Also add `$this->endsAt = null`. We'll talk more
+about that later, but this field will help know if a subscription has been cancelled.
+
+Back in `SubscriptionHelper`, add `$subscription->activateSubscription()`. We need
+to pass this the `stripePlanId` and the `stripeSubscriptionId`. But remember! We
+have this fancy `\Stripe\Subscription` object! In the API docs, you can see its
+fields, like `id` and `plan` with its *own* `id` sub-property.
+
+Cool! Pass the method `$stripeSubscription->plan->id` and `$stripeSubscription->id`.
+
+Booya!
+
+Ok, time to save this to the database! Since we're using Doctrine in Symfony, we
+need the EntityManager object to do this. I'll use dependency injection: add an
+`EntityManager` argument to the `__construct()` method and set it on a new `$em`
+property. For Symfony users, this service is using auto-wiring. So because I type-hinted
+this with `EntityManager`, Symfony will automatically know to pass that as an argument.
+
+Finally, at the bottom, add `$this->em->persist($subscription)` and
+`$this->em->flush($subscription)` to *just* save the Subscription.
+
+With all that setup, go back to `OrderController` to call this method. To do that,
+we need the `\Stripe\Subscription` object. Fortunately, the `createSubscription`
+method returns this. So add `$stripeSubscription = ` in front of that line. Then,
+add `$this->get('subscription_helper')->addSubscriptionToUser()` passing it
+`$stripeSubscription` and the currently-logged-in `$user`.
+
+Phew! That may have seemed like a lot, but ultimately, this line just makes sure
+that there is a new subscription row in our table that's associated with this user
+and up-to-date with the user's subscription and plan id. 
+
+Now, let's go try it out. Add a new subscription to your cart, fill out the fake
+credit card information and hit checkout. No errors! And on the account page, hey!
+The subscription is active! Our database is up-to-date.
