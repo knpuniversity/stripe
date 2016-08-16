@@ -80,6 +80,10 @@ And finally, you should *definitely* redirect the page somewhere. I'll use
 That is it. Now for the *real* moment of truth. Hit enter to reload our page without
 submitting, put in the fake credit card, any date, any CVC, and...
 
+***TIP
+If you get some sort of API or connection, you may need to [upgrade some TLS security settings][upgrade_tls].
+***
+
 Hey! Okay. No errors. That *should* mean it worked. How can we know? Go check out
 the Stripe Dashboard. This time, click "Payments". And there's our payment for `$62`.
 You can even see all the information that was used.
@@ -90,3 +94,4 @@ make this thing rock-solid.
 
 [php_sdk]: https://github.com/stripe/stripe-php
 [create_charge]: https://stripe.com/docs/api#create_charge
+[upgrade_tls]: https://support.stripe.com/questions/how-do-i-upgrade-my-stripe-integration-from-tls-1-0-to-tls-1-2#php

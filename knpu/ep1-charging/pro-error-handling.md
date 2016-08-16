@@ -14,7 +14,9 @@ Ah, this one is particularly important: this number will look valid, but will be
 declined when we try to charge it.
 
 Let's try this out. Use: `4000 0000 0000 0002`. Give it a valid expiration and then
-hit enter. It's submitting, but woh! A huge 500 error: Your card was declined.
+hit enter. It's submitting, but woh! A huge 500 error:
+
+> Your card was declined.
 
 This is a problem: on production, this would be a big error screen with no information.
 Instead, we need to be able to tell our user what went wrong: we need to be able
@@ -55,39 +57,57 @@ card is declined.
 To do that, let's move all of this processing logic into its own private function
 in this class. That'll make things cleaner.
 
-To do this, I'll use a PhpStorm shortcut: select the code, hit control+t (or go
-to the Refactor -> Refactor This menu) and select "method". Create a new method
-called `chargeCustomer()`. Hit refactor.
+To do this, I'll use a PhpStorm shortcut: select the code, hit `Control`+`T` (or go
+to the "Refactor"->"Refactor This" menu) and select "Method". Create a new method
+called `chargeCustomer()`. Hit refactor:
+
+[[[ code('fd1d86ffab') ]]]
 
 You don't need PhpStorm to do that: it just moved my code down into this private
 function and called that function from the original spot.
 
 ## Handling the Card Exception
 
-Ok, back to business: we know that when a card is declined, something in that code
+OK, back to business: we know that when a card is declined, something in that code
 will throw a `Stripe\Error\Card` exception. I'm adding a little documentation just
-to indicate this.
+to indicate this:
+
+[[[ code('6bdcc8e17a') ]]]
 
 Back in `checkoutAction()`, add a new `$error = false` variable before the `if`,
-because at this point, no error has occurred. Next, surround the `chargeCustomer()`
-call in a try-catch: `try` `chargeCustomer()` and then catch *just* a `\Stripe\Error\Card`
-exception.
+because at this point, no error has occurred:
+
+[[[ code('d643e54b6a') ]]]
+
+Next, surround the `chargeCustomer()` call in a try-catch: `try` `chargeCustomer()`
+and then catch *just* a `\Stripe\Error\Card` exception:
+
+[[[ code('43546e0a39') ]]]
 
 If we get here, there was a problem charging the card. Update `$error` to some nice
-message, like: "There was a problem charging your card.". Then add `$e->getMessage()`.
+message, like: "There was a problem charging your card.". Then add `$e->getMessage()`:
+
+[[[ code('d380baafb1') ]]]
+
 That's will be the message that Stripe's sending back like, "Your card was declined,"
 or, "Your card cannot be used for this type of transaction."
 
 Now, if there *is* an error, we don't want to empty the cart, we don't want to add
 the nice message and we don't want to redirect. So, `if (!$error)`, then it's safe
-to do those things.
+to do those things:
+
+[[[ code('ecbb4c4308') ]]]
 
 If there *is* an error, our code will continue down and it will re-render the checkout
 template, which is exactly what we want! Pass in the `$error` variable so we can
-show it to the user.
+show it to the user:
+
+[[[ code('fc705ec417') ]]]
 
 Then, in then template, specifically the `_cardForm` template, render `error` inside
-of our error div.
+of our error div:
+
+[[[ code('19b219bee6') ]]]
 
 If there is no error, no problem! It won't render anything. If there *is* an error,
 then we we need to *not* render the `hidden` class. Use an inline if statement to
