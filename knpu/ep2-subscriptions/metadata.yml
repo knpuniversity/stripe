@@ -41,7 +41,10 @@ chapters:
     user-has-subscription:
         is_finished: false
         video_key: ~
-    card-last-billing-period:
+    card-last4:
+        is_finished: false
+        video_key: ~
+    billing-periods-ends-at:
         is_finished: false
         video_key: ~
     canceling-stripe-subscription:

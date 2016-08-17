@@ -41,7 +41,7 @@ our `checkoutAction` route.
 ## Adding the Subscription on the Checkout Page
 
 Okay team, give it a try! Add the Farmer Brent plan. Bah! We need to login: use
-the pre-filled email and password used by all sheep: `breakingbaad`.
+the pre-filled email and the password used by all sheep: `breakingbaad`.
 
 Ok, this looks kinda right: the total is `$99` because the `ShoppingCart` object
 knows about the subscription... but we haven't printed anything about the subscription

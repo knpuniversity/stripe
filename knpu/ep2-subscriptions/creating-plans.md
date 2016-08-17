@@ -22,7 +22,7 @@ to start the built-in web server. Now for the magic: pull up the site at
 
 Oh yea, it's the Sheep Shear Club: thanks to part 1, it's already possible to buy
 individual products. Now, click "Pricing". The *real* point of the site is to get
-a *subscription* that'll send you awesome sheep awesome shearing accessories monthly.
+a *subscription* that'll send your awesome sheep awesome shearing accessories monthly.
 After vigorous meetings with our investors, we've decided to offer 2 plans: the
 Farmer Brent at $99/month and the New Zealander at $199/month. But other than this
 fancy looking page, we haven't coded anything for this yet.
