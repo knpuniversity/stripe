@@ -1,15 +1,73 @@
-# Canceling Stripe Subscription
+# Canceling a Subscription
 
-Sadly, there will come a time when someone wants to cancel your awesome subscription. So sad. We need to make that as easy as possible. Cancelling a subscription, like everything we do, is two parts. First we're going to need to cancel it inside of Stripe, so that this customer no longer has the subscription. By doing that, Stripe will no longer try to bill them every month for that subscription. Second, we need to update it in our database, so that it looks like the user no longer has a subscription on our application.
+Bad news: eventually, someone will want to cancel their subscription to your amazing,
+awesome service. So sad. But when that happens, let's make it as *smooth* as possible.
+Remember: happy customers!
 
-First, let's add the cancel subscription button right to this page. In account.html.twig, I'm actually going to move our h1 down here a little bit. Inside I'm going to add a new cancel subscription button. Next, I'm going to wrap this in a form tag with method equals post, so that this can be a button the user clicks that actually makes a post request.
+Like everything we do, cancelling a subscription has two parts. First we need to
+cancel it inside of Stripe and second, we need to update *our* database, so we know
+that this user no longer has a subscription.
 
-I don't always do this correctly, but technically since this is changing something, we should make it a button that starts a post request, instead of just a link that summons a git request. Inside, we'll add button equals type submits, give some pretty classes, and say cancel subscription. Okay. Now I haven't filled in this action equals yet, because we don't have an end point for this to submit to yet.
 
-Open up profile controller. This is actually the controller which renders this account action. Anything that has to do with cancelling subscriptions or updating credit card information, we're going to start putting inside of here. Let's create a new public function cancel subscription action. I'm going to give this a URL by saying at route slash profile slash subscription slash cancel and we'll give this an internal name of account subscription cancel. I'm also going to say at method and hit tab which did add this new statement up here. Post. You can only make a post request at this endpoint. That's optional.
+## Setting up the Cancel Button
 
-Now that we have this endpoint set up, let's copy the name of that route, go back and update our action to say path and then paste that in there. Perfect. Now step one is going to tell Stripe to cancel the subscription. Now if you look in the subscription's implementation, you'll see a section here called cancelling subscriptions. It's pretty simple. First you're going to retrieve the subscription, then you're just going to call cancel on it, or to make things slightly more complicated, when you call cancel, you may pass this at period end flag set to true. By default when you cancel a subscription in Stripe, it cancels it immediately. You can do that or instead by passing at period end equals true, you say don't cancel the subscription now, but once their month or year is over with, then cancel it. This is usually what you want, because usually your customer's already paid for the current month so you want them to get the service for the rest of the month and then cancel at the end of the month.
+Start by adding a cancel button to the account page. In `account.html.twig`, let's
+move the `h1` down a bit. Next, add a *form* with `method="POST"` and make this
+float right. We don't actually need a form, but now we can put a button inside and
+this will *POST* up to our server. I don't always do this right, but since this action
+will *change* something on the server, it's best done with a POST request. Add a
+few classes for styling and say "Cancel Subscription".
 
-That's what we're going to use. Now remember everything that we do through Stripe's API is going through our Stripe client object. Let's fetch that first with Stripe client equals this arrow get stripe underscore clients. Now let's open this class and at the bottom we'll add a new method called public function cancel subscription and this will take in the user object whose subscription we want to cancel. Now if I code inside, we can actually just copy the code from the documentation. Replace the hard-coded subscription ID with user arrow get subscription arrow get Stripe subscription ID. You can see why it was so important that we save the Stripe subscription ID there. Then we'll cancel it at period end.
+I still need to set the `action` attribute to some URL... but we need to create
+that endpoint first!
 
-Now on our profile controller we just use this. Stripe client arrow cancel subscription and say this arrow get user to get the currently logged in user. Then for good measure we'll add a flash message with a really sad message subscription cancelled and then we need to redirect to some other page. We'll redirect back up to our profile account. Return this redirect to route profile account. That should do it, but I'm not going to test it yet because we've only completed the first half of the puzzle which is cancelling the subscription in Stripe. What we haven't done yet is reflect that cancellation in our database. In other words by updating the subscription entity to somehow know that this user has a cancelled subscription. Let's do that next.
+Open `ProfileController`. This file renders the account page, but we're also going
+to put code in here to handle some other things on this page, like cancelling a
+subscription and updating your credit card.
+
+Create a new `public function cancelSubscriptionAction()`. Give this a URL:
+`@Route("/profile/subscription/cancel")` and a name: `account_subscription_cancel`.
+And, since we'll POST here, we might as well require a POST with `@Method` - hit
+tab to autocomplete and add the `use` statement - then `POST`.
+
+With the endpoint setup, copy the route name and go back into the template. Update
+`action`, with `path()` then paste the route. And we are setup!
+
+## Cancel that Subscription in Stripe
+
+Now, back to step 1: cancel the Subscription in Stripe. Go back to Stripe's documentation
+and find the section about Cancelling Subscriptions - it'll look a *little* different
+than what you see here... because Stripe updated their design *right* after I recorded.
+Doh! But, all the same info is there.
+
+Ok, this is simple: retrieve a subscription and then call `cancel()` on it. Yes!
+So easy!
+
+## Cancelling at_period_end
+
+Or not easy: because you *might* want to pass this an `at_period_end` option set
+to true. Here's the story: by default, when you cancel a subscription in Stripe,
+it cancels it immediately. But, by passing `at_period_end` set to true, you're saying:
+
+> Hey! Don't cancel their subscription *now*, let them finish the month and
+> *then* cancel it.
+
+This is *probably* what you want: after all, your customer already paid for this
+month, so you'll want them to keep getting the service until its over.
+
+So let's do this! Remember: we've organized things so that *all* Stripe API code
+lives inside the `StripeClient` object. Fetch that first with
+`$stripeClient = $this->get('stripe_client')`. Next, open this class, find the bottom,
+and add a new method: `public function cancelSubscription()` with one argument:
+the `User` object whose subscription should be cancelled. 
+
+For the code inside - go copy and steal the code from the docs! Yes! Replace the
+hard-coded subscription id with `$user->getSubscription()->getStripeSubscriptionId()`.
+Then, cancel it at period end.
+
+Back in `ProfileController`, use this! `$stripeClient->cancelSubscription()` with
+`$this->getUser()` to get the currently-logged-in-user. Then, to express how sad
+we are, add a heard-breaking flash message. Then, redirect back to `profile_account`.
+
+We've done it! But don't test it yet: we still need to do step 2: update our database
+to reflect the cancellation.

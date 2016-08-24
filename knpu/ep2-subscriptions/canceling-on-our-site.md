@@ -1,29 +1,101 @@
-# Canceling on Our Site
+# Tracking Cancelation in our Database
 
-When we cancel, we are now telling Stripe that we want to cancel, so the subscription is being canceled on Stripe's side, but we need to update our database, so that we know the user has canceled, and specifically, that means we need to do something with the subscription row in the subscription table. Either we need to delete the row, or somehow we need to mark this subscription as not being active anymore, as being canceled, still active, but it is in a canceled state.
+When the user cancels, we need to *somehow* update the user's row in the subscription
+table so that we know this happened! And actually, it's kind of complicated: the
+user canceled, but the subscription should still be active until the end of the
+month. *Then* it'll really be canceled. So, how the heck can we manage this?
 
-Inside profile controller, right after we cancel the subscription in Stripe, let's grab that subscription object by saying, "This, get user." ... "Subscription equals this, get user, arrow, get subscription." Now, here's the plan: We are not going to delete the subscription from the subscription table, because the subscription is still active until the period end. Instead, what we're going to do is we're going to set this "ends at" field to when the subscription will expire, and then we'll be able to tell whether or not this subscription is still active, meaning it's before that "ends at" date, or it's inactive, because it's after the "ends at" date.
+## Using Subscription endsAt
 
-Down at the bottom, let's make a helpful function to do this, called "Public function deactivate subscription." ... We know the user has paid through the end of the period, so we can use that to say, "This arrow ends at equals this arrow billing period ends at." That's a really simple way of knowing when this subscription will expire. I'm also going to set "billing period ends at" to NULL, just so we know that there won't be another bill that's going to be sent when that period ends.
+Open `ProfileController`. Right after we cancel the subscription in Stripe, grab
+the subscription object by saying, `$this->getUser()->getSubscription()`. Here's
+the plan: we are *not* going to delete the subscription from the subscription
+table, because it's still active until the period end. Instead, we'll set the
+`endsAt` date field to *when* the subscription will expire. That way, we'll know
+if the susbcription is still active, meaning it's before the `endsAt` date, or it's
+fully canceled, because it's after the `endsAt` date.
 
-Now, deactivating the subscription in the controller is as easy as saying, "Subscription, arrow, deactivate subscription," and then we're going to save this to the database, and persist subscription, and flush. That should do it. Let's give this guy a try. Make sure you're in your account area. There's our "cancel subscription" button. Click that, and looks good. You double check it inside your Stripe dashboard, you should see that the most recent subscription is canceled. ... Perfect, so active, but it's going to cancel.
+At the bottom of `Subscription`, add a helper function to do this:
+`public function deactivateSubscription()`. Since we know the user has paid through
+the end of the period, we can use that: `$this->endsAt = $this->billingPeriodEndsAt`.
+Also set `$this->billingPeriodsEndsAt = null` - just so we know that there won't
+be another bill at the end of this month.
 
-If you look at this page, here, all the information still says, "Active." It still says, "Next billing's going to happen at," so our database is probably updated correctly, but we now need to update our account page to reflect that. This is controlled in our account.html.twig. I need an easy way to know whether or not a subscription is active, and if it is active, whether or not it's in that canceled state.
+Cool! To deactivate the subscription in the controller, it's as easy as saying
+`$subscription->deactivateSubscription()` and then saving it to the database with
+the standard `persist()` and `flush()` Doctrine code.
 
-To help with this, let's create 2 methods inside of our subscription object. First, "Public function is active," meaning does the user still have an active subscription? We know they do. "If ends at equals equals NULL," then that means they have a subscription object and it has not been canceled, or, "This arrow ends at, is greater than, right now, new date time," meaning it is canceled, but it's ending in the future.
+And that should do it! Let's give this guy a try. Go to the account page, then press
+the new "Cancel Subscription" button. Ok, looks good! Check the customer page in
+the Stripe dashboard. Yes! The most recent subscription - the one we're dealing
+with in our code - is *active* but will cancel at the end of the month.
 
-The other method we're going to want here is, "Public function is canceled," so if it is active, has the user actually canceled it or not? This will simply be, "Return, this arrow ends at, does not equal, NULL." Ends at a set, "Is canceled," if ends at is NULL, "Is not canceled."
+## Showing "Canceled" on your Account
 
-To make it even easier to know if a user has an active subscription, I'm also going to go into the user class, and add a new public function here, called, "Has active subscription." A user has an active subscription if they have a subscription object related to them, and that subscription object is active. That will save us a little bit of typing when we need to check whether or not the user has an active subscription. We're going to use that immediately inside of our account template, in a few places.
+But if you look at the Account page, everything here still looks "Active". We updated
+the `endsAt` field on the subscription, but our code in this template isn't smart
+enough... yet.
 
-First, this cancel subscription button should obviously only be there if the user has an active subscription. Let's add an if statement that says, "If app dot user dot has active subscription," and then, even if the user has an active subscription, they may have already canceled it, so we only want to show this button if they have not canceled it, so add another if statement, says, "If app dot user dot subscription dot is canceled," then I'll add a little to-do, to add a re-activate button. In other words, the user has canceled, but they've come back and said, "Oh no, I actually want to have the service." Of course, if they're active and haven't canceled, that's where we want to have our button.
+Open `account.html.twig`. Hmm, I need an easy way to know whether or not a subscription
+is active, and if it *is* active, whether or not it's in this canceled state.
 
-We'll finish up the "end if," and add another "end if." Perfect. I'm actually going to copy these first 2 lines, because we're going to reuse these again, down here. This is the section that tells us whether or not we have an active subscription, and now we have 3 states. We have "active," "active but canceled," and, "none." In place of the first if statement, I'm going to place those 2 if statements, and we know that if a subscription is canceled, let's go to a label dash warning called, "Canceled," else we know it's really active.
+To help with this, let's create two methods inside the `Subscription` object.
+First, `public function isActive()`. Meaning: does the user still have an active
+subscription, even if it will cancel at the month's end? So, if
+`$this->endsAt === null`, then the subscription is definitely active. OR,
+`$this->endsAt` is greather than right now, `new \DateTime()`, meaning the subscription
+is canceled, but is ending in the future.
 
-If a user does not have any type of active subscription, we'll just say "none," like we did before. I'll copy just the first part of that if statement, and I'll keep going down here. Of course, in the next billing period, should only show if the user has an active subscription. They may have a subscription object, but it may be canceled, and if it's canceled, we don't want to show the next billing period.
+The second method we need is `public function isCanceled()`, meaning: if the subscription
+is active, has the user actually canceled it or not? This will simply be,
+`return $this->endsAt !== null`.
 
-Finally, same thing down here with credit card. It might just be confusing if we have the user's credit card information stored in the database, but they don't have an active subscription, so let's just surround that with the same if statement.
+Oh man, our setup is getting fancy! Let's get even fancier with one more helper
+method, this time in `User`. Add a new `public function hasActiveSubscription()`.
+A `User` has an active subscription if they have a subscription object related to
+them and that subscription object `isActive()`. That'll save us some typing whenever
+we need to check whether or not a user has an active subscription.
 
-We had a lot of new data to use in the database. When we refresh, it's perfect. You can see the "to do, add, reactivate" button here, canceled subscription, and actually, the only problem is, the next billing at and credit card should not be showing. ... Ah, that makes sense, because we need to actually add a little bit more logic here. ... Ah, and that makes sense, because the active subscription checks if it's active, even if it's canceled, so let's actually, in user, make a new method here, called "Public function has active non-canceled subscription," and we're going to return this, "Has active subscription and and not this arrow get subscription arrow is canceled." We can use this method whenever we need to know that bit of information.
+## Making the Account Template Awesome
 
-Refresh, now we're in good shape. Okay. Now that we've allowed the user to cancel, let's allow them to re-activate if they want to.
+Ok, back to the account template! This time, to be heros!
+
+First, that "Cancel Subscription" button should only be there if the user has an
+active subscription. No problem! Add `if app.user.hasActiveSubscription()`. But even
+here, if the user has already *canceled* their subscription, we don't want to keep
+showing them this button. Add another if: `if app.user.subscription.isCancelled()`,
+then add a little "TODO" to add a re-activate button. If they've cancelled, they
+might remember how cool your service is and want to come back LATER and reactivate!
+In the else, show them the Cancel button"
+
+Finish up the `endif` and the other `endif`. And actually, copy these first two lines:
+we need to re-use them further below. In the section that tells us whether or not
+we have an active subscription, we now have three states:  "active",
+"active but canceled," and "none." Replace the old `if` statement with the two
+that you just copied. If the subscription is canceled, add `label-warning` and say
+"Canceled". Else, we know it's active.
+
+If a user doesn't have any type of active subscription, keep the "none" from before.
+
+Finally, copy *just* the first `if` statement and scroll down to "Next Billing at".
+We should *only* show the next billing period if the user has an *active* subscription,
+not just if they have a related subscription object, because it could be canceled.
+Paste the `if` statement over this one.
+
+Finally, do the same thing down below for the credit card: I don't want to confuse
+someone by showing them credit card information when they don't have a subscription.
+
+Phew! Ok, refresh! It's beautiful! There's our todo for the reactivate button and
+the subscription is canceled. But wait! We don't want the "Next Billing at" and
+credit card information to show up.
+
+Ah, that's my bad! The `hasActiveSubscription()` returns true *even* if the user
+already cancelled it. Open `User`: let's add one more method: 
+`public function hasActiveNonCanceledSubscription()`. Inside,
+`return $this->hasActiveSubscription() && !$this->getSubscription()->isCancelled()`.
+Use this method in both places in the Twig template.
+
+Refresh once more! We got it!
+
+But now that the user can cancel, let's make it possible for them to *reactivate*
+the subscription. It's actually an easy win.

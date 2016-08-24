@@ -26,10 +26,10 @@ the `User` object are empty now, so let's fix that!
 ## The Card Details on the Stripe Customer
 
 Head to the Stripe API docs and click on Customers. The card information is attached
-to the user under a field called `sources`. Yes, `sources` with an `s` at the end
+to the customer under a field called `sources`. Yes, `sources` with an `s` at the end
 because you *could* attach *multiple* cards to a customer if you wanted. But we're
-not: on checkout, we set just *one* card on the user, and replace any existing card,
-if there was one.
+not: on checkout, we set just *one* card on the customer, and replace any existing
+card, if there was one.
 
 In other words, `sources` will always have just one entry. That one entry will have
 a `data` key, and *that* will describe the card: giving us all the info you see
