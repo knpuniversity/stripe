@@ -39,11 +39,11 @@ enough... yet.
 Open `account.html.twig`. Hmm, I need an easy way to know whether or not a subscription
 is active, and if it *is* active, whether or not it's in this canceled state.
 
-To help with this, let's create two methods inside the `Subscription` object.
+To help with this, let's create two methods inside the `Subscription` class.
 First, `public function isActive()`. Meaning: does the user still have an active
 subscription, even if it will cancel at the month's end? So, if
 `$this->endsAt === null`, then the subscription is definitely active. OR,
-`$this->endsAt` is greather than right now, `new \DateTime()`, meaning the subscription
+`$this->endsAt` is greater than right now, `new \DateTime()`, meaning the subscription
 is canceled, but is ending in the future.
 
 The second method we need is `public function isCanceled()`, meaning: if the subscription
@@ -66,7 +66,7 @@ here, if the user has already *canceled* their subscription, we don't want to ke
 showing them this button. Add another if: `if app.user.subscription.isCancelled()`,
 then add a little "TODO" to add a re-activate button. If they've cancelled, they
 might remember how cool your service is and want to come back LATER and reactivate!
-In the else, show them the Cancel button"
+In the else, show them the Cancel button.
 
 Finish up the `endif` and the other `endif`. And actually, copy these first two lines:
 we need to re-use them further below. In the section that tells us whether or not
@@ -95,7 +95,7 @@ already cancelled it. Open `User`: let's add one more method:
 `return $this->hasActiveSubscription() && !$this->getSubscription()->isCancelled()`.
 Use this method in both places in the Twig template.
 
-Refresh once more! We got it!
+Refresh one more time! We got it!
 
 But now that the user can cancel, let's make it possible for them to *reactivate*
 the subscription. It's actually an easy win.

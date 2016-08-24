@@ -1,25 +1,89 @@
-# Cancelation Edge Case Bugs
+# Cancelation Edge-Case Bugs
 
-As easy as cancelling and reactivating seems, there are 2 minor edge cases which have caused us problems in the past, that I want to get fixed right now. First, go to the Stripe API docs, and go down to subscription. You'll notice that one of the fields here is called status, which is a number of different values. The most important ones for us are active, past due, which means it's still in an active state, but we're having problems charging their card, and cancel. We're going to talk a lot more about what happens when we have problems charging on renewals in a little bit.
+I hope you now think that canceling and reactivating feels pretty easy! Well, it is!
+Except for 2 minor, edge-case bugs that have caused us problems in the past.
+Let's fix them now.
 
-I was going to say, Max stepped out, [inaudible 00:00:47] upstairs. [inaudible 00:00:49] around like [inaudible 00:00:51] the toilet, and the toilet's [inaudible 00:00:52] in there. In case you wanted to look.
+## Problem 1: Canceling Past Due Accounts
 
-[inaudible 00:00:54] I don't have time for this. Here's problem number 1. When Stripe tries to renew a subscription and charge the user's credit card, that might fail. Here's the first problem. As soon as Stripe is ready to charge your user for a renewal, it creates an invoice. Then, Stripe tries to charge that invoice. If it fails, it tries a few more times before it finally cancels the subscription. We'll talk more about that later.
+First, go to the Stripe API docs and go down to subscription. You'll notice
+that one of the fields is called `status`, which has a number of different
+values. The most important ones for us are `active`, `past_due`, which means it's
+still in an active state, but we're having problems charging their card, and
+`canceled`.
 
-Here's the problem. At the end of the month, Stripe will try to charge your user for the renewal. To do that, it will create an invoice and then charge that invoice. If, for some reason, the user's credit card can't be charged, the invoice remains created and Stripe will try to charge that invoice a few more times. That's something we'll talk about a lot more in a few minutes.
+Here's problem number 1: at the end of the month, Stripe will try to charge your
+user for the renewal. To do that, it will create an invoice and then charge
+that invoice. If, for some reason, the user's credit card can't be charged, the
+invoice remains created and Stripe will try to charge that invoice a few more
+times. That's something we'll talk a lot more about in a few minutes.
 
-Here's the problem. If the invoice has been created, and we're having problems charging the user's credit card, and then the user goes to our site and cancels, since we're cancelling at the period end, the invoice won't actually get deleted and Stripe will continue to try to charge that invoice a few more times, even though your user has said they want to cancel. The way to fix that is to fully cancel the user's subscription, which will close the invoice instead of cancelling it at period end, like we have been so far.
+Now, imagine that the invoice has been created and we're having problems charging
+the user's credit card. Then, the user goes to our site and cancels. Since we're
+cancelling "at period end", the invoice in Stripe won't be deleted, and Stripe will
+continue to try to charge that invoice a few more times. In other words, we will
+attempt to charge a user's credit card, after they cancel! Not cool!
 
-The second edge case is very, very similar. It deals with web hooks, which we're going to talk about in a second. At the end of the month, one hour before ... In this case, we need to fully cancel the user's subscription. Here's how we're going to do it. First, set a variable called cancel at period end to true, and down below we will cancel at period end. Now, if the subscription status equals past due, then it means that that invoice has been created and we're having problems charging it.
+To fix this, we need to *fully* cancel the user's subscription. That will close the
+invoice and stop future payment attempts on it.
 
-This means that we need to say cancel at period end equals false. When we do that, we will cancel the subscription immediately and that will close the invoice and not charge the user anymore. Now there's one other, small case where this exact same problem happens. At the end of the month, one hour before we need to charge the user, Stripe creates the invoice. It then waits one hour, and then tries to charge the user. Within that one hour, if your user cancels their subscription, then we also need to close that invoice. Else, the user will get charged even though they've canceled their subscription.
+## Squashing the Bug: Fully Cancel
 
-This one's even trickier, because we basically need to see if the user is in that one hour window. Their subscription status is not past due yet, because we haven't actually tried to charge them. To figure that out, create a new variable called current period end, and set that to a new date-time, then AT symbol, set to sub, arrow, subscription, arrow, current period end. What we're doing is we're reading the current period end date, which is a time stamp, and then turning that into a date-time object.
+In `StripeClient::cancelSubscription()`, it's time to squash this bug. First, create
+a new variable called `$cancelAtPeriodEnd` and set it to `true`. Then, down below, set
+the `at_period_end` option to this variable.
 
-We're doing that so we can say else if current period end is less than new date-time plus one hour, then this means that we're probably in that window, and we should cancel at period end equals false. An easy way of thinking of this is, if they're pretty close to the end of their period, they probably want to fully cancel, and so we'll just be careful.
+Now, here's the trick: if `$subscription->status == 'past_due'`, then it means that
+the invoice *has* been created and we're having problems charging it. In this case,
+set `$cancelAtPeriodEnd` to false. This will cause the subscription to cancel immediately
+and close that invoice!
 
-The reasons behind that are pretty subtle, but it's a pretty easy fix. The only other complication is it means that when the user clicks the cancel subscription button, we might be cancelling their subscription fully, immediately, so we need to update our database to reflect that. To make that happen, first return the Stripe subscription from the cancel subscription method, and then, the profile controller, we can say, Stripe subscription equals, when we call cancel subscription.
+## Problem 2: Canceling within 1 Hour of Renewal
 
-Then we can use that status field to know whether or not the subscription has actually been cancelled, or whether or not it's active. In other words, if Stripe subscription arrow status equals cancelled, then we know we just fully cancelled the user's subscription, else, we're cancelling at the period end so we'll just call deactivate. For fully cancelling it, let's go into the subscription class, and add a new public function called cancel. Here we want to set this ends at to right now, and set the billing period to null. The profile controller, call the subscription, arrow, cancel. That should take care of it.
+but there's one other, weirder, but similar problem. At the end of the month, one
+hour before charging the user, Stripe creates the invoice. It then waits one hour,
+and tries to charge the user for the first time. So, if your user cancels *within*
+that hour, then we also need to fully cancel that subscription to prevent its invoice
+from being paid.
 
-This is actually quite a bit harder to test. You can temporarily change your code to try to trigger this line. For now, we're just going to make sure that we didn't break anything. By making sure, we're going to hit cancel, perfect, and reactivate. That's why handling subscriptions is hard.
+This is a little trickier: we basically need to see if the user is canceling within
+that one hour window. To figure that out, create a new variable called `$currentPeriodEnd`
+and set that to a `\new DateTime()` with the `@` symbol and
+`$subscription->current_period_end`. This converts that timestamp into a `\DateTime`
+object.
+
+Now, if `$currentPeriodEnd < new \DateTime('+1 hour')`, then this means that we're
+probably in that window and should set `$cancelAtPeriodEnd = false`. An easy way
+of thinking of this is, if the user is *pretty* close to the end of their period,
+then canceling now versus at period end, is almost the same. So, we'll just be careful.
+
+But for this to work, your server's timezone needs to be set to UTC, which is the
+timezone used by the timestamps sent back from Stripe. If you're not sure, you could
+give yourself some more breathing room, but fully-canceling anyone's subscription
+that is within one day of the period end.
+
+## Fully Canceling in the Database
+
+These fixes created a *new* problem! Now, when the user clicks the "Cancel Subscription"
+button, we *might* be cancelling the subscription *right* now, and we need to update
+the database to reflect that. 
+
+To do that, first return the `$stripeSubscription` from the `cancelSubscription()`
+method. Then, in `ProfileController`, add `$stripeSubscription =` before the
+`cancelSubscription()` call.
+
+Finally, we can use the `status` field to know whether or not the subscription has
+truly been canceled, or if it's still active until the period end. In other words,
+if `$stripeSubscription->status == 'canceled'`, then the subscription is done! Else,
+we're canceling at period end and should just call `deactivate()`.
+
+To handle full cancelation, open up `Subscription` and add a new public function
+called `cancel()`. Here, set `$this->endsAt` to right now, to guarantee that it will
+look canceled, and `$this->billingPeriod = null`.
+
+In `ProfileController`, call it: `$subscription->cancel()`. And we are done!
+
+Now, testing this is a bit difficult. So let's just make sure we didn't break anything
+major by hitting cancel. Perfect! And we can reactivate.
+
+And *this* is why subscriptions are hard.
