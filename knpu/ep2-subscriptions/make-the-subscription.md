@@ -59,7 +59,7 @@ an Invoice, Stripe automatically attaches all existing InvoiceItems that haven't
 been paid yet to that Invoice.
 
 So, if the user has a Subscription, then an Invoice will be created when we call
-`createSubscriptionPlan()`. And *that* invoice will contain any InvoiceItems for
+`createSubscription()`. And *that* invoice will contain any InvoiceItems for
 individual products that are also in the cart. If you try to create *another* invoice
 below, it'll be empty... and you'll actually get an error.
 

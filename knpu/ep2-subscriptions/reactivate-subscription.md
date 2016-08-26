@@ -76,7 +76,7 @@ the user originally buys a new subscription.
 
 But we can could also call this after reactivating. In reality, this method simply
 ensures that the Subscription row in the table is up-to-date with the latest `stripePlanId`,
-`stripeSubscriptoinId`, `periodEnd` and `endsAt`.
+`stripeSubscriptionId`, `periodEnd` and `endsAt`.
 
 These last two are the most important: because they changed when we deactivated
 the subscription. So by calling `activateSubscription()`, all of that will be reversed,

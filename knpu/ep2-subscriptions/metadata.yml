@@ -59,10 +59,19 @@ chapters:
     cancelation-edge-case-bugs:
         is_finished: false
         video_key: ~
-    update-credit-card:
+    update-card-form:
+        is_finished: false
+        video_key: ~
+    update-card-processing:
+        is_finished: false
+        video_key: ~
+    card-update-failure:
         is_finished: false
         video_key: ~
     stripe-events-webhook:
+        is_finished: false
+        video_key: ~
+    webhook-endpoint-setup:
         is_finished: false
         video_key: ~
     subscription-canceled-webhook:

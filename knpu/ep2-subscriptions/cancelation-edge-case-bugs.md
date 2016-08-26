@@ -20,7 +20,7 @@ times. That's something we'll talk a lot more about in a few minutes.
 
 Now, imagine that the invoice has been created and we're having problems charging
 the user's credit card. Then, the user goes to our site and cancels. Since we're
-cancelling "at period end", the invoice in Stripe won't be deleted, and Stripe will
+canceling "at period end", the invoice in Stripe won't be deleted, and Stripe will
 continue to try to charge that invoice a few more times. In other words, we will
 attempt to charge a user's credit card, after they cancel! Not cool!
 
@@ -40,7 +40,7 @@ and close that invoice!
 
 ## Problem 2: Canceling within 1 Hour of Renewal
 
-but there's one other, weirder, but similar problem. At the end of the month, one
+But there's one other, weirder, but similar problem. At the end of the month, one
 hour before charging the user, Stripe creates the invoice. It then waits one hour,
 and tries to charge the user for the first time. So, if your user cancels *within*
 that hour, then we also need to fully cancel that subscription to prevent its invoice
@@ -65,7 +65,7 @@ that is within one day of the period end.
 ## Fully Canceling in the Database
 
 These fixes created a *new* problem! Now, when the user clicks the "Cancel Subscription"
-button, we *might* be cancelling the subscription *right* now, and we need to update
+button, we *might* be canceling the subscription *right* now, and we need to update
 the database to reflect that. 
 
 To do that, first return the `$stripeSubscription` from the `cancelSubscription()`
@@ -79,7 +79,7 @@ we're canceling at period end and should just call `deactivate()`.
 
 To handle full cancelation, open up `Subscription` and add a new public function
 called `cancel()`. Here, set `$this->endsAt` to right now, to guarantee that it will
-look canceled, and `$this->billingPeriod = null`.
+look canceled, and `$this->billingPeriodEndsAt = null`.
 
 In `ProfileController`, call it: `$subscription->cancel()`. And we are done!
 
