@@ -33,7 +33,7 @@ At the top of the file, override the block called `javascripts`, and call `endbl
 Inside, call the `parent()` function. In this project, any JS we put here will
 be included on the page.
 
-Add a script tag and a very simple `document.ready()` blovk. Inside of that, find
+Add a script tag and a very simple `document.ready()` block. Inside of that, find
 the `.js-open-credit-card-form` element and on `click`, create a callback function.
 Start with the normal `e.preventDefault()`. Now, find the other wrapper element, which
 is `js-update-card-wrapper`. Call `slideToggle()` on that to show/hide it.
@@ -46,7 +46,7 @@ Well, maybe we should see if it works first. Refresh! Ah, it doesn't! Huge error
 
 Hmm, checkout that template. Ah yes, on the checkout page, after we submit, if there
 was an error, we set this variable and render it here. For now, we don't have any
-errors. In `account.html.twig`, we could pass an `error` variable to `include()`
+errors. In `account.html.twig`, we could pass an `error` variable to the `include()`
 call. But, we could also do it in `ProfileController::accountAction()`. Add `error`
 set to `null`.
 
@@ -88,7 +88,7 @@ block.
 
 Ok, refresh and hope for the best! Ah, another missing variable: `stripePublicKey`.
 We're printing this in the middle of our JS. And the variable comes from `OrderController`.
-Copy that line, open `ProfileController`, and past it there.
+Copy that line, open `ProfileController`, and paste it there.
 
 Now the page works! *And* - at the very least - the JS formatting is rocking.
 

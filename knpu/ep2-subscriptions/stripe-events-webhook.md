@@ -19,53 +19,53 @@ when we added a new card, there was an event whose `type` field is set to
 *types* of events for the many things that can happen.
 
 In fact, switch over to Stripe's API docs. Event is so important that it's an *object*
-in their API: you can list and fetch them. Click [Types of events](https://stripe.com/docs/api#event_types).
+in the API: you can list and fetch them. Click [Types of events](https://stripe.com/docs/api#event_types).
 Awesome! A big, giant, long list of all the different event types so you can figure
-out what an event means.
+out what each event means.
 
 ## What Happens when we Can't Charge a User?
 
 Out of this list, there are just a few types that you'll need to worry about. The
 first is the event type that occurs when the customer's subscription is canceled
-because we can't charge their card for renewal.
+when Stripe can't charge their card for renewal.
 
-So, what *actually* happens when we can't charge a card? Go back to the Stripe Dashboard
-and go to "Account Settings", and then "Subscriptions". This page is *really* important:
-it determines *exactly* what happens when a card can't be charged. By default, Stripe
-will attempt to charge the card once, then try again 3, 5 and 7 days later. If
-we *still* can't charge the card, it will finally cancel the subscription. You can
-tweak the timing if you want, but the story is always this: Stripe tries to charge
-a few times, then cancels the subscription.
+So, what *actually* happens when Stripe can't charge a card? Go back to the Stripe
+Dashboard and go to "Account Settings", and then "Subscriptions". This screen is *really*
+important: it determines *exactly* what happens when a card can't be charged. By
+default, Stripe will attempt to charge the card once, then try again 3, 5 and 7 days
+later. If it *still* can't charge the card, it will finally cancel the subscription.
+You can tweak the timing, but the story is always this: Stripe tries to charge
+a few times, then eventually cancels the subscription.
 
 ## Hello Webhooks & requestb.in
 
 When this happens, we need Stripe to tell us that the subscription was canceled.
 And we'll do this via a webhook. It's pretty simple: we configure a webhook URL
 to our site in Stripe. Then, whenever certain event *types* happen, Stripe will
-send a request to that URL that contains the *event* object as JSON. So if Stripe
-sent us a webhook whenever a subscription were canceled, we would be in business!
+send a request to our URL that contains the *event* object as JSON. So if Stripe
+sent us a webhook whenever a subscription was canceled, we would be in business!
 
-A really nice way to test out webhook is by using a site called http://requestb.in.
+A really nice way to test out webhooks is by using a site called http://requestb.in.
 Click "Create a RequestBin". Ok, real simple: this page will record and display
 any requests made to this temporary URL. 
 
 Back on our dashboard, add a webhook and paste the URL. Put it in test mode, so
-that we receive only receive events from the "test" environment. Next, click
-"Select events". Instead of receiving *all* events types, let's just choose the
-few we want. For now, that's just `customer.subscription.deleted`.
+that we only receive events from the "test" environment. Next, click "Select events".
+Instead of receiving *all* events types, let's just choose the few we want. For now,
+that's just `customer.subscription.deleted`.
 
 Yep, this is the event that happens when a subscription is cancelled, for any reason,
 including when a user's card couldn't be charged.
 
 Create that webhook! Ok, let's see what a test webhook looks like. Click
-"Send test webhook" and change the event to `customer.subscription.deleted`. Ok,
+"Send test webhook" and change the event to `customer.subscription.deleted`. Now,
 send that webhook!
 
-Now, refresh the RequestBin page. So cool! This shows us the raw JSON request body
-that was just sent to us. These events are just objects in Stripe's API, like Customer,
+Refresh the RequestBin page. So cool! This shows us the raw JSON request body that
+was just sent to us. These events are just objects in Stripe's API, like Customer,
 Subscription or anything else. But if you configure a webhook, then Stripe will send
 that event to *us*, instead of us needing to fetch it from them.
 
-Here's our next goal: setup a route and controller on our site that's capable of
+Here's the next goal: setup a route and controller on our site that's capable of
 handling webhooks and doing different things in our system when different events
-happen.
+types happen.

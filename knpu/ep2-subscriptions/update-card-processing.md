@@ -47,7 +47,7 @@ care of things inside Stripe.
 ## Updating cardLast4 and cardBrand
 
 Now, what about our database? Do we store any information about the credit card?
-Actually, we do!. In the `User` class, we store `cardLast4` and `cardBrand`. With
+Actually, we do! In the `User` class, we store `cardLast4` and `cardBrand`. With
 the new card, this stuff probably changed!
 
 But wait, we've got this handled too guys! Open `SubscriptionHelper` and check out
@@ -56,7 +56,7 @@ and it'll make sure those fields are set.
 
 In `ProfileController`, call this: `$this->get('subscription_helper')->updateCardDetails()`
 passing `$user` and `$stripeCustomer`... which doesn't exist yet. Fortunately,
-`updateCustomerCard()` returns tat, so create that variable on that line.
+`updateCustomerCard()` returns that, so create that variable on that line.
 
 That's it! Add a success message so that everyone feels happy and joyful, and redirect
 back to the profile page.
