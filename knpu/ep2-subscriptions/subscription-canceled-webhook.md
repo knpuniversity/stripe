@@ -5,31 +5,36 @@ a switch-case statement: `switch ($stripeEvent->type)`. That's the field that'll
 hold one of those *many* event types we saw earlier.
 
 The *first* type we'll handle is `customer.subscription.deleted`. We'll fill in the
-logic here in a second. Add the break. 
+logic here in a second. Add the `break`. 
 
-We shouldn't receive *any* other event type, but if we do, throw an Exception:
-"Unexpected webhook from Stripe" and pass the type.
+We shouldn't receive *any* other event type because of how we configured the webhook,
+but just in case, throw an Exception: "Unexpected webhook from Stripe" and pass the
+type.
 
-At the bottom, well, we can return *anything* we want. How about a nice message:
-"Event Handled" and then the type. The important thing is to return a 200 status.
-If you return a *non* 200 status code, Stripe will think it failed and will try to
-send it again, over and over again. But 200 means "yo Stripe, it's cool - I heard
-you, I handled it".
+At the bottom, well, we can return *anything* back to Stripe. How about a nice message:
+"Event Handled" and then the type. Well, there is *one* important piece: you *must*
+return a 200-level status code. If you return a *non* 200 status code, Stripe will
+think the webhook failed and will try to send it again, over and over again. But 200
+means:
+
+> Yo Stripe, it's cool - I heard you, I handled it.
 
 ## Quick! Cancel the Subscription!
 
-Ok, let's cancel a subscription! First, we need to find the Subscription in our database.
-And check this out: the subscription id lives at `data.object.id`. That's because
-*this* type of event embeds the subscription in question. Add
-`$stripeSubscriptionId = $stripeEvent->data->object->id`.
+Alright, let's cancel the subscription! First, we need to find the Subscription in
+our database. And check this out: the subscription id lives at `data.object.id`.
+That's because *this* type of event embeds the subscription in question. *Other*
+event types will embed *different* data.
 
-Next, our subscription table has a `stripeSubscriptionId` field on it. Let's query
-to find it! Because I already know I'll want to re-use this, I'll put the logic into
-a private function. On this line, call that future function with
+Add `$stripeSubscriptionId = $stripeEvent->data->object->id`.
+
+Next, the subscription table has a `stripeSubscriptionId` field on it. Let's query
+on this! Because I already know I'll want to re-use this next code, I'll put the
+logic into a private function. On this line, call that future function with
 `$subscription = $this->findSubscription()` and pass it `$stripeSubscriptionId`.
 
-Scroll down and create this: `private function findSubscription()` with a `$stripeSubscriptionId`
-argument. Query for the subscription with
+Scroll down and create this: `private function findSubscription()` with its `$stripeSubscriptionId`
+argument. Query for by adding
 `$subscription = $this->getDoctrine()->getRepository('AppBundle:Subscription')`
 and then `findOneBy()` passing this an array with one item: `stripeSubscriptionId` -
 the field name to query on - set to `$stripeSubscriptionId`.
@@ -48,7 +53,7 @@ the database.
 
 Mind blown!
 
-Back in the controller, let's call this! Above the switch statement, add a `$subscriptionHelper`
+Back in the controller, call this! Above the switch statement, add a `$subscriptionHelper`
 variable set to `$this->get('subscription_helper')`. Finally, call
 `$subscriptionHelper->fullyCancelSubscription($subscription)`. And that is it!
 
@@ -56,7 +61,7 @@ Yep, there's some setup to get the webhook controller started, but now we're in
 really good shape.
 
 Of course... we have no way to test this... So, ya know, just make sure you do a
-*really* good job of coding and hope for the best! I'm kidding, I'll show you a few
-ways to test next. But also, don't forget to configure your webhook URL in Stripe
-once you finally deploy this to beta and production. I have a webhook setup for
-each instance.
+*really* good job of coding and hope for the best! No, that's crazy!, I'll show you
+a few ways to test this next. But also, don't forget to configure your webhook URL
+in Stripe once you finally deploy this to beta and production. I have a webhook
+setup for each instance.
