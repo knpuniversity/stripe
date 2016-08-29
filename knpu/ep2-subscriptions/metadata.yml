@@ -33,7 +33,7 @@ chapters:
     add-plan-to-cart:
         is_finished: false
         video_key: ~
-    make-the-subcription:
+    make-the-subscription:
         is_finished: false
         video_key: ~
     user-has-subscription:
