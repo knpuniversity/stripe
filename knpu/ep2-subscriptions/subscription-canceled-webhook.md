@@ -7,7 +7,7 @@ hold one of those *many* event types we saw earlier.
 The *first* type we'll handle is `customer.subscription.deleted`. We'll fill in the
 logic here in a second. Add the `break`. 
 
-We shouldn't receive *any* other event type because of how we configured the webhook,
+We shouldn't receive *any* other event types because of how we configured the webhook,
 but just in case, throw an Exception: "Unexpected webhook from Stripe" and pass the
 type.
 
@@ -34,12 +34,12 @@ logic into a private function. On this line, call that future function with
 `$subscription = $this->findSubscription()` and pass it `$stripeSubscriptionId`.
 
 Scroll down and create this: `private function findSubscription()` with its `$stripeSubscriptionId`
-argument. Query for by adding
+argument. Query by adding
 `$subscription = $this->getDoctrine()->getRepository('AppBundle:Subscription')`
 and then `findOneBy()` passing this an array with one item: `stripeSubscriptionId` -
 the field name to query on - set to `$stripeSubscriptionId`.
 
-If there is *no* matching Subscrpition... well, that shouldn't happen! But just in
+If there is *no* matching Subscription... well, that shouldn't happen! But just in
 case, throw a new Exception with a really confused message. Something is not right.
 
 Finally, return the `$subscription` on the bottom.
@@ -64,4 +64,4 @@ Of course... we have no way to test this... So, ya know, just make sure you do a
 *really* good job of coding and hope for the best! No, that's crazy!, I'll show you
 a few ways to test this next. But also, don't forget to configure your webhook URL
 in Stripe once you finally deploy this to beta and production. I have a webhook
-setup for each instance.
+setup for each instance on KnpU.

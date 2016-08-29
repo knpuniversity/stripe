@@ -23,10 +23,8 @@ summary: |
 illustration: stripe2.png
 
 tuts_hero:
-    # todo - fill these inn
-    # start_step: start
-    # finish_step: errors-handling-card-error
-    finish_step: start
+    start_step: subscription-prep-user-entity-changes
+    finish_step: invoice-render-single-invoice
 
 chapters:
     creating-plans:

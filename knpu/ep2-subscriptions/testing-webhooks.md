@@ -25,14 +25,14 @@ This is a special directory I created and you should have it if you downloaded t
 start code from this page. It has a few things to make our life easier.
 
 Copy the `WebhookControllerTest.php` file and put it into the `tests/AppBundle/Controller`
-directory. Let's check this out: this is the *start* of a testing that's specifically
+directory. Let's check this out: this is the *start* of a test that's specifically
 written for Symfony. If you're not using Symfony, the code will look different, but
 the idea is fundamentally the same.
 
 ## Testing Strategy
 
 This test boots Symfony's kernel so that we have access to its container, and all
-the useful object inside, like the entity manager! I also added a private function
+the useful objects inside, like the entity manager! I also added a private function
 called `createSubscription()`. We're not using this yet, but by calling it, it will
 create a new user in the database, give that user an active subscription, and save
 everything. This won't be a *real* subscription in Stripe - it'll just live in our
