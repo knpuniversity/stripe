@@ -20,7 +20,7 @@ when we added a new card, there was an event whose `type` field is set to
 
 In fact, switch over to Stripe's API docs. Event is so important that it's an *object*
 in the API: you can list and fetch them. Click [Types of events](https://stripe.com/docs/api#event_types).
-Awesome! A big, giant, long list of all the different event types so you can figure
+Awesome! A big, giant, beautiful list of all the different event types so you can figure
 out what each event means.
 
 ## What Happens when we Can't Charge a User?
@@ -51,7 +51,7 @@ any requests made to this temporary URL.
 
 Back on our dashboard, add a webhook and paste the URL. Put it in test mode, so
 that we only receive events from the "test" environment. Next, click "Select events".
-Instead of receiving *all* events types, let's just choose the few we want. For now,
+Instead of receiving *all* event types, let's just choose the few we want. For now,
 that's just `customer.subscription.deleted`.
 
 Yep, this is the event that happens when a subscription is cancelled, for any reason,
@@ -67,5 +67,5 @@ Subscription or anything else. But if you configure a webhook, then Stripe will 
 that event to *us*, instead of us needing to fetch it from them.
 
 Here's the next goal: setup a route and controller on our site that's capable of
-handling webhooks and doing different things in our system when different events
+handling webhooks and doing different things in our system when different event
 types happen.

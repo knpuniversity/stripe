@@ -1,4 +1,4 @@
-# Data: Card Last 4 Digits & Billing Period
+# Data: Card Last 4 Digits
 
 Unless I cancel my subscription... which I can't actually do yet - we'll add that
 soon - in 1 month, Stripe will renew my subscription by automatically charging the

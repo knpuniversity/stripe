@@ -32,7 +32,7 @@ number. This time, no 500 error! Just this sad, but useful message.
 
 With the ability to subscribe, cancel and update their credit card info, our subscription
 system is up-and-running! Now it's time to face our *last* big, *required* topic:
-web hooks. How can we email a user if we're having problems charging their card?
+webhooks. How can we email a user if we're having problems charging their card?
 How would we know when Stripe cancel's a customer's subscription due to payment failure?
 And how can we email a receipt each month when a subscription renews?
 

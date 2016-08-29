@@ -30,6 +30,14 @@ row in this table, associate it with the user, and set some data on it. This wil
 ultimately let *us* quickly determine if a user has an active subscription and to
 which plan.
 
+## Subscription and User Entities
+
+The new subscription table is modeled in our code with a `Subscription` entity class.
+It has properties for all the columns you just saw. And in the `User` class, for
+convenience, I added a `subscription` property shortcut. With this, if you have a
+`User` object and call `getSubscription()` on it, you'll get the `Subscription` object
+that's associated with this `User`, if there is one.
+
 ## Prepping the Account Page
 
 And that's cool because we'll be able to fill in this fancy account page I created!
