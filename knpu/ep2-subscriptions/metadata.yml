@@ -28,23 +28,21 @@ tuts_hero:
 
 chapters:
     creating-plans:
-        is_finished: false
-        video_key: ~
+        is_free:   true
+        video_key: 180641715
     add-plan-to-cart:
-        is_finished: false
-        video_key: ~
+        is_free:   true
+        video_key: 180643039
     make-the-subscription:
-        is_finished: false
-        video_key: ~
+        is_free:   true
+        video_key: 180644777
     user-has-subscription:
-        is_finished: false
-        video_key: ~
+        is_free:   true
+        video_key: 180647158
     card-last4:
-        is_finished: false
-        video_key: ~
+        video_key: 180648342
     billing-periods-ends-at:
-        is_finished: false
-        video_key: ~
+        video_key: 180661092
     canceling-stripe-subscription:
         is_finished: false
         video_key: ~
