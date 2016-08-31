@@ -81,7 +81,7 @@ files and server. Finally, for the `$content` argument - the *body* of the reque
 pass it `$eventJson`.
 
 And because things almost never work for me on the first try... and because I *know*
-this won't work yet, let's `dump($client->getResponse()->getContent()` to see what
+this won't work yet, let's `dump($client->getResponse()->getContent())` to see what
 happened in case there's an error. Also add a sanity check, `$this->assertEquals()`
 that 200 matches `$client->getResponse()->getStatusCode()`.
 

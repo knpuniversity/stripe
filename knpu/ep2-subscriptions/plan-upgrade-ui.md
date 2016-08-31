@@ -1,21 +1,73 @@
-# Plan Upgrade UI
+# Upgrading Subscription Plans: The UI
 
-So let's talk about something else a little happier. I want to talk about upgrading your subscription. Right now, if I already have for example, the Farmer Brent maybe I want to upgrade to the New Zealander. Fortunately this is kind of complex because you have to think about whether or not you should pro rate certain charges so that if I've had Farmer Brent for part of the month my second half of that month should be credited towards my New Zealander.
+Imagine this: a sheep customer is *so* happy with the Farmer Brent subscription that
+they want to *upgrade* to the New Zealander! Awesome! Amazing! But also... impossible
+currently.
 
-Stripe makes it pretty simple. In fact, they talk about this in their detailed guide section. You might want to read through that as we're going through this.
+Time to fix that. Upgrades like this can be complex, because someone needs to calculate
+how much of the current month has been used and prorate funds towards the upgrade.
+Stripe's documentation talks about this. I'll guide you through everything, but
+this section is worth a read.
 
-First, let's get our interface set up. Right now I check out and in my accounts section I can see that I have a subscription but I can't see which subscription I have. Step one, let's print what subscription the user has on that page. To that, we're going to work inside the account to HDMI template and also inside our profile controller. The first thing we need to do is actually go and figure out which plan the user has if any. Let's set current plan equals null, because they might not have one, and then if this get user has active subscription then we'll set current plan equals this get subscription helper. Arrow find plan. Here you can pass that this arrow get user arrow get subscription arrow get stripe plan ID. As a reminder that find plan method is something that we started with in this project and that's going to return one of these nice subscription plan objects. Just an object that describes which plan the user's on.
+## Printing the Current Plan
 
-Next let's pass this into our template down here. Pass in new variable called current plan. Set to our plan. Then in the account template, which this renders, find a spot that says we have an active subscription. Let's just print out current plan dot name. With any luck, there we have it. We currently have the Farmer Brent.
+Buy a new Farmer Brent Subscription, and then head to the account page. 
 
-Okay, step two. We're going to need to add a button over here that says upgrade subscription and we're going to need to know which plan they're upgrading to. If they're on the Farmer Brent we want to allow them to go up to New Zealander. If they're on the New Zealander we might want to have them down grade to the Farmer Brent.
+Let's focus on the plan upgrade user interface first. Here, I need to see *which*
+plan I'm currently subscribed to and a button to upgrade to the other one.
 
-Since we only have two plans we know we can pretty easily figure out which plan is the other plan. In subscription helper, I'm going to make a new pilot function called find plan to change to. I'll take on the current plan ID. In setup here I'm just going to paste in some really simple logic to save us time. Add a little bit of [inaudible 00:03:59] on top. The idea is if there current plan says Farmer Brent then the new plan should be the New Zealander. If they have a New Zealander than the new plan should be Farmer Brent. I'm using STR_replace right here, being a little fancier, because in a second we're actually going to add annual plans. I want this plan to work for our annual plans as well.
+Open up the `account.html.twig` template and `ProfileController`.
 
-The point is this is going to give us the other subscription plan object. That's helpful because in our controller we can create another variable called other plan equals null. Then very similarly we'll say other plan equals this get subscription helper arrow find plan to change to. We'll pass it the current plan arrow get plan ID. Then pass that indoor template as well. Other plan is set to other plan. Our template, after the active button, let's set up a new change button. We'll say button. I'll give it some classes to make it look nice. BTN. We'll pull it right. I'm also giving it a JS class so that we can select this in java script in a second. JS dash change dash plan dash button. With the text change to other plan dot name.
+Add a new variable: `$currentPlan = null`. Then, only *if* `$this->getUser()->hasActiveSubscription()`,
+set `$currentPlan = $this->get('subscription_helper')->findPlan()` passing that
+`$this->getUser()->getSubscription()->getStripePlanId()`.
 
-Now in addition to that I know in my java script I'm also going to need to know which plan they're changing to so I'm going to add a little data dash plan dash name attribute and then just print off other plan dot name.
+The `findPlan()` method will give *us* a fancy `SubscriptionPlan` object.
 
-Go ahead and copy the JS change plan button so we can hook up a little bit of java script. At the top where we have our java script we're going to add another listener on that class. Have it register on click. Then start like we always do with the E dot prevent dot fault. For now we're going to do something really simple. I'm going to use a library I already have installed called sweet alerts. You'll see how it looks in a second. We'll just say loading plan details.
+Pass a new `currentPlan` variable into the template, set to `$currentPlan` and then
+open that template. Find the "Active Subscription" spot, and print `currentPlan.name`.
 
-Let's try that out. Go back, refresh. Perfect. Farmer Brent change to the New Zealander. When we click that there's our sweet alert, loading plan details. Now we need to do a little bit of work. We're going to need to figure out how much we should charge the user to upgrade from the Farmer Brent to the New Zealander. Which is tricky, because they might be already in the middle of the month that they've paid for. That's where Stripe's going to help us out.
+Refresh the page! Great! Step 1 done: we have the "Farmer Brent" plan.
+
+## Adding the Upgrade Button
+
+Now, step two: add an upgrade button that mentions the plan they could switch to.
+Since we only have 2 plans, it's simple: if they're on the Farmer Brent, we want
+to allow them to upgrade to the New Zealander. And if they're on the New Zealander,
+we should let them *downgrade* to the Farmer Brent.
+
+To find the *other* plan, open `SubscriptionHelper` and add a new public function
+called `findPlanToChangeTo` with a `$currentPlanId` argument. I'll paste in the
+logic: it's kind of silly, but it gets the job done. I'm using `str_replace` instead
+of something simpler, because in a few minutes, we're going to add *yearly* plans,
+and I still want this function to... um... function.
+
+Ok, back to the controller! Add another variable: `$otherPlan = null`. Then,
+`$otherPlan = $this->get('subscription_helper')->findPlanToChangeTo()` and pass
+it `$currentPlan->getPlanId()`. Pass this into the template as an `otherPlan` variable.
+
+In the template, after the "Active" label, add a button with some classes: a few
+for styling, one to float right and one - `js-change-plan-button` - that we'll use
+in a minute via JavaScript. Make the text: "Change to" and then `otherPlan.name`.
+
+Oh, and add one more property: `data-plan-name` and print `otherPlan.name`. We'll
+read that attribute in JavaScript.
+
+In fact, let's play with the JavaScript now: copy the `js-change-plan-button` class
+and find the JavaScript at the top of this file. Find that element, then on `click`,
+add a callback and start with the always-in-style `e.preventDefault()`.
+
+Start really simple: let's use a library that I already installed called
+[Sweet Alerts](http://t4t5.github.io/sweetalert/). Call `swal()` and pass a message
+`Loading Plan Details`.
+
+Ok, let's see what this Sweet Alerts thing looks like! Refresh that page! Nice!
+Click the "Change to New Zealander" link. This is sweet alert. It's cute, it's easy,
+and it'll help us do our job. 
+
+Because next, we need to do some serious work: we need to calculate how *much* we
+should charge the user to upgrade from the Farmer Brent to the New Zealander, and
+then show it to the user. That's tricky, because the user is probably in the middle
+of the month that they've already paid for, so they deserve some credits!
+
+Thankfully, Stripe is going to be a *champ* and help us out.

@@ -1,19 +1,116 @@
-# Replay Attacks
+# Webhooks: Preventing Replay Attacks
 
-There's one last tiny detail that you need to worry about with [webhook 00:00:04], and that's something called a Replay Attack. This is both a security concern. It's also a practical concern. We already know that nobody can send us just a random fake event data because we verified with Strike that this is a real event that happened in their system, but somebody could somehow intercepted that webhook from strike, and send it to us multiple times. That can start some weird things in our system if this is sent multiple times, so lots of security concern.
+There's one last teeny, tiny little detail that we need to worry about with webhooks:
+replay attacks. This is both a security concern *and* a practical concern.
 
-There's also a potential, practical concern, and that's if Strike send you a webhook and you process it, but then somehow maybe there's a timeout between Strike and your endpoint, Strike might think that it wasn't completed successfully, and so it might try to send it to you a second time. This could cause things like users getting multiple emails.
+We already know that nobody can send us, random, fake event data because we fetch
+fresh event data from Stripe. But, someone *could* intercept a valid webhook, and
+send it to us multiple times. I don't know why they would do that, but weird things
+would happen.
 
-Soon I'm preventing the Replay attacks. The way to do that is really simple. We're going to create a big table of all of the events that we've handled, and then just look up the event ID in the table before we handle it. Inside the answering directory, we look at PHP class called Strike Event Log. In here I'll create an ID property, a strike event ID property and a handled app date time property.
+And there's also a more practical concern. Suppose Stripe sends us a webhook and
+we process it. But somehow, there was a connection problem between our server and
+Stripe, so Stripe never received our 200 status code. Then, thinking that the webhook
+failed, Stripe tries to send the webhook again. If this were for an `invoice.payment_succeeded`
+event, one user might receive *two* subscription renewal emails. I do *not* like
+that.
 
-I'm going to have the used statement that you always have with document annotations. You can also copy that from one of your other orientation classes, then I'll use a PHP storm shortcut, co-generate, or command and. It's like OEM class, which just adds those annotations up there for me, and then do that again for annotations through that.
+## Creating the stripe_event_log Table
 
-I'll change a Strike event ID to a stream field. It says that unique code holds true, and then daytime is perfect down here. I'm doing getters and setters. I'm going to create a public function construct. Keep this nice and simple. Then we'll set the Strike event ID. Then we'll set that, and we'll also automatically set the handle back to a new daytime, so that that's right now. Perfect. Now that we've created that table of the database, we'll go over on Ben council and doctor and migration Dif, because it was in doctor and migrations in this library. That will generate a new doctor and migration file for us, which just contains ESQL to create this Strike event log table. We can execute that by running doctor migrations migrate, perfect.
+Let's prevent replay attacks. And it's simple: create a database table that records
+all the event id's we've handled. Then, just query that table before processing a
+webhook to make sure we haven't seen it before.
 
-Finally, in our webhook controller, we just need to query to see if that event is already there. I'll get doctors event manager. Then we'll say, existing log equals EM. Get repository, get the event log repository. We'll say, "Find one by." I am looking for a Strike event ID set to dollar sign event ID.
+In the `AppBundle/Entity` directory, create a new PHP Class called `StripeEventLog`.
+Give it a few properties: `$id`, `$stripeEventId` and a `$handledAt` date field.
 
-After using an existing log, and we don't want to handle this. I'm just going to type, "New response says event previously handled." If you want to log a message there so you're notified about that, in case you want to know if this is happening, that's probably a good idea as well.
+Since this project uses Doctrine, I'll add a special `use` statement on top and
+then add some annotations, so that this new class will become a new table in the
+database. Use the Code->Generate menu, or command+N on a Mac and select "ORM Class".
+Then, repeat that and select "ORM Annotation". Choose all the fields.
 
-Now down here we know this is new event, so we just need to create and save the new log entry. New strike event log. We'll pass that. The event ID, and we'll just persist the log and we'll flush just the log, and it's that simple.
+Update `stripeEventId` to be a `string` field - that'll translate to a varchar in
+the database.
 
-Just to make sure we didn't mess anything up, I'm going to go to my webhook controller test. I'm just going to copy this method here and go run vendor bin PHP unit.  filter and past that method, and of course it fails. I know the reason. We need to update our test database, so I'll do that and scheme update dash dash EMV people's test, to add that new table, then we can run vendor bin PHP unit dash dash filter, paste that method in, and it works. If you try it a second time, it's actually going to fail. Fail to serving that true is false. The reason is that it's actually, every event has the same ID in here, so the second time you run a test that's already in the database, so it actually doesn't run it. We need to set a little bit of randomness by adding a percent S on the end and then adding a little MT run here. Every event comes in with a random ID. Now it looks like we're god, and replay attacks are tackled.
+To set the properties, create a new `__construct()` method with a `$stripeEventId`
+argument. Inside, set that on the property and also set `$this->handledAt` to a new
+`\DateTime()` to set this field to "right now".
+
+Brilliant! Now that we have the entity class, find your terminal and run:
+
+```bash
+bin/console doctrine:migrations:diff
+```
+
+This generates a new file in the `app/DoctrineMigrations` directory that contains
+the raw SQL needed to create this new table. Execute that query by running:
+
+```bash
+bin/console doctrine:migrations:migrate
+```
+
+## Preventing the Replay Attack
+
+Finally, in `WebhookController`, start by querying to see if this event has been
+handled before. First, fetch the EntityManager, and then add
+`$existingLog = $em->getRepository('AppBundle:StripeEventLog')` and call
+`findOneBy()` on it to query for `stripeEventId` set to `$eventId`.
+
+If an `$existingLog` exists, then we don't want to handle this. Just return
+`new Response()` that says "Event previously handled". If you want to log a
+message so that you know when this happens, that's not a bad idea.
+
+But if there is *not* existing log, time to process this webhook! Create a new
+`StripeEventLog` and pass it `$eventId`. Then, persist and flush *just* the log.
+
+And yea, replay attacks are gone!
+
+## Update the Test!
+
+To make sure we didn't mess anything up, open `WebhookControllerTest` and copy our
+test method. Run that:
+
+```bash
+vendor/bin/phpunit --filter testStripeCustomerSubscriptionDeleted
+```
+
+Bah! Of course... but for a silly reason: I need to update my *test* database - it's
+different than my normal, development database. A shortcut to do that is:
+
+```bash
+bin/console doctrine:schema:update --force --env=test
+```
+
+Try the test now:
+
+```bash
+vendor/bin/phpunit --filter testStripeCustomerSubscriptionDeleted
+```
+
+It works! So hey, run it again!
+
+```bash
+vendor/bin/phpunit --filter testStripeCustomerSubscriptionDeleted
+```
+
+It fails?!
+
+> Failed to assert that true is false.
+
+Ah, every event in the test has the *same* event id. So when you run the test the
+second time, this already exists in the `StripeEventLog` table and the webhook
+is skipped. Well hey, at least we know that system is working.
+
+To fix this, we need to set a little bit of randomness to the event id by adding
+a` %s` at the end and adding an `mt_rand()` to the `sprintf`.
+
+Now, every event id will be unique. Try the test again:
+
+```bash
+vendor/bin/phpunit --filter testStripeCustomerSubscriptionDeleted
+```
+
+Everything is happy!
+
+Ok, let's move on from webhooks to something fun: allowing our customers to *upgrade*
+from one subscription to another.

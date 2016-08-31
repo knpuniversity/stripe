@@ -76,6 +76,9 @@ chapters:
     testing-webhooks:
         is_finished: false
         video_key: ~
+    testing-webhooks-fake-event:
+        is_finished: false
+        video_key: ~
     subscription-renewal-webhook:
         is_finished: false
         video_key: ~
@@ -89,6 +92,9 @@ chapters:
         is_finished: false
         video_key: ~
     calculate-upgrade-cost:
+        is_finished: false
+        video_key: ~
+    upgrade-upcoming-invoice-process:
         is_finished: false
         video_key: ~
     execute-plan-upgrade:

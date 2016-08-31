@@ -1,27 +1,111 @@
-# Subscription Renewal Webhook
+# Webhook: Email User on Subscription Renewal
 
-There are a lot of different types of web hubs that you can listen to. You probably only need to listen to a few of them. The second one that we need to listen to is called invoice dot payment underscore succeeded. The reason we need to listen to this are two things.
+The second webhook *type* we need to handle is called `invoice.payment_succeeded`.
+This one fires when a subscription is successfully *renewed*. Well, actually,
+it fires whenever *any* invoice is paid, but we'll sort that out later.
 
-First, our subscription has a billing period ends at. Every time we have a new renewal that will trigger an invoice and when that invoice is paid, we need to update the billing period's ends at to the next billing period, the next months from now.
+This webhook is important to us for 2 reasons.
 
-The second reason you might want to have a web hub on this is because you might want to send your user an email to tell them that the payment was successful. Maybe send them an invoice. First, let's update our request bin web hook, to actually get all of the events instead of just the selected events. This is up to you but instead of me needing a click every time I need a new event and keep all of my web hooks with those same ones selected. I'm just going to choose send me all events.
+First, each subscription has a `billingPeriodEndsAt` value that we use to show the
+user when Stripe will charge them next. Obviously, that needs to be updated each month!
 
-When I do that, I'm going to go into my web hook controller. Down here I can't have this exception anymore since that went out via a normal situation. I'm going to say allow. We receive all web hook types. Okay. To see what a invoice payment succeeded looks like let's select our request bin and send that test web hook. Go over here, refresh and the top request is our new invoice payment succeeded.
+Second, when you charge your customer, you should probably send them a nice email
+about it, and maybe even attach a receipt! So let's get this setup.
 
-Let's look at what we need to figure out here. One, we're going to need to figure out and find the subscription that this invoice is for. Now the tricky thing is invoices can happen for two reasons. They can happen just because a user orders some products and there's no subscription or this might be an invoice related to a subscription. Fortunately, the data here covers that. Specifically, there's a subscription field under the data object section. If this is filled in, it will hold the subscription ID and, if there isn't a subscription that this is related to, that will be empty. That will be our way of knowing whether this invoice is attached to a subscription or not.
+## Receive all Webhook Types
 
-Let's go into our web hook controller and we're going to have a second case statement here for invoice dot payment underscore succeeded. I'll add my break and then we'll start filling in the logic. First this is, we need that stretch subscription ID. Stretch subscription ID equals stretch event arrow data arrow object arrow subscription. Now, if there is a stretch subscription, in other words, if this invoice was for a subscription. Then we need to locate that subscription in our database. To do that, we can just reuse our this arrow find subscription help or method that we have at the bottom of this class.
+Right now, Stripe is *not* sending us this webhook type. In the dashboard, update
+the RequestBin webhook and set it to receive *all* webhooks, instead of just the
+few that we select. You don't *need* to do this, but it does make it easier to keep
+your various webhooks - like for the staging and production servers - identical.
 
-Next, at this point we just have the stripe subscription ID. We need to query their API to get the full subscription object, because that object will have the end billing period date current period end. To do that, one of our stripe clients right now we don't have a method yet that can just return us to subscription. We set a new public function find subscription. It will take in a stripe subscription ID. It will return/stripe/subscription call upon and retrieve pass the stripe subscription ID, pretty simple.
+But now we need to do some work in `WebhookController`. In the `default` section
+of the switch-case, we *will* now receive unsupported webhooks, and that's cool!
+Remove that exception.
 
-Then web hook controller we can set that with stripe subscription equals this arrow, get stripe client arrow find subscription. Pass the stripe subscription ID. Now we have our subscription in the database. We have striped subscription which can tell us what they renew and the date is. We see the update our information in the database. To keep things organized, I am going to include this. As you may have guessed inside our subscription helper. It has got a new public function called handle subscription paid. This will take in our subscription objects and also take in the stripe/subscription object so that we can get the data off of that.
+## Inspecting the invoice.payment_succeeded Webhook
 
-First thing we need to do is read off that current period and data. Actually we already did this once before, when we were adding the subscription of the user. I'll do the exact same thing here. I will copy that line and paste it down here. I will actually change that to be called new period end. Next we see on the update date on the subscription ends it this billing period ends. We will call subscription arrow set billing period ends. You notice I am not getting any auto complete because I do not actually have that method yet. We will fix that and pass to the new period end. Then enter at subscription at the bottom I will make sure to set that. I will use the code generate menu or command end go to settings and sure enough there is the billing period end at. I will fix my methods name here .
+Next, every webhook type looks a little different. Head back to the dashboard to
+send a test webhook, this time for the `invoice.payment_succeeded` event type. Hit
+"Send test webhook" then go refresh your RequestBin.
 
-Finally we just need to persist subscription and flush just that subscription to the data base. Perfect, I won't set a test for this I will leave that to you guys. Now whenever that subscription is renewed we should automatically update the billing period ends at.
+Hmm, ok. This time, the embedded object is an invoice. But *we* will need to know
+the Stripe subscription id that this invoice is for. And that's tricky: an invoice
+may *not* actually contain a subscription. If you just buy some products on our site,
+that creates an invoice... but with no subscription.
 
-The second thing your controller we can call subscription helper which we already set earlier. Arrow up, arrow handles subscription paid pass on the subscription pas the stripe subscription and we should be good. The other thing you might want to do in your subscription helper when handling the subscription pay is send the user an email. It should seem pretty easy I will just write here I will send the user an email.
+Fortunately, the `data` key covers this: it has a `subscription` field. This will
+either be blank if there's no subscription or it will hold the subscription id.
+In other words, awesome!
 
-In fact I will let you add the logic for sending the email however you want. There is one catch related to stripe and that is that, this invoice dot payment succeeded web hook is going to trigger for renewals. It is also going to trigger at the moment you check out. If you send a user an email here that says, 'thanks for renewing your subscription'. All your new users are going to get it too, which is not going to be very cool. The way to fix that is to created renewal variable and set that to new period end created then subscription arrow get billing period ends.
+## Handling invoice.payment_succeeded
 
-This is a new subscription in about 2 seconds ago we just set up a subscription object and set the billing period ends at to be a true billing ends at. This is triggering for a new subscription. This new period end is going to match the one in database. If this is a renewal then the one we have in the database will be for last month and the new period end will be for next month and you can use that to figure out if this is a renewal. Now you can confidently send an email only on renewals.
+Go back into `WebhookController` and add a second `case` statement for statement
+for `invoice.payment_succeeded`. Add the `break`, then let's get straight to business.
+First, grab the subscription id with
+`$stripeSubscriptionId = $stripeEvent->data->object->subscription`.
+
+Next, if there *is* a `$stripeSubscriptionId`, then we need to load the corresponding
+`Subscription` from the database. Re-use the `$this->findSubscription()` method from
+earlier to do that.
+
+Remember: the goal is to update this Subscription row to have the *new* `billingPeriodEndsAt`.
+But the event's data doesn't have that date! No problem: if we fetch a fresh, full
+`Subscription` object from Stripe's API, we can use its `current_period_end` field.
+
+Open up `StripeClient` and add a new `public function findSubscription()` with a
+`$stripeSubscriptionId` argument. Make this return
+`\Stripe\Subscription::retrieve($stripeSubscriptionId)`.
+
+Cool! Back in `WebhookController`, add
+`$stripeSubscription = $this->get('stripe_client')->findSubscription()` and pass
+it `$stripeSubscriptionId`.
+
+## Updating the Subscription in the Database
+
+Finally, let's update the Subscription in our database by using the data on the
+Stripe subscription object. As usual, let's put this logic into `SubscriptionHelper`
+so we can reuse it later.
+
+Add a new public function called `handleSubscriptionPaid()` that has two arguments:
+the `Subscription` object that just got paid and the related `\Stripe\Subscription`
+object that holds the updated info.
+
+First, we need to read the `current_period_end` field. But wait! We did this earlier
+in `addSubscriptionToUser()`. Go steal that line! Past it here, but rename the
+variable to `$newPeriodEnd`.
+
+Now, let's set this `billingPeriodEndsAt` field with `$subscription->setBillingPeriodEnds()`.
+But wait! Where's my auto-completion! Oh, that method doesn't exist yet. In `Subscription`,
+I'll use the Code->Generate shortcut to select "Setters" and generate this setter.
+
+Whoops, then update the method in `SubscriptionHelper` to be `setBillingPeriodEndsAt()`.
+
+Finally, let's celebrate! Persist and flush the Subscription changes to the database.
+Back in your controller, call this: `$subscriptionHelper->handleSubscriptionPaid()`
+and pass it `$subscription` and `$stripeSubscription`.
+
+I won't test this - let's call that homework for you - but now whenever a subscription
+is renewed, the `billingPeriodEndsAt` will be updated.
+
+## Sending an Email on Renewal
+
+But there's just *one* other small important thing you'll want to do each time a
+subscription is renewed: send the user an email! Ok, we're not *actually* going
+to code up the email-sending logic - but it would live right here in `SubscriptionHelper`.
+
+But wait! There is one gotcha: the `invoice.payment_succeeded` webhook will be triggered
+when a subscription is renewed... but it will *also* be triggered at the moment that
+the user *originally* buys their subscription. So if you send your user an email
+that says: "thanks for renewing your subscription", then all of your new users will
+be pretty darn surprised.
+
+To fix this, add a new `$isRenewal` variable set to
+`$newPeriodEnd > $subscription->getBillingPeriodEndsAt()`.
+
+If this is a new subscription, then it was completed about 2 seconds ago, and we
+would have already set the `billingPeriodEndsAt` to the correct date. When the webhook
+fires, the dates will already match. But if this is a renewal, the `billingPeriodEndsAt`
+in the database will be for *last* month, and `$newPeriodEnd` will be for next month.
+
+In other words, you can use the `$isRenewal` flag to send the right *type* of email.
