@@ -79,6 +79,9 @@ chapters:
     testing-webhooks-fake-event:
         is_finished: false
         video_key: ~
+    live-webhook-testing-ngrok:
+        is_finished: false
+        video_key: ~
     subscription-renewal-webhook:
         is_finished: false
         video_key: ~

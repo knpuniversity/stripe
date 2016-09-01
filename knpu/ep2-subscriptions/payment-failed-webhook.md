@@ -1,14 +1,14 @@
 # Webhook: Payment Failed!
 
 Ok, there's just *one* more webhook we need to worry about, and it's the easiest
-one: `invoice.payment_failed`. Send a webhook for this event type.
+one: `invoice.payment_failed`. Send a test webhook for this event.
 
-Refresh your RequestBin to check it out.
+Refresh RequestBin to check it out.
 
 This webhook type is important for only one reason: to send your user an email so
 that they know we're having problems charging their card. That's it! We're already
-using a different webhook to actually *cancel* their subscription if there are multiple
-failures.
+using a different webhook to actually *cancel* their subscription if the failures
+continue.
 
 This has almost the same body as the `invoice.payment_succeeded` event: the embedded
 object is an `invoice` and if that invoice is related to a subscription, it has a
@@ -25,12 +25,12 @@ Earlier, we talked about what happens when a payment fails. It depends on your
 Subscription settings in Stripe, but ultimately, Stripe will attempt to charge the
 card a few times, and then cancel the subscription.
 
-You *could* send them an email *each* time it tries to charge their card and fails,
-but that'll probably be a bit annoying. So, I like to send an email *only* after the
-first attempt fails.
+You *could* send your user an email *each* time Stripe tries to charge their card
+and fails, but that'll probably be a bit annoying. So, I like to send an email *only*
+after the first attempt fails.
 
-To know if this webhook is being fired afte the first, second or third attempt, use
-a field called `attempt_count`. If this equals one, let's send an email. In the
+To know if this webhook is being fired after the first, second or third attempt,
+use a field called `attempt_count`. If this equals one, send an email. In the
 controller, add if `$stripeEvent->data->object->attempt_count == 1`, then send them
 an email. Well, I'll leave that step to you guys.
 
@@ -38,5 +38,5 @@ If you need to know *which* user the subscription belongs to, first fetch the
 `Subscription` from the database by using our `findSubscription()` method. Then,
 add `$user = $subscription->getUser()`.
 
-I like this webhook - it was easy! And actually, we're done with webhooks! Oh, except
-for preventing replay attacks... which is painless.
+I like this webhook - it's easy! And actually, we're done with webhooks! Except
+for preventing replay attacks... which is important, but painless.
