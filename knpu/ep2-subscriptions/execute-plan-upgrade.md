@@ -1,33 +1,98 @@
-# Execute Plan Upgrade
+# Execute the Plan Upgrade
 
-To actually make the upgrade, when the user clicks okay here we'll make one last AJAX request up to our server to tell Stripe to make the change. In profile controller, let's make that new end point. Make a new function called change plan action, URL of slash profile, slash plan, change, execute, slash plan ID, and the name of account execute plan change. We'll give that a plan ID [inaudible 00:00:32]. This will start just like the previous one. We'll fetch the actual plan object, because that will probably be convenient to have.
+When the user clicks "OK", we'll make an AJAX request to the server and then tell
+Stripe to *actually* make this change.
 
-Now to actually change the plan, the way to do that in Stripe is by updating the subscription. You'll fetch the subscription and then actually change the plan and save it, so it's a relatively straight forward thing to do. Since that's a new API call, let's do that inside of Stripe Client. A new public function called change plan. We'll accept our user object, so we know who wants to upgrade and we'll accept a subscription plan object, which will be the new plan that they're going to change to.
+In `ProfileController`, add that new end point: `public function changePlanAction()`.
+Set its URL to `/profile/plan/change/execute/{planId}` and name it `account_execute_plan_change`.
+Add the `$planId` argument.
 
-First, we need to find the Stripe subscription for the current user. We can say Stripe subscription equals this find subscription method we already have, and we'll just pass that the Stripe subscription ID. Which will be user, arrow, get subscription, arrow, get subscription ID. Second, we'll call Stripe subscription, arrow, plan, and set that equal to the new plan ID. Finally, to actually make this API request out, we'll call Stripe subscription, arrow, save. That, at least for now, is it.
+This will start just like the preview change endpoint: copy its `$plan` code and
+copy it below. 
 
-Here's the problem, remember I just told you in the last part that by default, Stripe doesn't bill you right now. It waits until the end of the cycle and then bills you the next month price, plus what they owe for upgrading this month. We want to bill them immediately. You can do that by creating and paying an invoice. As you remember from the first part of this tutorial, whenever you create an invoice, Stripe looks for all unpaid invoice items on the customer. By changing the plan, we have actually created a new invoice ... We've actually created two new invoice items for the negative and positive pro-ration. If we invoice the user right now, it will pay those invoice items.
+## Changing a Subscription Plan in Stripe
 
-Fortunately, we already have a method to do that inside this function called create invoice, which also pays that invoice. Down here, let's call this arrow create invoice, and we'll pass it the user object. That will bill the user immediately. The bottom, return Stripe subscription because we'll need that in a second. Back in our controller, we'll say Stripe subscription equals this arrow, get Stripe Client, arrow, change plan, passing it this get user and the plan object. This takes care of the plan on Stripe's side, but we also need to update the subscription row in our database.
+To actually change the plan in Stripe, we need to fetch the *Subscription*, set
+its plan to the new id, and save. That's so easy!
 
-Originally, when a user checks out with a new subscription, we call a method on subscription helper called add subscription to user. We pass it the new Stripe subscription, we pass it the user. It makes sure that, that user has a subscription row at the table. Then it makes sure to update it so that the plan subscription ID and period end are correct. Technically, the only thing we need to update right now is the plan ID on the subscription. The subscription ID itself is the same, and the period hasn't changed, because Stripe keeps the period the same as long as the thing you're upgrading to has the same duration. Like a monthly subscription to a monthly subscription, or a yearly subscription to a yearly subscription.
+Open `StripeClient` and add a new function called `changePlan()` with two arguments:
+the `User` who wants to upgrade and the `SubscriptionPlan` that they want to change
+to.
 
-It turns out we can just reuse this function. It does a little bit more than we need to, but it will guarantee that the Stripe subscription and the user are in sync in the database. In profile controller, we'll just say this, arrow, get subscription helper, arrow, add subscription to user, passing it the Stripe subscription and this get user for the user object. That will take care of everything.
+Then, fetch the `\Stripe\Subscription` for the User with `$this->findSubscription()`
+passing it `$user->getSubscription()->getStripeSubscriptionId()`. Second, update
+that: `$stripeSubscription->plan = $newPlan->getPlanId()`. Finally, send that to
+Stripe with `$stripeSubscription->save()`.
 
-Finally, at the bottom we don't really need to return anything from this. We'll turn a new response, and I'll pass it null as the content and do a 204 status code. Doesn't matter what you return, 204 status code just means no content. It's a nice way to return a valid response from your server when there's really nothing that we need to say back, the action was successful. Copy the name of your route, because now we need to go into JavaScript and actually make this AJAX call. This will be two parts.
+## But Charge the User Immediately
 
-First, on the button itself we're going to add another line here with a data URL. I'll paste the name of the route real quick, copy the preview URL, let's change that to change URL, and we'll replace the route name with the correct one. That should take care of that. Next, up here we'll add a new variable called bar, change URL, equals, and we'll grab that data attribute. Finally, down here in this function right here, this function will be called if the user confirms that they actually do want to make the change. We'll say dollar sign dot AJAX ... No, that's not okay.
+Oh wow, that *was* easy. And now you probably expect there to be a "catch" or a
+gotcha that makes this harder. Well... yea... there is. Sorry. 
 
-Oh, did it scroll you down?
+I just told you earlier that Stripe doesn't charge the customer right now: it waits
+until the end of the cycle and then bills for next month's renewal, plus what they
+owe for upgrading this month. We want to bill them immediately.
 
-No, no. Well, I'm scrolling is my [inaudible 00:06:50] right now. It's because it will stop recording.
+How? Simple: by creating an Invoice manually and paying it. Remember: when you create
+an Invoice, Stripe looks for all unpaid invoice items on the customer. When you change
+the plan, this creates *two* new invoice items for the negative and positive plan
+proration. So if we invoice the user right now, it will pay those invoice items.
 
-Oh.
+And hey! We *already* have a method to do that called `createInvoice()`. Heck it
+even *pays* that invoice immediately.
 
-Yeah, not okay.
+In our function, call `$this->createInvoice()` and pass it `$user`.
 
-Want to pause it real quick?
+Finally, return `$stripeSubscription` at the bottom - we'll need that in a minute.
 
-Set the URL to change URL. Set the method to post. Then we'll add a little dot done down here, a success, so we can show like a little success message. I'll use the sweet alert again, set a title of plan changed, type success so it looks happy. Finally, I'll add one more function on here, which will just reload the page after I click okay on that last success message, just so that the information behind it updates.
+Back in the controller, call this with `$stripeSubscription = $this->get('stripe_client')`
+then `->changePlan($this->getUser(), $plan)`.
 
-Let's give this a change. Refresh the whole page, hit change to New Zealander, $99.88, hit okay and ... Cool, it looks like it worked. For refresh, now you see the New Zealander over here, and the Farmer Brent over here. Let's go to our payment section, and there's our payment for $99.88. An invoice that shows the negative and the positive, which is perfect. If you check out the customer, we can now see that their subscription is the New Zealander. Ignore these subscriptions, these are older ones from testing earlier. This one is on the New Zealander. We're good. Just one last little edge case to cover.
+## Upgrading the Plan in our Database
+
+Ok, the plan is upgraded! Well, in Stripe. But we *also* need to update the subscription
+row in our database.
+
+Originally, when a user buy a new subscription, we call a method on
+`SubscriptionHelper` called `addSubscriptionToUser()`. We pass it the new
+`\Stripe\Subscription` and the `User`. Then *it* guarantees that the user has a
+subscription row in the table with the correct data, like the plan id, subscription
+id, and `$periodEnd` date.
+
+Technically, the only thing *we* need to update right now is the plan id: both the
+subscription id and period end haven't changed. But that's ok: we can still safely
+reuse this method. 
+
+In `ProfileController`, add `$this->get('subscription_helper')->addSubscriptionToUser()`
+passing it `$stripeSubscription` and `$this->getUser()`.
+
+And that's *everything*. At the bottom... well, we don't *really* need to return
+anything to our JSON. So just return a `new Response()` with `null` as the content
+and a 204 status code. This doesn't do anything special: 204 simply means that the
+operation was successful, but the server has nothing it wishes to say back.
+
+Copy the route name, then head to the template to make this work.
+
+First, find the button, copy the `data-preview-url` attribute, and paste it. Name
+this `data-change-url` and update the route name.
+
+Up in the JavaScript, set a new `changeUrl` variable to `$(this).data('change-url')`.
+Then, scroll down to the bottom: this function will be called if the user clicks
+the "Ok" button to confirm. Make the AJAX call here: set the `url` to `changeUrl`,
+the `method` to `POST`, and attach *one* more success function. Inside, call Sweet
+Alert to tell the user that the plan was changed! Let's also add some code to reload
+the page after everything.
+
+
+Phew! Let's do this! Refresh the page! Click to change to the "New Zealander".
+$99.88 - that looks right, now press "Ok". And ... cool! I think it worked! When
+the page reloads, our plan is the "New Zealander" and we can downgrade to the
+"Farmer Brent".
+
+In the Stripe dashboard, open the payments, click the one for $99.88, and open its
+Invoice. Oh, it's a thing of beauty:  the two line items for the change.
+
+If you check out the customer, their top subscription is *now* to the New Zealander
+plan.
+
+So we're good. Except for one last edge-case.

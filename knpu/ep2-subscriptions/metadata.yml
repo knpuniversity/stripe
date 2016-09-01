@@ -109,7 +109,13 @@ chapters:
     monthly-to-yearly:
         is_finished: false
         video_key: ~
+    monthly-yearly-billing-period:
+        is_finished: false
+        video_key: ~
     coupon-code-form:
+        is_finished: false
+        video_key: ~
+    validating-coupons:
         is_finished: false
         video_key: ~
     apply-coupon-checkout:
