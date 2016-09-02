@@ -44,17 +44,13 @@ chapters:
     billing-periods-ends-at:
         video_key: 180661092
     canceling-stripe-subscription:
-        is_finished: false
-        video_key: ~
+        video_key: 181228865
     canceling-on-our-site:
-        is_finished: false
-        video_key: ~
+        video_key: 181230231
     reactivate-subscription:
-        is_finished: false
-        video_key: ~
+        video_key: 181231228
     cancelation-edge-case-bugs:
-        is_finished: false
-        video_key: ~
+        video_key: 181231424
     update-card-form:
         is_finished: false
         video_key: ~
