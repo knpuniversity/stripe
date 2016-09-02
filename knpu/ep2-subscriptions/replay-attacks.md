@@ -55,7 +55,7 @@ handled before. Fetch the EntityManager, and then add
 `findOneBy()` on it to query for `stripeEventId` set to `$eventId`.
 
 If an `$existingLog` is found, then we don't want to handle this. Just return a
-`new Response()` that says "Event previously handled". If you alsowant to log a
+`new Response()` that says "Event previously handled". If you also want to log a
 message so that you know when this happens, that's not a bad idea.
 
 But if there is *not* an existing log, time to process this webhook! Create a new

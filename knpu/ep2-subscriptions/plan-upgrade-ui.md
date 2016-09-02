@@ -25,7 +25,7 @@ set `$currentPlan = $this->get('subscription_helper')->findPlan()` passing that
 The `findPlan()` method will give *us* a fancy `SubscriptionPlan` object.
 
 Pass a new `currentPlan` variable into the template, set to `$currentPlan`. Then
-in template, find the "Active Subscription" spot, and print `currentPlan.name`.
+in the template, find the "Active Subscription" spot, and print `currentPlan.name`.
 
 Refresh the page! Great! Step 1 done: we have the "Farmer Brent" plan.
 
@@ -56,7 +56,7 @@ read that attribute in JavaScript.
 ## Bootstrapping the JavaScript
 
 In fact, let's play with the JavaScript right now: copy the `js-change-plan-button`
-class and find the JavaScript block at the top of this file. Use jQueryt to locate
+class and find the JavaScript block at the top of this file. Use jQuery to locate
 that element, then on `click`, add a callback. Start with the always-in-style
 `e.preventDefault()`.
 
