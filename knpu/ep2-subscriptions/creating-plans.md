@@ -50,7 +50,7 @@ I added two classes to help us stay organized. The first is called `Subscription
 And as you can see... it's not very helpful... yet. But pretty soon, it will keep
 track of the two plans we just added. We'll use the second class - `SubscriptionPlan`:
 
-[[[ code('875c5bf68e) ]]]
+[[[ code('875c5bf68e') ]]]
 
 To hold the data for each plan: the plan ID, name and price. But we won't save these
 to the database.

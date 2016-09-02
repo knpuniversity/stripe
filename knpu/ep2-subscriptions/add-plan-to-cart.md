@@ -4,7 +4,7 @@ We can already add products to our cart... but a user should *also* be able to c
 these fancy buttons and add a subscription to their cart.
 
 Open up `OrderController`: the home for the checkout and shopping cart magic. I've
-already started a new page called `addSubscriptionToCartAction`:
+already started a new page called `addSubscriptionToCartAction()`:
 
 [[[ code('7a5cd48c3e') ]]]
 
