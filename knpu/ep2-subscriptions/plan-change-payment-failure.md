@@ -1,13 +1,14 @@
 # Failing Awesomely When Payments Fail
 
-And now, you can even *downgrade* to the Farmer Brent and get a `$99` balance on
-your account. In the Stripe dashboard, refresh the Customer. Ah, there's an account
-balance of `$99.84`.
+You can even *downgrade* to the Farmer Brent and get a `$99` balance on your account.
+In the Stripe dashboard, refresh the Customer. Ah, there's an account balance of
+`$99.84`.
 
 And if you change *back* to the New Zealander, now it's free! The `amount_due` field
-on the upcoming invoice correctly takes the account balance into account.
+on the upcoming invoice correctly calculates its total by using any available
+account balance.
 
-So this is solid.
+So, this is solid.
 
 ## Card Failure on Upgrade
 
@@ -20,16 +21,16 @@ Ok, try to change to the New Zealander. It thinks for awhile and then... an AJAX
 error! You can see it down in the web debug toolbar. 
 
 Open the profiler for that request in a new tab and then click "Exception" to see
-what the error was. Ah yes, "Your card was declined". Clearly, we aren't handling
-this situation very well. 
+the error. Ah yes, the classic: "Your card was declined". Clearly, we aren't handling
+this situation very well.
 
 But actually, the problem is worse than you might think. Refresh the Customer in
 Stripe. You can see the failed payment... but you can also see that the subscription
 change was successful! We are now on the New Zealander plan.
 
 The customer also has an unpaid invoice, which represents what they should have been
-charged. Since this is unpaid, Stripe will re-try it a few times. In summary, everything
-is totally borked.
+charged. Since this is unpaid, Stripe will try to charge it a few more times. In summary,
+everything is totally borked.
 
 ## Failing Gracefully
 
@@ -40,16 +41,16 @@ In addition to calling this to upgrade a subscription plan, we *also* call this
 at checkout, even if there is *no* subscription. The problem is that if payment
 fails on checkout, this invoice will *still* exist, and Stripe will try again to
 charge it. Imagine having your card be declined at checkout, only for the vendor
-to try to charge it again later, without you ever having finished checkout!
+to try to charge it again later, without you ever having finished the checkout process!
 
-Here's the plan: if paying the invoice fails, we need to *close* it. By doing that,
-Stripe will *not* try to pay it again.
+Here's our rescue plan: if paying the invoice fails, we need to *close* it. By doing
+that, Stripe will *not* try to pay it again.
 
 To do that, surround the `pay()` line with a try-catch for the `\Stripe\Error\Card`
 exception. Here, add `$invoice->close = true` and then `$invoice->save()`.
 
-Then, re-throw the exception. Our checkout logic looks for this and notifies the
-user.
+Then, re-throw the exception. Our checkout logic looks for this exception and uses
+it to notify the user of the problem.
 
 Next, down in the other function, if we fail to create the invoice, we need to
 *not* change the customer's plan in Stripe.
@@ -60,8 +61,8 @@ Then, surround the `createInvoice()` call with a try-catch block for the same ex
 
 ## Reverting the Plan without Proration
 
-If this happens, we need to do change the Stripe subscription *back* to the original
-one: `$stripe->plan = $originalPlanId`. But here's the tricky part: add
+If this happens, we need to do change the subscription plan *back* to the original
+one: `$stripeSubscription->plan = $originalPlanId`. But here's the tricky part: add
 `$stripeSubscription->prorate = false`.
 
 Why? When we originally change the plan, that creates the two proration invoice items.
@@ -93,7 +94,7 @@ paste in one last sweet alert popup that shows the message to the user.
 
 ## Give it a Floor Run, See if it Plays
 
-Let's test this *whole* big mess. But our current subscription is totally messed up,
+Let's test this *whole* big mess. Our current subscription is totally messed up,
 so go add a new, fresh Farmer Brent to your cart. Then, checkout with the functional,
 fake card.
 
@@ -107,8 +108,8 @@ it's wonderful!
 
 Reload the Customer page. First, the customer still has no account balance, that's
 good. Second, we can see the failed payment, but we're still on the Farmer Brent
-subscription. And the $100 invoice is unpaid, but it's *closed*. Stripe won't try
-to pay this again.
+plan. And the $100 invoice is unpaid, but it's *closed*. Stripe won't try to pay
+this again.
 
 Back on the Customer page, find Events at the bottom and click to view more. This
 tells the *whole* story: we upgraded to the New Zealander plan, the two proration
@@ -116,5 +117,5 @@ invoice items were created, the invoice was created, the invoice payment failed,
 we updated the invoice to be closed, and finally downgraded back to the Farmer Brent
 plan.
 
-WOW. You should go find a co-worker and challenge them to break this. We are now,
-truly, rock solid.
+WOW. Go find a co-worker and challenge them to break your setup. We are now, truly,
+rock solid.

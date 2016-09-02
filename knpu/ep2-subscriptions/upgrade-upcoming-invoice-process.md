@@ -64,9 +64,9 @@ plan for part of the month, plus the cost for the full-price renewal.
 
 ## Charging Immediately for an Upgrade
 
-This feels weird to me. So let's do something better: let's charge the customer *immediately*
-for the plan price change, and then let them pay for the normal, full-month
-renewal next month. This is totally possible to do.
+Honestly, this feels weird to me. So let's do something better: let's charge the
+customer *immediately* for the plan price change, and then let them pay for the normal,
+full-month renewal next month. This is totally possible to do.
 
 But that means, to show the user the amount they will be charged right now, we need
 to read the `amount_due` value and then *subtract* the full price of the plan,
@@ -74,7 +74,7 @@ to remove the extra line item.
 
 In `ProfileController`, add a new variable `$total` set to `$stripeInvoice->amount_due`.
 Add a comment above - this stuff is confusing, so let's leave some notes. Then, correct
-the total by subtracting `$plan->getPrice() * 100`to convert into cents - our price
+the total by subtracting `$plan->getPrice() * 100` to convert into cents - our price
 is stored in dollars.
 
 Then, return `$total / 100` in the JSON. Let's try it guys: go back and refresh.

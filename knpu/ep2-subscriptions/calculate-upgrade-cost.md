@@ -14,7 +14,7 @@ Set the URL to `/profile/plan/change/preview/{planId}` and give it a name:
 `account_preview_plan_change`.
 
 Use the `planId` in the route to load a `$plan` object with `$this->get('subscription_helper')`
-and then call `findPlan()`.
+and then call `findPlan()` with `$planId`.
 
 ## Upcoming Invoice to the Rescue
 
@@ -53,7 +53,7 @@ will be upgrading and the `SubscriptionPlan` they want to change to.
 
 Inside, it's easy: `return \Stripe\Invoice::upcoming()` and pass it a few parameters.
 First, `customer` set to `$user->getStripeCustomerId()` and second, `subscription`
-set to `$user->getSubscription()->getSubscriptionId()`. This tells Stripe *which*
+set to `$user->getSubscription()->getStripeSubscriptionId()`. This tells Stripe *which*
 subscription we would update. Now, in our system, every user should only have one,
 but it doesn't hurt to be explicit.
 
