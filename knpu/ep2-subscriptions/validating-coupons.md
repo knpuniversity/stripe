@@ -1,60 +1,74 @@
-## Validating Coupons via Stripe
+# Validate that Coupon in Stripe!
 
-Perfect. Now to read the post parameter for code we'll need
-to request object. Then we'd say dollar send code equals request error request
-error get code, and that will get the post parameter whose name is code. Just
-in case somebody hits submit with it empty, let's add a little validation
-saying if not code this error add flash error. We'll say missing coupon code.
-Then we will redirect back to our checkout page with that error. Cool, so at
-this point all we need to do is go and talk to Stripe and ask them, "Is this a
-valid coupon code in your system?" If it is, we'll add it to our shopping cart
-and then we can use it later on checkout. As I just showed you, coupon is
-actually a object in Stripe's API, so we just need to make an API request out
-to fetch a specific coupon. As usual, we're going to do that inside of our
-Stripe client. At the bottom here let's create a new public function called
-find coupon.
+The coupon form will submit its `code` field right here. To fetch that POST parameter,
+add the `Request` object as an argument. Then add `$code = $request->request->get('code')`.
 
-We'll pass it the coupon code. Here we'll just return Stripe/coupon::retrieve
-and that will pass us the code, which is the primary key for the coupon. Now
-inside of the `OrderController` we can say Stripe coupon equals this arrow get
-Stripe onto store client arrow find coupon and code. If that is an invalid
-code, that's going to throw and exception and we'll handle that in a second.
-Just for right now, let's dump that Stripe coupon and have a die statement so
-we can see what it looks like. All right, go back, refresh, hit "I have a
-coupon code," and let's put in our CHEAP SHEEP, and that is case sensitive.
-Okay, cool so it found our coupon object. In field incentive values it has the
-ID, it also has the amount off in cents, which is going to be really important
-for us. It also has other information like duration in case you are supporting
-recurring duration and you want to be able to tell the user this is going to be
-applied once or many times. You might read and use that off right there. For
-us, we're going to add this to shopping cart by saying this arrow get shopping
-cart.
+And in case some curious user submits while the form is empty, send back a validation
+message with `$this>addFlash('error', 'Missing coupon code')`. Redirect to the checkout
+page.
 
-I've already prepared the shopping cart to have a place where it stores the
-discounts, so just say set coupon code, and what it wants is it wants what the
-actual code is. The second argument here is the value in dollars for that code.
-Lets use Stripe coupon arrow amount underscore off divided by a hundred to put
-that into dollars. We're just reading this amount off here to put it into fifty
-dollars. Of course we'll add a flash message coupon applied, and then redirect
-back to our checkout page. Now I'll go back, and we can just refresh this to
-resubmit that. Boom, instantly we see coupon applied. You don't see any
-evidence of that in our cart yet, so it's not really obvious if my shopping
-cart is working. Let me tell you, inside of our checkout template when we print
-the total we call it cart dot total. The way that I made the shopping cart,
-when call up a total on it it totals up all of your products and all of your
-subscription plans, but it doesn't take into account your discounts. I did that
-because the total is the amount that we actually want to tell Stripe to charge
-us, to charge the user.
+## Fetching the Coupon Information
 
-You'll see why in a second. For displaying the user how much they're going to
-get charged, we have another method here called get total with discount, which
-actually goes and subtracts the coupon code value. To see the update down here
-we'll say total with discount. Now that shows forty-nine dollars. Now, also to
-be a little more friendly let's add an end statement here that says if cart dot
-coupon code then we know that we're going to want to show a little row with
-that in it. Let's print out cart dot coupon code here. Then down here we'll
-print out cart dot coupon code value. Maybe even a little minus in front. Now,
-refresh, now that looks really nice. It'll be nicer with the word coupon in
-front. We've validated the coupon with Stripe, we attached the coupon to our
-shopping cart, and now when we check out we need to tell Stripe to apply this
-coupon code to their account. Let's do that now.
+Cool! At this point, all *we* need to do is talk to Stripe and ask them:
+
+> Hey Stripe! Is this a valid coupon code in your system?. Oh, and if it is,
+> how much is it for?
+
+Since `Coupon` is just an object in Stripe's API, we can fetch it like *anything*
+else. Booya!
+
+As usual, add the API call in `StripeClient`. At the bottom, create a new public
+function called `findCoupon()` with a `$code` argument. Then, return
+`\Stripe\Coupon::retrieve()` and pass it the `$code` string, which is the Coupon's
+primary key in Stripe's API.
+
+Back in `OrderController`, add `$stripeCoupon = $this->get('stripe_client')` and
+then call `->findCoupon($code)`.
+
+If the code is invalid, Stripe will throw an exception. We'll handle that in a few
+minutes. But just for now, let's `dump($stripeCoupon)` and `die` to see what it
+looks like.
+
+Ok, refresh, hit "I have a coupon code," fill in our `CHEAP_SHEEP` code.
+
+There it is! In the `_values` section where the data hides, the coupon has an `id`,
+it shows the `amount_off` in cents and has a few other things, like `duration`, in
+case you want to create coupons that are recurring and need to tell the user that
+this will be applied multiple times.
+
+Now that we know the coupon is legit, we should add it to our cart. I've already
+prepped the cart to be able to store coupons. Just use
+`$this->get('shopping_cart')` and then call `->setCouponCode()`, passing it the
+`$code` string and the amount off, in dollars: `$stripeCoupon->amount_off/100`.
+The cart will *remember* - via the session - that the user has this coupon.
+
+We're *just* about done: add a *sweet* flash message - "Coupon applied!" - and then
+redirect back to the checkout page.
+
+## Showing the Code on Checkout
+
+Refresh and re-POST the form! Coupon applied! Except... I don't see *any* difference:
+the total is *still* $99.
+
+Here's why: it's specific to our `ShoppingCart` object. In `checkout.html.twig`,
+we print `cart.total`. I designed the `ShoppingCart` class so that the `getTotal()`
+method adds up *all* of the product prices plus the subscription total. But, *this*
+method doesn't subtract the coupon discount. I did this to keep things clean: total
+is really more like a "sub-total".
+
+But no worries, the method below this - `getTotalWithDiscount()` - subtracts the
+coupon code. So back in the template, use `cart.totalWithDiscount`.
+
+Ah, *now* it shows $49.
+
+But, it'll be even *clearer* if we display the discount in the table. At the bottom
+of that table, add new if statement: `if cart.couponCode` and an `endif`. Then, copy
+the subscription block from above, paste it here, and change the first variable to
+`cart.couponCode` and the second to `cart.couponCodeValue` without the `/ month`,
+unless you want to make all your coupons recurring. Oh, and add "Coupon" in front
+of the code.
+
+This time, the whole page makes sense! $99 - $50 = $49. It's a miracle!
+
+Now for the easy step: apply the coupon to the user's order at checkout... ya know,
+so that they *actually* save $50.

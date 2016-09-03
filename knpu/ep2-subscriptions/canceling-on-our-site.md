@@ -1,4 +1,4 @@
-# Tracking Cancelation in our Database
+# Tracking Cancelations in our Database
 
 When the user cancels, we need to *somehow* update the user's row in the subscription
 table so that we know this happened! And actually, it's kind of complicated: the

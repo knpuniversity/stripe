@@ -1,23 +1,121 @@
-# Free checkout
+# Free (Ice Cream) Checkout!
 
-If you create a really big coupon, then checkout might actually be completely free. Let's do that. Click on "Coupon" section, let's add one that's worth $500 called super sheep. Then go to our checkout and apply our new code. Perfect. So I have my cart set up to be smart and not give us a negative number. So Kraken knows that this is $0. The problem is, we still have a checkout form over here, and if you still, for some reason, want to force the user to actually put in their credit card information just to checkout for free, then you don't need to change anything. It won't charge the user, but it will put the credit card on file for them. But that's probably not what you want, because you want to make it as easy as possible for this user to checkout free.
+Go create a *huge* coupon - like for $500. Call this one `SUPER_SHEEP`!
 
-So I want to hide this checkout form if it's free. First we're gonna do that in the template. Inside checkout, the dates from Twig, we'll go down to the client form down here, we'll say "if cart dot total with discount is greater than zero, then we want to show that." Otherwise, we're just gonna show a very simple checkout button, that says "checkout for free." So I put in "button" type in "submit". Give it a couple of classes, and we'll say "checkout for free". So now, if we refresh, boom. Goes away and checkout for free.
+Ok, this coupon is awesome - let's add it to our order.
 
-Now still, there's not a lot of logic that needs to change. Stripe is already set up to understand not to charge this user. The one funny thing though, is up until now, inside of our order controller, we're expecting there to be a token. Remember that's the token that we get back from Stripe, after submitting that credit card information. We then pass that to charge customer, down here, and we use this token when we either- to attach the customer.
+Perfect! As you can see, the cart is *already* smart enough to return the total
+as $0, instead of a negative number. Way to go cart!
 
-So the only thing that needs to change, is we need to make sure our code is smart enough to not try to attach this token to the customer, because there won't be a token in this case. At the top, I'm first gonna add some code just to be really careful. I'm gonna say "If there is no token, and this get shopping cart, get total discount, when discount is greater than zero" that means we have a problem. That means this was not a free order, but somehow we're missing the token. That shouldn't be allowed. So store exception, to indicate this.
+But, uh, what's this checkout form still doing over here? Why should I need to enter
+my credit card info? This order is *free*!
 
-Next, instruct client when you create the customer, we pass in the token. So let's find create customers out here. Now, we need to make sure that we're a little careful, because there's no payment token, we don't want to pass a source. Stripe's gonna get angry if we pass that empty source, so instead, correcting data variable, and just the email inside of that. Then when you call up Stripe, customer create, passive data. Now we say, "if payment token, then we will add the source key equal to payment token". So that'll take care of any weirdness there.
+Look, how you handle *free* orders is up to you. If you *still* want to require a
+credit card, you can do that. The customer won't be charged, but the card will be
+on file for renewals.
 
-The other situation is when we call "update customer card", well, clearly, if we don't have a token, then there's no customer card update. So we don't want to call this function. So we'll say "if token, then we will call that line". However, in both cases, we do need a Stripe customer, because we end up using it in other places. So anything else, we need to "fetch" the Stripe customer. So in Stripe client, we're gonna add a new method for that all the way at the bottom, very simple, call it function, via customer, taking the user object, it'll just return, slash stripe. Slash customer. Retrieved, say user, arrow, get Stripe customer ID.
+But that's not for me: I want to make it as easy as possible for this user to checkout
+free.
 
-So back in order controller, we can say Stripe customer equals Stripe client, arrow, client customer as the user. So in all cases now, we end up with a Stripe customer object, which is good. Now the last thing that we need to change here is down in "update card details" inside of subscription helper. Update card details is the thing that actually looks on sources, which are the card details, and then updates the last four in the brand. Now, as I mentioned earlier, technically you can attach many cards onto the user, that's why we just- but we just attach one. That's all we're looking for, just the zero index here.
+## Hide the Checkout Form
 
-But if the card doesn't have a customer on them, then there's nothing to update. So let's just add an if statement here that says "if not Stripe customer, arrow, sources, arrow, data" meaning it's an empty array, then just return. Because the customer may not have a card on file. And that is everything. So really, checkout for free is just a matter of handling a couple of details, making sure your code can deal with not having a Stripe token. So let's checkout for free, and there we go.
+The first step, is to hide this checkout form! In `checkout.html.twig`, find the
+`_cardForm.html.twig` include, and wrap it in `if cart.totalWithDiscount > 0`. Else,
+create a really simple form with `method="POSt"` and a submit button that invites
+the user to "Checkout for Free".
 
-Inside of Stripe, checkout our customer, and we see that there's no payment for this, because he didn't actually pay anything, but down here, there's an invoice for zero dollars, and you have an active subscription. The only other- we've just introduced the idea that customers in our system may or may not have a card attached to them. This causes one slight problem with our web hooks, so open up the web hook controller. Go down to the invoice dot payment failed- oh, and actually, let me fix my old error there with my typo. Do not typo those.
+If you refresh now, boom! Checkout form gone.
 
-Anyways, back to invoice dot payment fail. The only reason that we are listing it on this web hook, is so that we can send the user email when there's a problem charging their credit card. So we say something like "Hey, we're having a problem charging your credit card, please go to your account page and update your credit card". So the only weird thing now, is that if they checked out for free, after their first month, Stripe's gonna have problems charging them. It's going to send this web hook. So in those cases, what we really want to say is "Hey, I hope you enjoyed your free month, if you want to continue, go add a credit card to your account page." So it's just a language thing that we want to be really smooth with for our user.
+## Handling Free Checkout
 
-So to figure out which situation we're in, we're first gonna fetch the Stripe customer, by saying this "arrow, get Stripe client, arrow, find customer" we pass then, our user object. The reason we do that, is because now, we can create a new variable, called "Has card on file". We can set that to a count of "Stripe customer, arrow, sources, arrow, data" and make sure that's greater than zero. So now we can send an email down here, or we can use "Has card on file" to customize this. These are the small details that really make e-commerce difficult.
+But that's not *quite* everything we need to do. Thanks to the discount, Stripe
+will already know that it doesn't need to charge the user, and so, the customer
+doesn't need to have a card. But, the funny thing is, up until now, our `OrderController`
+is expecting that `stripeToken` to *always* be submitted. 
+
+Remember that's the token that we get back from Stripe, after submitting that
+credit card information to them. We then pass that to `chargeCustomer()` and attach
+it to the Customer.
+
+## Optionally Apply the Stripe Token
+
+But now, our code needs to be smart enough to *not* try to attach the token to the
+Customer for free orders. At the top, add some *sanity* code: if there is *no* token,
+and the shopping cart's total with discount is *not* free... well, we have a problem!
+Throw a clear exception: the order is non-free... but we're missing the payment token!
+
+Next, when we call `createCustomer()`, we pass in the `$token`. Open `StripeClient`
+and find that method. 
+
+Hmm. Now, `$paymentToken` might be blank. But Stripe will be *really* angry if we
+try to attach an empty *source* to the Customer. Instead of doing this all at once,
+add a new `$data` array variable, and move the `email` key into it. Then, pass
+`$data` to the `create()` call.
+
+Then, you know what's next: if `$paymentToken` is not blank, add a `source` key to
+`$data` set to `$paymentToken`. We're done here.
+
+But we have the same problem in `updateCustomerCard()`. This is easier to fix, and
+we'll do it right in the controller: if `$stripeToken`, then update the customer's
+card.
+
+Else, we *do* need to fetch the `\Stripe\Customer` object - we use it further below.
+In `StripeClient`, add a new method to do this: `public function findCustomer()`
+with a `User` argument. Then, return the timeless
+`\Stripe\Customer::retrieve($user->getStripeCustomerId())`.
+
+In the controller, use that: `$stripeCustomer = $stripeClient->findCustomer($user)`.
+
+Ok, I'm feeling good! The last trouble spot is in `updateCardDetails()`. Open
+`SubscriptionHelper`. Oh yea - this method looks at the `sources` key on the Customer
+to get the card brand and last four digits. In our app, every Customer has exactly
+*one* card, so we use the `0` key. But guess what! Not anymore: a customer *might*
+have zero cards.
+
+So we just need to code defensively: add an if statement: if `!$stripeCustomer->sources->data`,
+just return: there's no card to update.
+
+Ok, we're done! A free checkout and a normal checkout are *almost* the same: get
+or create a customer, add some invoice items and attach a subscription. The only
+difference is that you *don't* attach the Stripe token to your Customer.
+
+So really, checking out for free is just a matter of handling the reality that you
+don't have a Stripe payment token. Refresh our checkout page and, "Checkout for Free".
+
+It works! In Stripe, find our Customer. There is no new payment, but there *is* an
+Invoice for $0 and an active subscription. The Invoice shows off the discount.
+
+## No Card? Webhook Problems
+
+Thanks to this change, it's now possible for a Customer to *not* have *any* cards
+attached in Stripe. And yea know what? This creates a new problem in a *totally*
+unrelated part of the process: webhooks.
+
+But, it's no big deal. Open `WebhookController` and find the `invoice.payment_failed`
+section. Wait! Woh! Before that - oh geez - fix my *horrible* type: `invoice.payment_succeeded`.
+This is why you must *test* your webhooks!
+
+Anyways, back to `invoice.payment_failed`. Our *entire* reason for handling this
+is so that we can send the user an email to tell them that we're having a problem
+charging their card. We didn't do the work here, but that email would probably sound
+like this:
+
+> Hey friend! So, we're having a problem charging your card. If you need to update
+> it, go to your account page and add the new details there.
+
+But what will happen if a user checks out for free, but with a subscription? After
+their first month, Stripe will not be able to charge them, and it will trigger *this*
+webhook.
+
+In those cases, the email should *really* have some different text, like:
+
+> Yo amigo! I hope you enjoyed your free month. If you want to continue,
+> you can add a credit card to your account page.
+
+To know *which* language to use, first fetch the Stripe Customer by saying
+`$this->get('stripe_client')->findCustomer($user)`.
+
+Now we can create a new variable, called `$hasCardOnFile`. Set that to a count
+of `$stripeCustomer->sources->data` and check if it's greater than zero. Now, just
+use that variable to write the most uplifting, majestic, and encouraging payment
+failed emails that the world has ever seen.

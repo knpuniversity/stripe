@@ -1,15 +1,78 @@
-# Apply Coupon checkout
+# Applying a Coupon at Checkout
 
-The way you actually apply coupons on checkout is either by attaching them to the subscription, to say, "This subscription should have this coupon code.", or by attaching them to the user themselves using the coupon field. Then the coupon will be attached to their actual account. They are approximately the same, so that's the one we're going to use.
+There are two ways to use a coupon on checkout: either attach it to the *subscription*
+to say "This subscription should have this coupon code" - *or* - attach it to the
+*customer*. They're approximately the same, but we'll attach the coupon to the customer,
+in part, because the user should be able to use the coupon towards individual products.
 
-In order controller, scroll down to the charge customer section. This is the section where we get or create the Stripe customer. We eventually create invoice items for our products, create the subscription, and then create the invoice if we need to. Right before we create the invoice items, let's add our coupon to our user. It looks like this. If cart arrow, get coupon code value, then very simply, Stripe customer, arrow, coupon equals cart, get coupon code. Then Stripe customer, arrow, save to actually send it. The important thing is you don't actually change how much you're charging the user. You're still charge them for the full amount. You let Stripe take care of charging them for the full amount, but then applying the discount that's on their account. It's that simple.
+In `OrderController`, scroll down to the `chargeCustomer()` method. We know this
+method: we get or create the Stripe Customer, create InvoiceItems for any products,
+create the Subscription, and then create an invoice, if needed.
 
-Let's go back over here and try this out. Throw in some valid, but fake, credit card information. [inaudible 00:02:11] it completes. [inaudible 00:02:18] customers, we can see one order, here, for $49. The invoice will show you all the details, $99, the exact coupon that was applied, and $49 as the balance. Very, very, nice. Very easy.
+Before adding the invoice items, let's add the coupon to the Customer. So, if
+`$cart->getCouponCodeValue()`, then very simply,
+`$stripeCustomer->coupon = $cart->getCouponCode()`. Make it official with `$customer->save()`.
 
-The only thing we need to work on is actually handling invalid coupons. Let's add another item to our cart. Right now if we do a fake coupon code, it's not going to work, but it's going to come up with the 500 error. It's returning with a Stripe/error/invalid request, because basically, it makes the API call and it comes back as a 404. This happens right when we try to retrieve the coupon in our Stripe client on line 185, and our order controller on line 95. All we need to do, then, is go up here and surround this 'find coupon' thing with a try catch. If that exception is thrown, we know this is a non-existent coupon. Catch/Stripe/error/invalid request. Here, easiest thing to do is just add an error/, site invalid coupon code, and then we are going to redirect on back to checkout. If you go back, just refresh that page, now we have that handled.
+The important thing is that *you* don't need to change how much you're charging the
+user: attach the coupon, charge them for the full amount, and let Stripe figure
+it all out.
 
-The one other case is an expired coupon. If we go back to the coupon section, let's create a second coupon, here. While this will be for $50 off as well, duration wants ID code, single use. Here, we're actually going to add a max redemptions of one. You can also set your 'redeem by'. If either of those are invalid, then we do not want to allow this coupon code to be used. Let's go checkout with single use and fill out our information once, really quickly, just so we can get that first redemption taken care of. If you refresh the coupon's page, you'll now see redemption show up as one of one on our single use. We should not be able to use that one anymore.
+I think we should test out our discounted order! Use or favorite fake credit card,
+and Checkout! So far so good!
 
-Let's go back to try [inaudible 00:05:20] and let's try it. No. Now, we know if we tried to add it right here, right now, that would successfully attach to our cart because it would look up that coupon in Stripe and it exists, so it attaches to the cart. If we try to check out, Stripe will throw an exception. Stripe has our back, here. It's not going to let that coupon code be used multiple times. It will throw an exception. We want to prevent it from being added at all. Here's the key, if you look at the coupon part of the API, you'll see a field called 'valid'. This is really cool because it basically tells you, "Can this coupon be applied anymore or not?" As long as we check the valid part, we can correctly handle this.
+Find the Customer in Stripe. Yep! There's the order: $49. The invoice tells the
+*whole* story: with the sub-total, the discount and the total.
 
-Let's add an 'if' statement in the same spot inside of our 'add coupon' action that says, 'if not Stripe coupon, arrow, valid'; same thing, we're going to add a /, say 'coupon expired', and then we will redirect back to the checkout page. This will prevent us from adding this a second time. If you want to you can also add the same 'if' statement to the actual checkout page, just to prevent somebody from using this between now and then. It depends on how error tight you want to get with this stuff.
+Very, very, nice.
+
+## Handling Invalid Coupons
+
+And very easy! So easy, that we have time to add some code to handle *invalid*
+coupons. Add another item to your cart. Now, try a FAKE coupon code.
+
+Ah! 500 error is *no* fun. The exception is a `\Stripe\Error\InvalidRequest` because,
+basically, the API responds with a 404 status code.
+
+This all falls apart in `OrderController` on line 95. Let's hunt that down!
+
+Ah, `findCoupon()`: surround this beast with a try-catch block for `\Stripe\Error\InvalidRequest`.
+
+The easiest thing to do is a flash error message: `Invalid Coupon code`. Then, redirect
+back to the checkout page.
+
+Refresh that bad coupon! Ok! That's covered!
+
+## Expired Coupons
+
+There's just *one* other situation to handle. In Stripe, find the Coupon section
+and create a second code. Set the amount to $50, duration "once" and the code:
+`SINGLE_USE`. By here's the kicker: set Max redemptions to 1. So, only *one* customer
+should be able to use this. There's also a time-sensitive "Redeem by" option. 
+
+Quickly, go use the `SINGLE_USE` code and checkout. This will be the first - and only -
+allowed "redemption" of this code. When you refresh the Coupon page in Stripe, Redemptions
+are 1/1.
+
+Now, add another subscription to your cart and add this code a *second* time. It
+*does* allow us to attach it to the cart. And that makes sense: *all* we're doing
+is looking up the code in Stripe to make sure it *exists*. 
+
+But, if we tried to checkout, Stripe would be *pissed*: it would *not* allow us
+to use the code a second time. Stripe has our back - it's *such* a great team member.
+
+But, we should *definitely* prevent the code from being attached to the cart in
+the first place. Checkout the Coupon section of Stripe's API docs. Ah, this `valid`
+field is the *key*. This field basically answers this question:
+
+> In this moment, can this coupon be used?
+
+Brilliant! Back in `OrderController::addCouponAction()`, add an if statement: if
+`!$stripeCoupon->valid`, then, just like in the catch, add an error flash - "Coupon expired" -
+and redirect over to the checkout page.
+
+This time, the system blocks us from using that code a second time.
+
+If you want to be *extra* careful, you could add some extra try-catch logic to your
+checkout code *just* to prevent the edge-case where the code becomes *invalid* between
+the time of adding it to the cart and checking out. But either way, Stripe will *never*
+allow an invalid coupon to be used.

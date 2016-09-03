@@ -75,13 +75,13 @@ operation was successful, but the server has nothing it wishes to say back.
 Copy the route name, then head to the template to make this work.
 
 First, find the button, copy the `data-preview-url` attribute, and paste it. Name
-the news `data-change-url` and update the route name.
+the new one `data-change-url` and update the route name.
 
 Above in the JavaScript, set a new `changeUrl` variable to `$(this).data('change-url')`.
 Then, scroll down to the bottom: this callback function will be executed *if* the
 user clicks the "Ok" button to confirm the change. Make the AJAX call here: set the
 `url` to `changeUrl`, the `method` to `POST`, and attach *one* more success function.
-Inside, that call Sweet Alert to tell the user that the plan was changed! Let's also
+Inside that, call Sweet Alert to tell the user that the plan was changed! Let's also
 add some code to reload the page after everything.
 
 Ok! Let's do this! Refresh the page! Click to change to the "New Zealander".
