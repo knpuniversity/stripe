@@ -3,15 +3,15 @@
 We just found out that this amount - $792 - doesn't seem right! Open the web debug
 toolbar and click to see the profiler for the "preview change" AJAX call that returned
 this number. Click the Debug link on the left. This is a dump of the upcoming invoice.
-And according to *it*, the user will owe $891.05. Wait, that's *exactly* right!
+And according to *it*, the user will owe $891.05. Wait, that sounds *exactly* right!
 
 The number we just saw is different because, remember, we start with `amount_due`,
 but then subtract the plan total to remove the extra line item that Stripe adds.
 Back then, we had *three* line items: the two prorations and a line item for the
 next, full month.
 
-But woh, now there's only two: the partial-month discount and a charge for the *full*,
-yearly period.
+But woh, now there's only two line items: the partial-month discount and a charge
+for the *full*, yearly period.
 
 ## Changing Duration changes Billing Period
 

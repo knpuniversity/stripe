@@ -4,7 +4,7 @@ The coupon form will submit its `code` field right here. To fetch that POST para
 add the `Request` object as an argument. Then add `$code = $request->request->get('code')`.
 
 And in case some curious user submits while the form is empty, send back a validation
-message with `$this>addFlash('error', 'Missing coupon code')`. Redirect to the checkout
+message with `$this->addFlash('error', 'Missing coupon code')`. Redirect to the checkout
 page.
 
 ## Fetching the Coupon Information
@@ -29,7 +29,7 @@ If the code is invalid, Stripe will throw an exception. We'll handle that in a f
 minutes. But just for now, let's `dump($stripeCoupon)` and `die` to see what it
 looks like.
 
-Ok, refresh, hit "I have a coupon code," fill in our `CHEAP_SHEEP` code.
+Ok, refresh, hit "I have a coupon code," fill in our `CHEAP_SHEEP` code, and submit!
 
 There it is! In the `_values` section where the data hides, the coupon has an `id`,
 it shows the `amount_off` in cents and has a few other things, like `duration`, in
@@ -39,7 +39,7 @@ this will be applied multiple times.
 Now that we know the coupon is legit, we should add it to our cart. I've already
 prepped the cart to be able to store coupons. Just use
 `$this->get('shopping_cart')` and then call `->setCouponCode()`, passing it the
-`$code` string and the amount off, in dollars: `$stripeCoupon->amount_off/100`.
+`$code` string and the amount off, in dollars: so `$stripeCoupon->amount_off/100`.
 The cart will *remember* - via the session - that the user has this coupon.
 
 We're *just* about done: add a *sweet* flash message - "Coupon applied!" - and then
@@ -62,7 +62,7 @@ coupon code. So back in the template, use `cart.totalWithDiscount`.
 Ah, *now* it shows $49.
 
 But, it'll be even *clearer* if we display the discount in the table. At the bottom
-of that table, add new if statement: `if cart.couponCode` and an `endif`. Then, copy
+of that table, add a new if statement: `if cart.couponCode` and an `endif`. Then, copy
 the subscription block from above, paste it here, and change the first variable to
 `cart.couponCode` and the second to `cart.couponCodeValue` without the `/ month`,
 unless you want to make all your coupons recurring. Oh, and add "Coupon" in front

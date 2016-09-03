@@ -2,7 +2,7 @@
 
 So far, we *only* offer monthly plans. But sheep *love* commitment, so they've been
 asking for *yearly* options. Well, great news! After all that upgrade stuff we
-just handle, this is going to be *easy*.
+just handled, this is going to be *easy*.
 
 ## Creating the New Plans
 
@@ -23,7 +23,7 @@ monthly and yearly plans.
 First, we need to add these plans to our system. Open the `SubscriptionPlan` class.
 To distinguish between monthly and yearly plans, add a new property called `duration`:
 this will be a string, either `monthly` or `yearly`. At the top, I love constants,
-so create: `cost DURATION_MONTHLY = 'monthly'` and `const DURATION_YEARLY = 'yearly'`.
+so create: `const DURATION_MONTHLY = 'monthly'` and `const DURATION_YEARLY = 'yearly'`.
 
 Next, add a `$duration` argument to the constructor, but default it to monthly.
 Set the property below.
@@ -38,14 +38,14 @@ the *yearly* duration. Now, these are *at least* valid plans inside the system.
 ## The Duration Change UI
 
 Here's the goal: on the account page, next to the "Next Billing at" text, I want
-to add a link that says "change to yearly" or "change to monthly". When you click
+to add a link that says "bill yearly" or "bill monthly". When you click
 this, it should follow the same workflow we just built for *upgrading* a plan:
 it should show the cost, then make the change.
 
 In `ProfileController::accountAction()`, add yet *another* variable here called
 `$otherDurationPlan`. This will eventually be the `SubscriptionPlan` object for
-the *other* duration of a plan. So if I have the *monthly* Farmer Brent, this will
-be set to the *yearly* Farmer Brent plan.
+the *other* duration of the current plan. So if I have the *monthly* Farmer Brent,
+this will be set to the *yearly* Farmer Brent plan.
 
 To find that plan, open `SubscriptionHelper` and add a new function called
 `findPlanForOtherDuration()` with a `$currentPlanId` argument. I'll paste in some
@@ -58,7 +58,7 @@ into the template as a new variable.
 
 Cool!
 
-In `account.html.twig`, and scroll down to the Upgrade Plan button. Copy that *whole*
+In `account.html.twig`, scroll down to the Upgrade Plan button. Copy that *whole*
 thing. Then, keep scrolling to the "Next Billing at" section. If the user has a
 subscription, paste the upgrade button.
 
