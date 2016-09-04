@@ -35,7 +35,7 @@ it below the button.
 This new div is hidden by default and has a `js-code-form` class that we'll use soon
 via JavaScript. And, it has just one field named `code`. 
 
-Copy the `js-show-code-form` button and scroll up to the `javascripts` block. Add
+Copy the `js-show-code-form` class and scroll up to the `javascripts` block. Add
 a new `document.ready()` function.
 
 Inside, find the `.js-show-code-form` element and on `click`, add a callback. Start
@@ -51,11 +51,12 @@ that validates the code in Stripe and attaches it to our user's cart.
 
 To create the new endpoint, open `OrderController`. Near the bottom add a new public
 function `addCouponAction` with `@Route("/checkout/coupon")`. Name it `order_add_coupon`.
-Also, to be extra-hipster, add `@Method("POST")` to guarantee that you can only
+And to be extra-hipster, add `@Method("POST")` to guarantee that you can only
 POST to this.
 
 Cool! Copy the route name, then find the coupon form in the checkout template. Update
 the form's `action`: add `path()` and then paste the route name.
 
 Next, we'll read the submitted code and check with Stripe to make sure it's real,
-and not just someone trying to guess clever coupon codes. We've all tried that before.
+and not just someone trying to guess clever coupon codes. Come on, we've all tried
+it before.

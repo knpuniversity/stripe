@@ -9,7 +9,7 @@ page.
 
 ## Fetching the Coupon Information
 
-Cool! At this point, all *we* need to do is talk to Stripe and ask them:
+Great! At this point, all *we* need to do is talk to Stripe and ask them:
 
 > Hey Stripe! Is this a valid coupon code in your system?. Oh, and if it is,
 > how much is it for?
