@@ -32,11 +32,17 @@ which plan.
 
 ## Subscription and User Entities
 
-The new subscription table is modeled in our code with a `Subscription` entity class.
+The new subscription table is modeled in our code with a `Subscription` entity class:
+
+[[[ code('c013afe5b6') ]]]
+
 It has properties for all the columns you just saw. And in the `User` class, for
-convenience, I added a `subscription` property shortcut. With this, if you have a
-`User` object and call `getSubscription()` on it, you'll get the `Subscription` object
-that's associated with this `User`, if there is one.
+convenience, I added a `$subscription` property shortcut:
+
+[[[ code('000c78d0c9') ]]]
+
+With this, if you have a `User` object and call `getSubscription()` on it, you'll
+get the `Subscription` object that's associated with this `User`, if there is one.
 
 ## Prepping the Account Page
 
@@ -45,7 +51,9 @@ All this info: yep, it's just hardcoded right now. Open up the template for this
 at `app/Resources/views/profile/account.html.twig`. Instead of "None", add an `if`
 statement: `if app.user` - that's the currently-logged-in user `app.user.subscription`,
 then we know they have a Subscription. Add a label that says "Active". If they don't
-have a subscription, say "None".
+have a subscription, say "None":
+
+[[[ code('11bc04364e') ]]]
 
 If you refresh now... it says None. We actually *do* have a Subscription in Stripe
 from a moment ago, but our database doesn't know about it. That's what we need to
@@ -60,7 +68,9 @@ But instead of putting the code to update the database right here, let's add it
 to `SubscriptionHelper`: this class will do all the work related to subscriptions.
 Add a new method at the bottom called `public function addSubscriptionToUser()`
 with two arguments: the `\Stripe\Subscription` object that was just created and the
-`User` that the Subscription should belong to.
+`User` that the Subscription should belong to:
+
+[[[ code('77b2ffca94') ]]]
 
 Inside, start with `$subscription = $user->getSubscription()`. So, the user may *already*
 have a row in the `subscription` table from a previous, expired subscription. If
@@ -69,43 +79,68 @@ will have a *maximum* of one related row in the `subscription` table. It keeps t
 simple.
 
 But if they *don't* have a previous subscription, let's create one:
-`$subscription = new Subscription()`. Then, `$subscription->setUser($user)`.
+`$subscription = new Subscription()`. Then, `$subscription->setUser($user)`:
+
+[[[ code('83cf2f4282') ]]]
 
 Our *other* todo is to update the fields on the `Subscription` object:
-`stripeSubscriptionId` and `stripePlanId`. To keep things clean, open `Subscription`
+`$stripeSubscriptionId` and `$stripePlanId`. To keep things clean, open `Subscription`
 and add a new method at the bottom: `public function activateSubscription()` with
-two arguments: the `$stripePlanId` and `$stripeSubscriptionId`. Set each of these
-onto the corresponding properties. Also add `$this->endsAt = null`. We'll talk more
-about that later, but this field will help us know whether or not a subscription
-has been cancelled.
+two arguments: the `$stripePlanId` and `$stripeSubscriptionId`:
 
-Back in `SubscriptionHelper`, call `$subscription->activateSubscription()`. We need
-to pass this the `stripePlanId` and the `stripeSubscriptionId`. But remember! We
-have this fancy `\Stripe\Subscription` object! In the API docs, you can see its
+[[[ code('e036363857') ]]]
+
+Set each of these onto the corresponding properties. Also add `$this->endsAt = null`:
+
+[[[ code('4527ab60ed') ]]]
+
+We'll talk more about that later, but this field will help us know whether or not
+a subscription has been cancelled.
+
+Back in `SubscriptionHelper`, call `$subscription->activateSubscription()`:
+
+[[[ code('8ae8e8d773') ]]]
+
+We need to pass this the `stripePlanId` and the `stripeSubscriptionId`. But remember!
+We have this fancy `\Stripe\Subscription` object! In the API docs, you can see its
 fields, like `id` and `plan` with its *own* `id` sub-property.
 
-Cool! Pass the method `$stripeSubscription->plan->id` and `$stripeSubscription->id`.
+Cool! Pass the method `$stripeSubscription->plan->id` and `$stripeSubscription->id`:
+
+[[[ code('cf03501390') ]]]
 
 Booya!
 
 And, time to save this to the database! Since we're using Doctrine in Symfony, we
 need the EntityManager object to do this. I'll use dependency injection: add an
 `EntityManager` argument to the `__construct()` method, and set it on a new `$em`
-property. For Symfony users, this service is using auto-wiring. So because I type-hinted
-this with `EntityManager`, Symfony will automatically know to pass that as an argument.
+property:
+
+[[[ code('e33d73a9ba') ]]]
+
+For Symfony users, this service is using auto-wiring. So because I type-hinted this
+with `EntityManager`, Symfony will automatically know to pass that as an argument.
 
 Finally, at the bottom, add `$this->em->persist($subscription)` and
-`$this->em->flush($subscription)` to save *just* the Subscription.
+`$this->em->flush($subscription)` to save *just* the Subscription:
+
+[[[ code('90d184c8a3') ]]]
 
 With all that setup, go back to `OrderController` to call this method. To do that,
 we need the `\Stripe\Subscription` object. Fortunately, the `createSubscription`
-method returns this. So add `$stripeSubscription = ` in front of that line. Then,
-add `$this->get('subscription_helper')->addSubscriptionToUser()` passing it
-`$stripeSubscription` and the currently-logged-in `$user`.
+method returns this:
+
+[[[ code('a42ae9e687') ]]]
+
+So add `$stripeSubscription = ` in front of that line. Then, add
+`$this->get('subscription_helper')->addSubscriptionToUser()` passing it `$stripeSubscription`
+and the currently-logged-in `$user`:
+
+[[[ code('fca5617906') ]]]
 
 Phew! That may have seemed like a lot, but ultimately, this line just makes sure
 that there is a subscription row in our table that's associated with this user
-and up-to-date with the subscription and plan ids. 
+and up-to-date with the subscription and plan IDs. 
 
 Let's go try it out. Add a new subscription to your cart, fill out the fake
 credit card information and hit checkout. No errors! To the account page! Yes!
