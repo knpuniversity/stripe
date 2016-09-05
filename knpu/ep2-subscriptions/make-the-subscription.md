@@ -4,7 +4,7 @@ Open up the Stripe docs and go down the page until you find subscriptions. There
 a nice little "Getting Started" section but the detailed guide is the place to go
 if you've got serious questions.
 
-But let's start with the basics! Step one...done! Step 2: subscribing your customers.
+But let's start with the basics! Step 1... done! Step 2: subscribing your customers.
 Apparently all we need to do is set the plan on the Customer and save! Cool!
 
 ## The Players: Subscription, Customer, Invoice
@@ -24,30 +24,47 @@ finally we create an `Invoice` and pay it. When you create an `Invoice`, Stripe
 automatically adds all unpaid invoice items to it.
 
 With a `Subscription`, there are two new players: Plans and Subscriptions. Click
-Subscriptions and go down to "Create a Subscription". Ah, so simple: a Subscription
+"Subscriptions" and go down to "Create a Subscription". Ah, so simple: a `Subscription`
 is between a Customer and a specific Plan. This is the code we will use.
 
 ## Coding up the Stripe Subscription
 
 Back on our site, after we fill out the checkout form, the whole thing submits to
 `OrderController::checkoutAction()`. And *this* passes the submitted Stripe token
-to `chargeCustomer()`. Ah that's where the magic happens: it creates or gets
-the Customer, adds InvoiceItems and creates the Invoice. Beautiful.
+to `chargeCustomer()`:
+
+[[[ code('258e8ea655') ]]]
+
+Ah that's where the magic happens: it creates or gets the `Customer`, adds InvoiceItems
+and creates the `Invoice`:
+
+[[[ code('12a3a7a852') ]]]
+
+Beautiful.
 
 All *we* need to do is create a `Subscription` - via Stripe's API - if they have a plan
-in their cart. Before we create the `Invoice`, add `if $cart->getSubscriptionPlan()`.
+in their cart. Before we create the `Invoice`, add `if $cart->getSubscriptionPlan()`:
+
+[[[ code('bb281cb2e9') ]]]
+
 Next, open `StripeClient`: we've designed this class to hold all Stripe API setup
 and interactions. Add a new method: `createSubscription()` and give it a `User` argument
-and a `SubscriptionPlan` argument that the User wants to subscribe to.
+and a `SubscriptionPlan` argument that the User wants to subscribe to:
+
+[[[ code('2b476634ce') ]]]
 
 Now, go back to the Stripe API docs, steal the code that creates a Subscription,
 and paste it here. Set that to a new `$subscription` variable. For the customer,
 use `$user->getStripeCustomerId()` to get the id for *this* user. For the plan, just
-`$plan->getPlanId()`. Return the `$subscription` at the bottom.
+`$plan->getPlanId()`. Return the `$subscription` at the bottom:
+
+[[[ code('5b9bd8dca7') ]]]
 
 To use this in the controller, use the `$stripeClient` variable we setup earlier:
 `$stripeClient->createSubscription()` and pass it the current `$user` variable and
-then `$cart->getSubscriptionPlan()`.
+then `$cart->getSubscriptionPlan()`:
+
+[[[ code('2f8b5c2a42') ]]]
 
 And that's *all* you need to create a subscription!
 
@@ -65,8 +82,11 @@ below, it'll be empty... and you'll actually get an error.
 
 What we actually want to do is move `createInvoice()` into the `else` so that if
 there *is* a subscription plan, *it* will create the invoice, else, *we* will create
-it manually. Yep, the user can buy a subscription *and* some extra, amazing products
-all at the same time.
+it manually:
+
+[[[ code('827ef6f953') ]]]
+
+Yep, the user can buy a subscription *and* some extra, amazing products all at the same time.
 
 ## Try out the Whole Flow
 
