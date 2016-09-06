@@ -27,8 +27,9 @@ At the bottom of `Subscription`, add a helper function to do this:
 [[[ code('5d564fe01f') ]]]
 
 Since we know the user has paid through the end of the period, we can use that:
-`$this->endsAt = $this->billingPeriodEndsAt`. Also set `$this->billingPeriodsEndsAt = null`
-- just so we know that there won't be another bill at the end of this month:
+`$this->endsAt = $this->billingPeriodEndsAt`. Also set
+`$this->billingPeriodsEndsAt = null` - just so we know that there won't be another
+bill at the end of this month:
 
 [[[ code('cd997cf210') ]]]
 
