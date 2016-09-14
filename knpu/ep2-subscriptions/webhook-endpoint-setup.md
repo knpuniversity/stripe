@@ -2,14 +2,22 @@
 
 Let's get right to work on our webhook endpoint. In the `src/AppBundle/Controller`
 directory, create a new `WebhookController` class. Make it extend a `BaseController`
-class I created - that just has a few small shortcuts.
+class I created - that just has a few small shortcuts:
+
+[[[ code('e5f672342b') ]]]
 
 Now, create the endpoint with `public function stripeWebhookAction()`. Give an `@Route`
 annotation set to `/webhooks/stripe` and a similar name. Make sure you have the
-`Route` use statement.
+`Route` use statement:
 
-Start simple: return a `new Response()` from the `HttpFoundation` component. That's
-just enough to try it out: find your browser and go to `/webhooks/stripe`. It's alive!
+[[[ code('458d27b5b0') ]]]
+
+Start simple: return a `new Response()` from the `HttpFoundation` component:
+
+[[[ code('def86c5e49') ]]]
+
+That's just enough to try it out: find your browser and go to `/webhooks/stripe`.
+It's alive!
 
 ## Decoding the Event
 
@@ -19,13 +27,19 @@ most important thing is this *event* `id`. Let's decode the JSON and grab this.
 To do that, add `$data = json_decode()`, but pause there. We need to pass this the
 *body* of the Request. In Symfony, we get this by adding a `Request` argument - don't
 forget the `use` statement! Then, use `$request->getContent()`. Also, pass `true`
-as the second argument so that `json_decode` returns an associative array.
+as the second argument so that `json_decode` returns an associative array:
+
+[[[ code('9e5913cef9') ]]]
 
 Next, it *shouldn't* happen, but just in case, if `$data` is null, that means Stripe
 sent us invalid JSON. Shame on you Stripe! Throw an exception in this case... and
 make sure you spell `Exception` correctly!
 
-Finally, get the `$eventId` from `$data['id']`.
+[[[ code('dfd8e346db') ]]]
+
+Finally, get the `$eventId` from `$data['id']`:
+
+[[[ code('e9c7426621') ]]]
 
 ## We Found the Event! Now, Fetch the Event?!
 
@@ -42,11 +56,14 @@ the event data is legitimate.
 
 Since we make all API requests through the `StripeClient` class, open it up and scroll
 to the bottom. Add a new public function called `findEvent()` with an `$eventId`
-argument.
+argument. Inside, just return `\Stripe\Event::retrieve()` and pass it `$eventId`:
 
-Inside, just return `\Stripe\Event::retrieve()` and pass it `$eventId`.
+[[[ code('3720935668') ]]]
 
-Back in the controller, add `$stripeEvent = $this->get('stripe_client')->findEvent($eventId)`.
-If this were an invalid event id, Stripe would throw an exception.
+Back in the controller, add `$stripeEvent = $this->get('stripe_client')->findEvent($eventId)`:
+
+[[[ code('b8062b5a11') ]]]
+
+If this were an invalid event ID, Stripe would throw an exception.
 
 With that, we're prepped to handle some event types.
