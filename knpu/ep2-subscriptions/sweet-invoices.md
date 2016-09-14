@@ -1,157 +1,68 @@
-# Invoices
+# Sweet Invoices
 
-Finally, it's time for our last topic which is a bit of accounting. The way
-we've set up our system, everything the user buys ultimately is purchased
-through an invoice. This is awesome, because your user's going to want to see
-what they paid for in the past, and you'll probably also want them to get some
-sort of a receipt. We're not going to go all the way through that process, but
-I'm going to show you the most important things that you need to show in the
-receipt, and how you'd actually fetch those things.
+Ha! We've made it! We've survived our subscription payment setup! So, umm, go celebrate:
+eat some cake! Sing a song! Or, like we'll do, do some accounting.
 
-Now, in our application, I'm going to have no local invoices table. We're
-entirely going to let Stripe handle invoices for us, and then we're just going
-to display these invoices for the user when they need them. We'll be using the
-invoices [inaudible 00:00:53] point, right about ten minutes. This is my last
-chapter. Yup. Specifically, we're going to use it to fetch all of the invoices
-for a specific customer.
+Because our *last* topic is about that: your users *will* need to see a receipt
+after purchase. And good news: we've setup our system so that every charge is
+done by creating an *Invoice* in Stripe's system. That'll make our life easy.
 
-Let's open up the Stripe client, and at the bottom, you know we're going to
-need a new function here, something like public function, find paid invoices.
-This will accept the user object. The idea here is, we're going to use the API
-to find all the invoices, but then we're going to filter our so that this
-method only returns the paid invoices, because there are other invoices that
-may include failed invoices, and we don't really want to worry the user about
-those, because they didn't really actually end up paying them.
+## Store Invoices Locally?
 
-First, let's say, "All invoices=Stripe/invoice::all" We'll pass that in array
-of a single customer key set to user arrow, get Strip customer ID. Next, create
-a new iterator variable, set that to all invoices arrow auto paging-iterator.
-This "all invoices" thing is actually an array of invoices, but the auto
-paging-iterator is a cool thing that they have so many invoices that the API
-has page named the results, this will automatically make new API calls behind
-the scenes. In other words, we can loop over this, and it will give us all of
-the invoices for the customer.
+In fact, *all* the information we need to render a receipt is *already* stored in
+Stripe. So, you *could* create a local `invoices` database table and store details
+there... or, you can take a shortcut and use Stripe's API to fetch invoice data whenever
+you actually need it. Let's do that.
 
-Finally, let's say, "Invoices=empty array". Let's loop over iterator as
-invoice. Very simply, what we're looking for here is whether or not the invoice
-is paid, which is a true or a false. If invoice arrow paid, then we'll add this
-invoice to our array, and then, return those invoices at the bottom. We'll even
-add a little PHP backup here that says that this returns an array of Stripe
-invoice objects.
+## Fetch all Paid Invoices
 
-What I want to do in assembly is, in our account page, right at the bottom
-here, I'll add another invoices spot, and we're just list all the invoices, and
-then eventually they'll click those invoices to get all the details. To do
-that, open up your profile controller, and all the way in the top, in the
-method that actually renders the account page, we're going to need to go, we're
-going to say "Invoices=this arrow get Stripe_clients," and then we'll call find
-the paid invoices and pass [inaudible 00:04:21] user. Then, we're going to pass
-that into our template as invoices.
+Open up `StripeClient`. At the bottom, add a new `public function findPaidInvoices()`
+with a `User` argument. Here's the idea: we'll use Stripe's API to find *all*
+`Invoices` for a customer, but then filter those to only return invoices that were
+*paid*. That will remove some *garbage* invoices the user shouldn't see: like invoices
+for payments that failed and then were closed immediately.
 
-Now, in our account template, we'll go down to the bottom of our table and
-create a new TR that TH such as invoices. We'll create a little list group here
-were we can list all of the invoices. We'll just iterate over them with for
-invoice in invoices. We'll create a little A tag. Keep the [H-up 00:05:02]
-empty for now, because we don't have a page yet that will show all of them.
-Let's add "Class=list group item".
+Start with: `$allInvoices = \Stripe\Invoice::all()` and pass that an array with a
+`customer` key set to `$user->getStripeCustomerId()`. Next - and this will look a
+little weird at first - create an `$iterator` variable set to `$allInvoices->autoPagingIterator()`.
+This is actually *really* cool: if the user has a *lot* of invoices, then Stripe
+will *paginate* your results. But with the iterator, it will automatically make new
+API calls behind-the-scenes, allowing us to loop over *every* invoice, no matter
+how many there are.
 
-Down here, we'll print a couple of things. First, we'll print the date of the
-invoice. Which, if you look at the API, very simply, there is an invoice.date,
-which is a timestamp. We'll print curly curly invoice.date, pipe that to the
-date filter, year/m/d, and that will convert that to that nice format for us.
-Second, we'll add a little label here that floats to the right, and inside of
-it, we'll do a dollar sign, and we'll say the invoice total. Specifically, and
-you'll remember this from earlier, we want the amount due. This is actually the
-amount that was charged to that invoice. We'll say, "Invoice.amount_due", and
-we'll divide that by 100 so that it gets converted into dollars.
+Let's do that: start with `$invoices = array()`. Then `foreach` over
+`$iterator as $invoice`. Very simply, we want to know if this invoice is *paid*.
+If `$invoice->paid`, then add this to the `$invoices` array. Finally, return those
+paid `$invoices` at the bottom. Heck, let's over-achieve by adding some PHPDoc that
+shows that this method return an array of `\Stripe\Invoice` objects.
 
-Let's try this out. We'll go back, refresh. Just like that, we have our long
-list of paid invoices. Now, let's make it so that we can actually view all of
-the information about those invoices, and that's a really important step to
-make that really clear for the user. In profile controller, at the bottom,
-we'll create a new public function, "Show invoice action." We'll have the
-url/profile/invoices/invoiceID. We'll give it a name of account invoice show.
-This will show just a single invoice. I'll copy the name of the route, because
-we can already go back to our account template, and fill in the href with path
-that, and then we'll pass invoice ID set to invoice.ID, which will get the
-Stripe ID off of that, from that invoice.
+## Listing all Invoices
 
-Next, in profile controller, this is actually pretty simple. We need to first
-ask Stripe for this one, individual invoice object. In Stripe client, we don't
-have a method that returns invoice yet, so let's create on quickly. Public
-function, find invoice. We'll set the invoice ID, [inaudible
-00:08:13]/Stripe/invoice, retrieve invoice ID. Very simple. Now, in our
-controller, we can add Stripe invoice=this arrow get. Stripe client arrow find
-invoice. Pass it that invoice ID. If you want, you can surround that with a tri
-catch block, if you wanted to do a 404 instead of a 500.
+Thanks to this function, on the account page, at the bottom, we'll print a list of
+all the Customer's invoices. Eventually, they'll be able to click each invoice to
+see *all* the details.
 
-Then, we're just going to render a tweaked template. Profile/invoice.html.[twic
-00:09:01], and we'll pass it an invoice variable set to our Stripe invoice.
-Instead of creating this template by hand, to save us some time, inside of your
-tutorial directory, you should already have invoice.html.twic. Go ahead and
-copy that into your profile directory. Before we look at this template, let's
-double check and make sure that this all works.
+Start in `ProfileController`... all the way at the top: this method renders the account
+page. Fetch the invoices with
+`$invoices = $this->get('stripe_client')->findPaidInvoices()` with the current user.
+Pass that as a new variable into the template.
 
-I'll refresh the page on our profile page. Let's click into one of the
-discounted invoices, and there it is. The important pieces here is that it
-shows the subscription, it shows the discount, and it shows the total on the
-bottom. There's lots of different ways to render your invoices, but what you
-need to understand is what information you need to render. If you look at the
-template, there's a number of different things that might be useful.
+Now inside the template, find the bottom of the table. Add a new row, and title
+it Invoices. Next, create a list and the loop with `for invoice in invoices`. Add
+the `endfor`. Create an anchor tag, but keep the `href` empty for now - we don't
+have an invoice "show" page yet. Add some classes to make this look a little fancy.
 
-First, on the invoice object, there's a starting balance field. This is
-basically telling you how much customer balance was used against the order.
-They may have already had a positive customer balance, and you need to show
-that to the users to explain why they were charged less than they meay have
-expected. Second, we're going to loop over the line items. The line items might
-include individual products, or they might be for subscriptions. It's a little
-quirky, but the way I've found to figure this out is, you check to see if line
-item.description is set.
+So let's see, the user might be looking for a *specific* invoice, so let's print
+its date. Check out the Invoice API. Hey! There's actually a `date` field, which
+is a UNIX timestamp. Print `invoice.date` and then pipe that through the `date` filter
+with `Y-m-d`.
 
-That might be set in 2 different cases. If it's an individual product, that
-would be set with the product's name, because that's how we set up our line
-invoice items. Also, if this is a proration invoice line item, that will have a
-very nice invoice description describing that it's being prorated for a partial
-month. If line.item.description is blank, then there should be a line
-item.plan, which means that this was a normal charge for a subscription, and we
-can print subscription, too, and then the plans name below that. Now, below
-here, we're going to print the line item.amount. This macros.currency is just
-something I have set up here to help with my dollar signs and my negative
-numbers.
+Next, add a span label, float it right, and inside, add the amount: `$` then print
+`invoice.amount_due / 100` to convert it from cents to dollars. The `amount_due` field
+is what the user should have *actually* been charged, after accounting for coupons
+or a positive account balance.
 
-After the line items, the other thing I want to check is the invoice.discount.
-Originally, if you added a coupon, then once that's been taken into account,
-the results of that coupon are shown on invoice.discount. We show which coupon
-code was used, and we also show the amount off thanks to that coupon. Finally
-down here we show the total with amount due. These are all the different
-aspects that go into figuring out how much someone was charged, and just make
-sure that you show those when you're charging your user.
-
-One downside to this approach is that we don't have any of the invoice data in
-our database, which means for bookkeeping services we're reliant on a third
-party service for keeping track of all the stuff. It also means that we can't
-easily do querying on reporting, we couldn't very easily total up the amount of
-sales that we've had over a period, because all of that stuff is sitting on
-somebody else's system. Also, these pages load a little bit slow because we're
-making an API request out to an outside server.
-
-Depending on your needs, you might want to store some of this invoice
-information locally. What I mean is, you would create an invoice table, and in
-that table you would store whatever information was important to you. You'd
-probably store the amount the user was charged, and you may also store any
-discounts that were applied to it, and you might even have a summary on that
-invoice item of what they purchased.
-
-The way you do that is by listening to a few webhooks. Specifically, webhook
-like invoice.created, and in that webhook, you would do nothing more than
-create that new invoice in your database. You'd also want to listen to
-invoice.updated, because this is going to be called whenever the invoice is
-updated, like when its status goes from unpaid to paid, or if anything else
-changes. Storing some information in your database is a good way to at least
-have some good record of what's going on.
-
-Phew, okay. I warned you, this stuff is hard, but we have poured out our heart
-on this tutorial to give you everything you need to have a really robust
-checkout system, and a really great experience where your users don't get any
-surprises. If you have any questions, as usual, ask in the comments, and I'll
-see you guys next time.
+Try things out so far: head back to the account page and refresh! Bam! Here's our
+long invoice list. Next, let's give each invoice its own detailed display page, complete
+with invoice items, discounts and anything else that might have happened on that
+invoice.

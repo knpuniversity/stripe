@@ -21,7 +21,7 @@ free.
 
 The first step, is to hide this checkout form! In `checkout.html.twig`, find the
 `_cardForm.html.twig` include, and wrap it in `if cart.totalWithDiscount > 0`. Else,
-create a really simple form that submits right back this this URL. Give it
+create a really simple form that submits right back to this URL. Give it
 `method="POST"` and a submit button that invites the user to "Checkout for Free".
 
 If you refresh now, boom! Checkout form gone.

@@ -123,3 +123,6 @@ chapters:
     sweet-invoices:
         is_finished: false
         video_key: ~
+    display-invoice-details:
+        is_finished: false
+        video_key: ~
