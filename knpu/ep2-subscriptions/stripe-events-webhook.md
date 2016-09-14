@@ -19,9 +19,9 @@ when we added a new card, there was an event whose `type` field is set to
 *types* of events for the many things that can happen.
 
 In fact, switch over to Stripe's API docs. Event is so important that it's an *object*
-in the API: you can list and fetch them. Click [Types of events](https://stripe.com/docs/api#event_types).
-Awesome! A big, giant, beautiful list of all the different event types so you can figure
-out what each event means.
+in the API: you can list and fetch them. Click [Types of events][event_types].
+Awesome! A big, giant, beautiful list of all the different event types so you can
+figure out what each event means.
 
 ## What Happens when we Can't Charge a User?
 
@@ -45,7 +45,7 @@ to our site in Stripe. Then, whenever certain event *types* happen, Stripe will
 send a request to our URL that contains the *event* object as JSON. So if Stripe
 sent us a webhook whenever a subscription was canceled, we would be in business!
 
-A really nice way to test out webhooks is by using a site called http://requestb.in.
+A really nice way to test out webhooks is by using a site called [http://requestb.in][request_bin].
 Click "Create a RequestBin". Ok, real simple: this page will record and display
 any requests made to this temporary URL. 
 
@@ -69,3 +69,7 @@ that event to *us*, instead of us needing to fetch it from them.
 Here's the next goal: setup a route and controller on our site that's capable of
 handling webhooks and doing different things in our system when different event
 types happen.
+
+
+[event_types]: https://stripe.com/docs/api#event_types
+[request_bin]: http://requestb.in

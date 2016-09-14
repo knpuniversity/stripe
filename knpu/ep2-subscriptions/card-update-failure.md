@@ -18,14 +18,25 @@ the new customer card back to Stripe. We *did* handle this situation on our
 checkout page, so we just need to *also* handle it here.
 
 In `ProfileController`, the `updateCustomerCard()` call is the one that might fail.
-Wrap this is a try-catch for `\Stripe\Error\Card`. Set an `$error` variable to:
-`There was a problem charging your card` and then concatenate `$e->getMessage()`.
+Wrap this is a try-catch for `\Stripe\Error\Card`:
 
-To show this to the user, call `addFlash()` and set an `error` type. Just like with
-`success` flash messages, our base template is already configured to show these.
-But in this case, the message will look red and angry!
+[[[ code('97d95311fd') ]]]
 
-Finally, redirect back to the `profile_account` route.
+Set an `$error` variable to: `There was a problem charging your card` and then
+concatenate `$e->getMessage()`:
+
+[[[ code('788af80d2b') ]]]
+
+To show this to the user, call `addFlash()` and set an `error` type:
+
+[[[ code('69d3ebd87c') ]]]
+
+Just like with `success` flash messages, our base template is already configured
+to show these. But in this case, the message will look red and angry!
+
+Finally, redirect back to the `profile_account` route:
+
+[[[ code('98028c72e3') ]]]
 
 To try it out, go back, press "Update Card" again, and use the same, failing card
 number. This time, no 500 error! Just this sad, but useful message.

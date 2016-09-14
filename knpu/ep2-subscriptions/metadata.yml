@@ -52,35 +52,25 @@ chapters:
     cancelation-edge-case-bugs:
         video_key: 181231424
     update-card-form:
-        is_finished: false
-        video_key: ~
+        video_key: 182593499
     update-card-processing:
-        is_finished: false
-        video_key: ~
+        video_key: 182596162
     card-update-failure:
-        is_finished: false
-        video_key: ~
+        video_key: 182594657
     stripe-events-webhook:
-        is_finished: false
-        video_key: ~
+        video_key: 182595452
     webhook-endpoint-setup:
-        is_finished: false
-        video_key: ~
+        video_key: 182596342
     subscription-canceled-webhook:
-        is_finished: false
-        video_key: ~
+        video_key: 182601300
     testing-webhooks:
-        is_finished: false
-        video_key: ~
+        video_key: 182602437
     testing-webhooks-fake-event:
-        is_finished: false
-        video_key: ~
+        video_key: 182621794
     live-webhook-testing-ngrok:
-        is_finished: false
-        video_key: ~
+        video_key: 182620777
     subscription-renewal-webhook:
-        is_finished: false
-        video_key: ~
+        video_key: 182623409
     payment-failed-webhook:
         is_finished: false
         video_key: ~
