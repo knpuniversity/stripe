@@ -48,7 +48,7 @@ page. Fetch the invoices with
 Pass that as a new variable into the template.
 
 Now inside the template, find the bottom of the table. Add a new row, and title
-it Invoices. Next, create a list and the loop with `for invoice in invoices`. Add
+it Invoices. Next, create a list and then loop with `for invoice in invoices`. Add
 the `endfor`. Create an anchor tag, but keep the `href` empty for now - we don't
 have an invoice "show" page yet. Add some classes to make this look a little fancy.
 

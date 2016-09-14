@@ -2,8 +2,8 @@
 
 To see *all* the details for each invoice, we need an "invoice show" page. Head to
 `ProfileController` and add a new method for this: `showInvoiceAction()`. Give it
-a URL: `/profile/invoices/{invoiceId}`. And a name: `account_invoice_show`.
-Add the `$invoiceId` argument.
+a URL: `/profile/invoices/{invoiceId}`. And a name: `account_invoice_show`, and then
+add the `$invoiceId` argument.
 
 Before doing anything else, copy that route name, head back to the account template
 and fill in the `href` by printing `path()` then pasting the route name. For the
@@ -61,7 +61,7 @@ its details. But, each line item *might* be for an individual product *or* for a
 subscription. It's a little weird, but I've found that the best way to handle this
 is to check to see if `lineItem.description` is set.
 
-If it *is* set, then this print it. In that case, this line item is either an individual
+If it *is* set, then print it. In that case, this line item is either an individual
 product - in which case the description is the product's name - *or* it's a proration
 subscription line item that's created when a user changes between plans. In that
 case, the description is really nice: it explains exactly what this charge or credit
@@ -77,8 +77,8 @@ After the line items, there's just *one* more thing to worry about: discounts! W
 already know that you can create Coupons and attach them to a Customer at checkout.
 When a Coupon has been used, it's known as a "discount" on the invoice. Let's print
 the coupon's id and the amount off thanks to the coupon. If you want to support
-Coupons for both a set amount off *and* a percentage off, you'll need a bit more
-logic here.
+Coupons for both a set amount off *and* a percentage off, you'll need to do a little
+bit more work here.
 
 Finally, at the bottom: print the total by using the `amount_due` field. After taking
 everything above into account, this should be the amount they were charged.
