@@ -29,7 +29,7 @@ It's not perfect, it's slow, but it's totally real-world.
 The second option is to point a webhook at your *local* development machine. But
 wait! That's not possible: our local machine is not accessible by the internet.
 
-Well... that doesn't *have* to be true. By using a cool utility called [Ngrok](https://ngrok.com/),
+Well... that doesn't *have* to be true. By using a cool utility called [Ngrok][ngrok],
 you can temporarily tunnel a *public* URL to your computer.
 
 Let's try it! Since I already have ngrok installed, I can use it from any directory
@@ -45,7 +45,9 @@ this cool public URL.
 Copy that and paste it into your browser! Ah, that's a little security check that
 prevents any non-local users from accessing our `dev` environment. Just for now,
 go into the `web/` directory, open `app_dev.php`, and comment-out the two security
-lines.
+lines:
+
+[[[ code('012d540dfe') ]]]
 
 Refresh again! Hey, it's our site! Via a public URL.
 
@@ -73,3 +75,6 @@ were just *too* fast the first time.
 
 So, choose your favorite method of testing these crazy webhook things, and make sure
 they are bug-free.
+
+
+[ngrok]: https://ngrok.com/
