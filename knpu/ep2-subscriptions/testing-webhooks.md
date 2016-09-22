@@ -25,9 +25,12 @@ This is a special directory I created and you should have it if you downloaded t
 start code from this page. It has a few things to make our life easier.
 
 Copy the `WebhookControllerTest.php` file and put it into the `tests/AppBundle/Controller`
-directory. Let's check this out: this is the *start* of a test that's specifically
-written for Symfony. If you're not using Symfony, the code will look different, but
-the idea is fundamentally the same.
+directory. Let's check this out:
+
+[[[ code('150955bd6b') ]]]
+
+This is the *start* of a test that's specifically written for Symfony. If you're not
+using Symfony, the code will look different, but the idea is fundamentally the same.
 
 ## Testing Strategy
 
@@ -42,30 +45,50 @@ Because here's the strategy:
 
 1. Create a fake User and fake Subscription in the database;
 2. Send a webhook to `/webhooks/stripe` with *fake* JSON, where the
-    subscription id in the JSON matches the fake data in the database;
+   subscription id in the JSON matches the fake data in the database;
 3. Verify that the subscription is fully canceled after the webhook finishes.
 
-Add the test: `public function testStripeCustomerSubscriptionDeleted()`. Ok, step 1:
-create the subscription in the database: `$subscription = $this->createSubscription()`.
+Add the test: `public function testStripeCustomerSubscriptionDeleted()`:
+
+[[[ code('038f6537c6') ]]]
+
+OK, step 1: create the subscription in the database: `$subscription = $this->createSubscription()`.
 Easy! Step 2: send the webhook... which I'll put as a TODO for now. Then step 3:
-`$this->assertFalse()` that `$subscription->isActive()`. Make sense?
+`$this->assertFalse()` that `$subscription->isActive()`:
+
+[[[ code('e6a00dc0e2') ]]]
+
+Make sense?
 
 ## Prepping some Fake JSON
 
 To send the webhook, we first need to prepare a JSON string that matches what Stripe
 sends. At the bottom of the class, create a new private function called
-`getCustomerSubscriptionDeletedEvent()` with a `$subscriptionId` argument. To fill
-this in, go copy the *real* JSON from the test webhook. Paste it here with
+`getCustomerSubscriptionDeletedEvent()` with a `$subscriptionId` argument:
+
+[[[ code('c9c3b2c52a') ]]]
+
+To fill this in, go copy the *real* JSON from the test webhook. Paste it here with
 `$json = <<<EOF` enter, and paste!
 
+[[[ code('229d29d4ba') ]]]
+
 Now here's the important part: our controller reads the `data.object.id` key to find
-the subscription id. Replace this with `%s`. Then, finish the function with
-`return sprintf($json, $subscriptionId)`. Now, this function will create a
-realistic-looking JSON string, but with whatever subscriptionId we want!
+the subscription id. Replace this with `%s`:
+
+[[[ code('459979901a') ]]]
+
+Then, finish the function with `return sprintf($json, $subscriptionId)`:
+
+[[[ code('f9ca15f5df') ]]]
+
+Now, this function will create a realistic-looking JSON string, but with whatever `subscriptionId` we want!
 
 Back in the test function, add `$eventJson = $this->getCustomerSubscriptionDeletedEvent()`
 and pass it `$subscription->getStripeSubscriptionId()`, which is some fake, random
-value that the function below created.
+value that the function below created:
+
+[[[ code('260d1351a7') ]]]
 
 ## Sending the Fake Webhook
 
@@ -78,12 +101,16 @@ endpoint.
 Now for the magic: call `$client->request()` and pass it a bunch of arguments:
 `POST` for the HTTP method, `/webhooks/stripe`, then a few empty arrays for parameters,
 files and server. Finally, for the `$content` argument - the *body* of the request -
-pass it `$eventJson`.
+pass it `$eventJson`:
+
+[[[ code('d981695132') ]]]
 
 And because things almost never work for me on the first try... and because I *know*
 this won't work yet, let's `dump($client->getResponse()->getContent())` to see what
 happened in case there's an error. Also add a sanity check, `$this->assertEquals()`
-that 200 matches `$client->getResponse()->getStatusCode()`.
+that 200 matches `$client->getResponse()->getStatusCode()`:
+
+[[[ code('45feba117a') ]]]
 
 Let's run the test! But not in this video... this video is getting too long. So go
 get some more coffee and then come back. Then, to the test!

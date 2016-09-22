@@ -72,38 +72,27 @@ chapters:
     subscription-renewal-webhook:
         video_key: 182623409
     payment-failed-webhook:
-        is_finished: false
-        video_key: ~
+        video_key: 183888289
     replay-attacks:
-        is_finished: false
-        video_key: ~
+        video_key: 183891531
     plan-upgrade-ui:
-        is_finished: false
-        video_key: ~
+        video_key: 183891774
     calculate-upgrade-cost:
-        is_finished: false
-        video_key: ~
+        video_key: 183891815
     upgrade-upcoming-invoice-process:
-        is_finished: false
-        video_key: ~
+        video_key: 183898694
     execute-plan-upgrade:
-        is_finished: false
-        video_key: ~
+        video_key: 183896440
     plan-change-payment-failure:
-        is_finished: false
-        video_key: ~
+        video_key: 183899728
     monthly-to-yearly:
-        is_finished: false
-        video_key: ~
+        video_key: 183900792
     monthly-yearly-billing-period:
-        is_finished: false
-        video_key: ~
+        video_key: 183902491
     coupon-code-form:
-        is_finished: false
-        video_key: ~
+        video_key: 183904396
     validating-coupons:
-        is_finished: false
-        video_key: ~
+        video_key: 183906388
     apply-coupon-checkout:
         is_finished: false
         video_key: ~
