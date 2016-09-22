@@ -94,14 +94,10 @@ chapters:
     validating-coupons:
         video_key: 183906388
     apply-coupon-checkout:
-        is_finished: false
-        video_key: ~
+        video_key: 183914219
     free-checkout:
-        is_finished: false
-        video_key: ~
+        video_key: 183917436
     sweet-invoices:
-        is_finished: false
-        video_key: ~
+        video_key: 183915036
     display-invoice-details:
-        is_finished: false
-        video_key: ~
+        video_key: 183915869
