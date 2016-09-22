@@ -53,9 +53,9 @@ Quickly, go use the `SINGLE_USE` code and fill out the form to checkout. This wi
 be the first - and only - allowed "redemption" of this code. When you refresh the
 Coupon page in Stripe, Redemptions are 1/1.
 
-Now, add another subscription to your cart and add this code a *second* time. Our
-system *does* allow us to attach this to the cart. And that makes sense: *all* we're
-doing now is looking up the code in Stripe to make sure it *exists*. 
+Now, add another subscription to your cart. If you tried to use the code a *second*
+time, our system *would* allow this. And that makes sense: *all* we're doing now
+is looking up the code in Stripe to make sure it *exists*.
 
 But, if we tried to checkout, Stripe would be *pissed*: it would *not* allow us
 to use the code a second time. Stripe has our back.

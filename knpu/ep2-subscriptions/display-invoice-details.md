@@ -37,7 +37,7 @@ the "start" code from the site, you should have a `tutorial/` directory with an
 directory.
 
 Before we look deeper at this, let's make sure it works! Refresh the profile page,
-then click into one of the discounted templates. Score! It's got all the important
+then click into one of the discounted invoices. Score! It's got all the important
 stuff: the subscription, the discount and the total at the bottom.
 
 Here's the deal: there is an infinite number of ways to render an invoice. But the
