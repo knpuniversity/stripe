@@ -9,12 +9,16 @@ promise. Here's the plan: as soon as this screen loads, we'll make an AJAX call 
 to the server. The server will calculate how much to charge the customer
 for the upgrade, and send that back so we can show it.
 
-In `ProfileController`, add a new public function called `previewPlanChangeAction`.
+In `ProfileController`, add a new public function called `previewPlanChangeAction()`.
 Set the URL to `/profile/plan/change/preview/{planId}` and give it a name:
-`account_preview_plan_change`.
+`account_preview_plan_change`:
 
-Use the `planId` in the route to load a `$plan` object with `$this->get('subscription_helper')`
-and then call `findPlan()` with `$planId`.
+[[[ code('1f89e434a7') ]]]
+
+Use the `$planId` in the route to load a `$plan` object with `$this->get('subscription_helper')`
+and then call `findPlan()` with `$planId`:
+
+[[[ code('3c6a027790') ]]]
 
 ## Upcoming Invoice to the Rescue
 
@@ -49,25 +53,36 @@ Yea, it's hard! The tl;dr is that Stripe does these calculations for us.
 
 Let's use this endpoint: in `StripeClient`, add a new function:
 `getUpcomingInvoiceForChangedSubscription()` with two arguments: the `User` that
-will be upgrading and the `SubscriptionPlan` they want to change to.
+will be upgrading and the `SubscriptionPlan` they want to change to:
+
+[[[ code('e0528315cc') ]]]
 
 Inside, it's easy: `return \Stripe\Invoice::upcoming()` and pass it a few parameters.
 First, `customer` set to `$user->getStripeCustomerId()` and second, `subscription`
-set to `$user->getSubscription()->getStripeSubscriptionId()`. This tells Stripe *which*
-subscription we would update. Now, in our system, every user should only have one,
-but it doesn't hurt to be explicit.
+set to `$user->getSubscription()->getStripeSubscriptionId()`:
+
+[[[ code('155ce06c25') ]]]
+
+This tells Stripe *which* subscription we would update. Now, in our system, every
+user should only have one, but it doesn't hurt to be explicit.
 
 The last option is `subscription_plan`: in other words, which plan do we want to
-change to. Set it to `$plan->getPlanId()`.
+change to. Set it to `$newPlan->getPlanId()`:
+
+[[[ code('ed10452515') ]]]
 
 Back in `ProfileController`, use this to set a new `$stripeInvoice` variable via
 `this->get('stripe_client')->getUpcomingInvoiceForChangedSubscription()` passing
-it `$this->getUser()` and the new `$plan`.
+it `$this->getUser()` and the new `$plan`:
+
+[[[ code('5e639ed816') ]]]
 
 ## Dumping the Upcoming Invoice
 
 So, what does this fancy Upcoming invoice actually look like? Let's find out by
 dumping it. Then, return a `JsonResponse` with... I don't know, how about a `total`
-key set to a hardcoded `50` for now. Oh, and make sure you dump `$stripeInvoice`.
+key set to a hardcoded `50` for now. Oh, and make sure you dump `$stripeInvoice`:
+
+[[[ code('9d22a61d85') ]]]
 
 Ok, let's keep going by hooking up the frontend and finishing the cost calculation.
