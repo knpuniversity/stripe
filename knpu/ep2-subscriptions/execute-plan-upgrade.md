@@ -7,7 +7,7 @@ In `ProfileController`, add the new endpoint: `public function changePlanAction(
 Set its URL to `/profile/plan/change/execute/{planId}` and name it `account_execute_plan_change`.
 Add the `$planId` argument:
 
-[[[ code('c6fca0bd12') ]]]
+[[[ code('1a034ae1f3') ]]]
 
 This will start just like the `previewPlanChangeAction()` endpoint: copy its `$plan`
 code and paste it here:
