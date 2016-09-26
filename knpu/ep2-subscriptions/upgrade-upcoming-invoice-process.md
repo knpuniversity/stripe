@@ -3,16 +3,22 @@
 Head over to the account template. When the user clicks upgrade, we need to make
 an AJAX call to our new endpoint. To get that URL, find the button and add a new
 attribute: `data-preview-url` set to `path('account_preview_plan_change')`, passing
-a `planId` wildcard set to `otherPlan.planId`.
+a `planId` wildcard set to `otherPlan.planId`:
+
+[[[ code('2158eef0e3') ]]]
 
 Cool! Copy that new attribute name and go back up to the JavaScript section. Let's
 read that attribute: `var previewUrl = $(this).data('preview-url')`. And while
-we're here, create a `planName` variable set to `$(this).data('plan-name')`.
+we're here, create a `planName` variable set to `$(this).data('plan-name')`:
+
+[[[ code('fadeb753ee') ]]]
 
 Now, make that AJAX call! I'll use `$.ajax()` with `url` set to `previewUrl`. Chain
 a `.done()` to add a success function with a `data` argument. And *just* to try
 things out, open sweet alert with a message: `Total $` then `data.total`, since the
-endpoint returns that field.
+endpoint returns that field:
+
+[[[ code('25aeebd08b') ]]]
 
 Ok team, try that out. Refresh the account page and click "Change to New Zealander".
 Bam! Total $50!
@@ -72,12 +78,22 @@ But that means, to show the user the amount they will be charged right now, we n
 to read the `amount_due` value and then *subtract* the full price of the plan,
 to remove the extra line item.
 
-In `ProfileController`, add a new variable `$total` set to `$stripeInvoice->amount_due`.
+In `ProfileController`, add a new variable `$total` set to `$stripeInvoice->amount_due`:
+
+[[[ code('5219b05c58') ]]]
+
 Add a comment above - this stuff is confusing, so let's leave some notes. Then, correct
 the total by subtracting `$plan->getPrice() * 100` to convert into cents - our price
-is stored in dollars.
+is stored in dollars:
 
-Then, return `$total / 100` in the JSON. Let's try it guys: go back and refresh.
+[[[ code('8cf26336fc') ]]]
+
+Then, return `$total / 100` in the JSON:
+
+[[[ code('b2c4991955') ]]]
+
+Let's try it guys: go back and refresh.
+
 Click "Change to New Zealander". Ok, `$99.93` - that *looks* about right. Remember,
 the upgrade should cost about $100, but since we've been using the old plan for
 a few minutes, the true cost should be *slightly* lower.
@@ -85,7 +101,9 @@ a few minutes, the true cost should be *slightly* lower.
 ## Finishing up the JS
 
 Ok! It's time to *execute* this upgrade! To save us some time, I'll paste some
-JavaScript into the AJAX success function.
+JavaScript into the AJAX success function:
+
+[[[ code('c97c893648') ]]]
 
 This first display how much we will charge the user. And check this out: it could
 be *positive*, meaning we'll charge them, or *negative* for a downgrade, meaning
