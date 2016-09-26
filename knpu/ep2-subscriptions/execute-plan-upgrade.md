@@ -5,10 +5,14 @@ Stripe to *actually* make the change.
 
 In `ProfileController`, add the new endpoint: `public function changePlanAction()`.
 Set its URL to `/profile/plan/change/execute/{planId}` and name it `account_execute_plan_change`.
-Add the `$planId` argument.
+Add the `$planId` argument:
 
-This will start just like the previewChange endpoint: copy its `$plan` code and
-paste it here. 
+[[[ code('c6fca0bd12') ]]]
+
+This will start just like the `previewPlanChangeAction()` endpoint: copy its `$plan`
+code and paste it here:
+
+[[[ code('c6fca0bd12') ]]]
 
 ## Changing a Subscription Plan in Stripe
 
@@ -17,12 +21,22 @@ its plan to the new id, and save. Super easy!
 
 Open `StripeClient` and add a new function called `changePlan()` with two arguments:
 the `User` who wants to upgrade and the `SubscriptionPlan` that they want to change
-to.
+to:
+
+[[[ code('06dfaa4339') ]]]
 
 Then, fetch the `\Stripe\Subscription` for the User with `$this->findSubscription()`
-passing it `$user->getSubscription()->getStripeSubscriptionId()`. Now, update
-that: `$stripeSubscription->plan = $newPlan->getPlanId()`. Finally, send that to
-Stripe with `$stripeSubscription->save()`.
+passing it `$user->getSubscription()->getStripeSubscriptionId()`:
+
+[[[ code('19addc5caa') ]]]
+
+Now, update that: `$stripeSubscription->plan = $newPlan->getPlanId()`:
+
+[[[ code('705f6bf5d0') ]]]
+
+Finally, send that to Stripe with `$stripeSubscription->save()`:
+
+[[[ code('aded3d8bce') ]]]
 
 ## But Charge the User Immediately
 
@@ -39,14 +53,22 @@ the plan, this creates *two* new invoice items for the negative and positive pla
 proration. So if we invoice the user right now, it will pay those invoice items.
 
 And hey! We *already* have a method to do that called `createInvoice()`. Heck it
-even *pays* that invoice immediately.
+even *pays* that invoice immediately:
 
-In our function, call `$this->createInvoice()` and pass it `$user`.
+[[[ code('c0b2822490') ]]]
 
-Finally, return `$stripeSubscription` at the bottom - we'll need that in a minute.
+In our function, call `$this->createInvoice()` and pass it `$user`:
+
+[[[ code('dbf6fecaec') ]]]
+
+Finally, return `$stripeSubscription` at the bottom - we'll need that in a minute:
+
+[[[ code('3151833b53') ]]]
 
 Back in the controller, call this with `$stripeSubscription = $this->get('stripe_client')`
-then `->changePlan($this->getUser(), $plan)`.
+then `->changePlan($this->getUser(), $plan)`:
+
+[[[ code('60ca3ddc12') ]]]
 
 ## Upgrading the Plan in our Database
 
@@ -54,37 +76,56 @@ Ok, the plan is upgraded! Well, in Stripe. But we *also* need to update the subs
 row in our database.
 
 When a user buys a new subscription, we call a method on `SubscriptionHelper` called
-`addSubscriptionToUser()`. We pass it the new `\Stripe\Subscription` and the `User`.
+`addSubscriptionToUser()`. We pass it the new `\Stripe\Subscription` and the `User`:
+
+[[[ code('b68a1488b6') ]]]
+
 Then *it* guarantees that the user has a subscription row in the table with the correct
 data, like the plan id, subscription id, and `$periodEnd` date.
 
-Now, the only thing *we* need to update right now is the plan id: both the
-subscription id and period end haven't changed. But that's ok: we can still safely
+Now, the only thing *we* need to update right now is the plan ID: both the
+subscription ID and period end haven't changed. But that's ok: we can still safely
 reuse this method. 
 
 In `ProfileController`, add `$this->get('subscription_helper')->addSubscriptionToUser()`
-passing it `$stripeSubscription` and `$this->getUser()`.
+passing it `$stripeSubscription` and `$this->getUser()`:
+
+[[[ code('6ee1542d47') ]]]
 
 And that's *everything*. At the bottom... well, we don't *really* need to return
 anything to our JSON. So just return a `new Response()` with `null` as the content
-and a 204 status code. This doesn't do anything special: 204 simply means that the
-operation was successful, but the server has nothing it wishes to say back.
+and a `204` status code:
+
+[[[ code('5cd8ada49d') ]]]
+
+This doesn't do anything special: `204` simply means that the operation was successful,
+but the server has nothing it wishes to say back.
 
 ## Executing the Upgrade in the UI
 
 Copy the route name, then head to the template to make this work.
 
 First, find the button, copy the `data-preview-url` attribute, and paste it. Name
-the new one `data-change-url` and update the route name.
+the new one `data-change-url` and update the route name:
 
-Above in the JavaScript, set a new `changeUrl` variable to `$(this).data('change-url')`.
+[[[ code('629c734e8e') ]]]
+
+Above in the JavaScript, set a new `changeUrl` variable to `$(this).data('change-url')`:
+
+[[[ code('5835b2f012') ]]]
+
 Then, scroll down to the bottom: this callback function will be executed *if* the
 user clicks the "Ok" button to confirm the change. Make the AJAX call here: set the
-`url` to `changeUrl`, the `method` to `POST`, and attach *one* more success function.
-Inside that, call Sweet Alert to tell the user that the plan was changed! Let's also
-add some code to reload the page after everything.
+`url` to `changeUrl`, the `method` to `POST`, and attach *one* more success function:
 
-Ok! Let's do this! Refresh the page! Click to change to the "New Zealander".
+[[[ code('e648e52652') ]]]
+
+Inside that, call Sweet Alert to tell the user that the plan was changed! Let's also
+add some code to reload the page after everything:
+
+[[[ code('f690f55556') ]]]
+
+OK! Let's do this! Refresh the page! Click to change to the "New Zealander".
 $99.88 - that looks right, now press "Ok". And ... cool! I think it worked! When
 the page reloads, our plan is the "New Zealander" and we can downgrade to the
 "Farmer Brent".
