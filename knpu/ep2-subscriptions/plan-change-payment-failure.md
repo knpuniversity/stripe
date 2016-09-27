@@ -15,7 +15,7 @@ So, this is solid.
 But what happens if their card is declined when they try to upgrade? I don't know:
 let's find out. First, go buy a new, fresh subscription. Great!
 
-Now, update your card to be one that will fail when it's charged: `4000-0000-0000-0341`.
+Now, update your card to be one that will fail when it's charged: `4000 0000 0000 0341`.
 
 Ok, try to change to the New Zealander. It thinks for awhile and then... an AJAX
 error! You can see it down in the web debug toolbar. 
@@ -35,7 +35,13 @@ everything is totally borked.
 ## Failing Gracefully
 
 This whole mess starts in `StripeClient`, when we call `$this->createInvoice()`,
-because this might fail. Scroll up to that method.
+because this might fail:
+
+[[[ code('9146c196c7') ]]]
+
+Scroll up to that method:
+
+[[[ code('9d592214c3') ]]]
 
 In addition to calling this to upgrade a subscription plan, we *also* call this
 at checkout, even if there is *no* subscription. The problem is that if payment
@@ -47,23 +53,37 @@ Here's our rescue plan: if paying the invoice fails, we need to *close* it. By d
 that, Stripe will *not* try to pay it again.
 
 To do that, surround the `pay()` line with a try-catch for the `\Stripe\Error\Card`
-exception. Here, add `$invoice->close = true` and then `$invoice->save()`.
+exception:
 
-Then, re-throw the exception. Our checkout logic looks for this exception and uses
-it to notify the user of the problem.
+[[[ code('23c9bca170') ]]]
+
+Here, add `$invoice->close = true` and then `$invoice->save()`. Then, re-throw the
+exception:
+
+[[[ code('1a7f6d4ddf') ]]]
+
+Our checkout logic looks for this exception and uses it to notify the user of the
+problem.
 
 Next, down in the other function, if we fail to create the invoice, we need to
 *not* change the customer's plan in Stripe.
 
-Add a new variable called `$originalPlanId` set to `$stripeSubscription->plan->id`.
+Add a new variable called `$originalPlanId` set to `$stripeSubscription->plan->id`:
+
+[[[ code('563db405e8') ]]]
+
 Then, surround the `createInvoice()` call with a try-catch block for the same exception:
-`\Stripe\Error\Card`.
+`\Stripe\Error\Card`:
+
+[[[ code('fbf6d194fe') ]]]
 
 ## Reverting the Plan without Proration
 
 If this happens, we need to do change the subscription plan *back* to the original
 one: `$stripeSubscription->plan = $originalPlanId`. But here's the tricky part: add
-`$stripeSubscription->prorate = false`.
+`$stripeSubscription->prorate = false`:
+
+[[[ code('0decc072a7') ]]]
 
 Why? When we originally change the plan, that creates the two proration invoice items.
 If the invoice fails to pay, then the invoice containing those invoice items is closed.
@@ -75,7 +95,9 @@ proration invoice items in reverse to be created. By saying `prorate = false`, w
 telling Stripe to change back to the original plan, but without creating any invoice
 items. Yep, simply change the plan back.
 
-Finally, call `$stripeSubscription->save()`. Then, once again, re-throw the exception.
+Finally, call `$stripeSubscription->save()`. Then, once again, re-throw the exception:
+
+[[[ code('9b4af084e0') ]]]
 
 ## Telling the User What Happened
 
@@ -83,14 +105,23 @@ That fixes the problem in Stripe. The last thing *we* need to do is tell the use
 what went wrong.
 
 Open `ProfileController::changePlanAction()`. Surround the `changePlan()` call with -
-you guessed it - one more try-catch block for that same exception: `\Stripe\Error\Card`.
-If this happens, return a new `JsonResponse()` with a message key set to `$e->getMessage()`.
+you guessed it - one more try-catch block for that same exception: `\Stripe\Error\Card`:
+
+[[[ code('f0af8639da') ]]]
+
+If this happens, return a new `JsonResponse()` with a message key set to `$e->getMessage()`:
+
+[[[ code('e04e1003b7') ]]]
+
 This will be something like: "Your card was declined".
 
 Oh, and give this a 400 status code so that jQuery knows that this AJAX call has failed.
 
-Finally, in the template, add a `.fail()` callback with a `jqXHR` argument. I'll
-paste in one last sweet alert popup that shows the message to the user.
+Finally, in the template, add a `.fail()` callback with a `jqXHR` argument:
+
+[[[ code('97e86f6bfb') ]]]
+
+I'll paste in one last sweet alert popup that shows the message to the user.
 
 ## Give it a Floor Run, See if it Plays
 
