@@ -27,11 +27,15 @@ of that month and be renewed in one year, on the 15th.
 For us, this means that the `amount_due` on the Invoice is actually correct: we don't
 need to adjust it. In `ProfileController`, create a new variable called `$currentUserPlan`
 set to `$this->get('subscription_helper')->findPlan()` and pass it
-`$this->getUser()->getSubscription()->getStripePlanId()`.
+`$this->getUser()->getSubscription()->getStripePlanId()`:
+
+[[[ code('963db113a5') ]]]
 
 Now, if `$plan` - which is the new plan - `$plan->getDuration()` matches the
 `$currentUserPlan->getDuration()`, then we *should* correct the total. Otherwise,
-if the duration is changing, the `$total` is already perfect.
+if the duration is changing, the `$total` is already perfect:
+
+[[[ code('f702f1568e') ]]]
 
 Since this looks *totally* weird, I'll tweak my comment to mention that `amount_due`
 contains the extra month charge *only* if the duration stays the same.
@@ -54,15 +58,22 @@ Open the profiler for that request and find the Exception:
 > Nothing to invoice for customer
 
 Obviously, we need to avoid this. In `StripeClient`, add a new variable: `$currentPeriodStart`
-that's set to `$stripeSubscription->current_period_start`. That's the current period
-start date *before* we change the plan.
+that's set to `$stripeSubscription->current_period_start`:
+
+[[[ code('30192c8d06') ]]]
+
+That's the current period start date *before* we change the plan.
 
 After we change the plan, if the duration is different, the current period start
 will have changed. Surround the *entire* invoicing block with if
-`$stripeSubscription->current_period_start == $currentPeriodStart`.
+`$stripeSubscription->current_period_start == $currentPeriodStart`:
+
+[[[ code('45d826630e') ]]]
 
 In other words: only invoice the customer manually if the subscription period hasn't
 changed. I think we should add a note above this: this can look really confusing!
+
+[[[ code('b7629307a5') ]]]
 
 ## Take it for a Test Drive
 
