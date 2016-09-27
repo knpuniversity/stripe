@@ -26,21 +26,33 @@ Back on our site, before we get into any Stripe integration, we need to add a sp
 for adding coupons during checkout.
 
 Open the template: `order/checkout.html.twig`. Below the cart table, add a button,
-give it some styling classes and a `js-show-code-form` class. Say, "I have a coupon code".
+give it some styling classes and a `js-show-code-form` class. Say, "I have a coupon code":
+
+[[[ code('7dcf927f98') ]]]
 
 Instead of adding this form by hand, open your `tutorial/` directory: this is
 included in the code download. Open `coupon-form.twig`, copy its code, then paste
-it below the button.
+it below the button:
 
-This new div is hidden by default and has a `js-code-form` class that we'll use soon
+[[[ code('d3f8301cab') ]]]
+
+This new `div` is hidden by default and has a `js-code-form` class that we'll use soon
 via JavaScript. And, it has just one field named `code`. 
 
 Copy the `js-show-code-form` class and scroll up to the `javascripts` block. Add
-a new `document.ready()` function.
+a new `document.ready()` function:
+
+[[[ code('62567e537d') ]]]
 
 Inside, find the `.js-show-code-form` element and on `click`, add a callback. Start
-with our favorite `e.preventDefault()`. Then, scroll down to the form, copy the
-`js-code-form` class, use jQuery to select this, and... drumroll... show it!
+with our favorite `e.preventDefault()`:
+
+[[[ code('a7977f8154') ]]]
+
+Then, scroll down to the form, copy the `js-code-form` class, use jQuery to select this,
+and... drumroll... show it!
+
+[[[ code('7ce35e3a8a') ]]]
 
 Cool! Now when you refresh, we have a new link that shows the form. 
 
@@ -50,12 +62,16 @@ So let's move to phase two: when we hit "Add", this should submit to a new endpo
 that validates the code in Stripe and attaches it to our user's cart.
 
 To create the new endpoint, open `OrderController`. Near the bottom add a new public
-function `addCouponAction` with `@Route("/checkout/coupon")`. Name it `order_add_coupon`.
-And to be extra-hipster, add `@Method("POST")` to guarantee that you can only
-POST to this.
+function `addCouponAction()` with `@Route("/checkout/coupon")`. Name it `order_add_coupon`.
+And to be extra-hipster, add `@Method("POST")` to guarantee that you can only POST
+to this:
+
+[[[ code('a4a75f7593') ]]]
 
 Cool! Copy the route name, then find the coupon form in the checkout template. Update
-the form's `action`: add `path()` and then paste the route name.
+the form's `action`: add `path()` and then paste the route name:
+
+[[[ code('e720ad0893') ]]]
 
 Next, we'll read the submitted code and check with Stripe to make sure it's real,
 and not just someone trying to guess clever coupon codes. Come on, we've all tried
