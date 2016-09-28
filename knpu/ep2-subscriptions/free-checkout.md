@@ -20,9 +20,14 @@ free.
 ## Hide the Checkout Form
 
 The first step, is to hide this checkout form! In `checkout.html.twig`, find the
-`_cardForm.html.twig` include, and wrap it in `if cart.totalWithDiscount > 0`. Else,
-create a really simple form that submits right back to this URL. Give it
-`method="POST"` and a submit button that invites the user to "Checkout for Free".
+`_cardForm.html.twig` include, and wrap it in `if cart.totalWithDiscount > 0`:
+
+[[[ code('a5cf2ee05f') ]]]
+
+Else, create a really simple form that submits right back to this URL. Give it
+`method="POST"` and a submit button that invites the user to "Checkout for Free":
+
+[[[ code('5631e20cac') ]]]
 
 If you refresh now, boom! Checkout form gone.
 
@@ -31,11 +36,15 @@ If you refresh now, boom! Checkout form gone.
 But that's not *quite* everything we need to do. Thanks to the discount, Stripe
 will already know that it doesn't need to charge the user, and so, the customer
 doesn't need to have a card. But, the funny thing is, up until now, our `OrderController`
-logic is expecting a `stripeToken` to *always* be submitted. 
+logic is expecting a `stripeToken` to *always* be submitted:
+
+[[[ code('dadf05afb4') ]]]
 
 Remember that's the token that we get back from Stripe, after submitting the
 credit card information to them. We then pass that to `chargeCustomer()` and attach
-it to the Customer.
+it to the Customer:
+
+[[[ code('917a38d36e') ]]]
 
 ## Optionally Apply the Stripe Token
 
@@ -44,35 +53,59 @@ Customer for free orders. At the top, add a *sanity* check: if there is *no* tok
 and the shopping cart's total with discount is *not* free... well, we have a problem!
 Throw a clear exception: the order is non-free... but we're missing the payment token!
 
+[[[ code('07509ab60c') ]]]
+
 Next, when we call `createCustomer()`, we pass in the `$token`. Open `StripeClient`
-and find that method. 
+and find that method:
+
+[[[ code('e8394aaaae') ]]]
 
 Hmm. Now, `$paymentToken` might be blank. But Stripe will be *really* angry if we
 try to attach an empty *source* to the Customer. Instead of doing this all at once,
 add a new `$data` array variable, and move the `email` key into it. Then, pass
-`$data` to the `create()` call.
+`$data` to the `create()` call:
+
+[[[ code('0d272658da') ]]]
 
 You know what's next: if `$paymentToken` is not blank, add a `source` key to
-`$data` set to `$paymentToken`. We're done here.
+`$data` set to `$paymentToken`:
+
+[[[ code('d49319adb0') ]]]
+
+We're done here.
 
 But we have the same problem in `updateCustomerCard()`. Let's fix this here:
-if `$stripeToken`, then update the customer's card.
+if `$stripeToken`, then update the customer's card:
+
+[[[ code('d171926a05') ]]]
 
 Else, we *do* need to fetch the `\Stripe\Customer` object - we use it below.
 In `StripeClient`, add a new method to do this: `public function findCustomer()`
-with a `User` argument. Then, return the timeless
-`\Stripe\Customer::retrieve($user->getStripeCustomerId())`.
+with a `User` argument:
 
-In the controller, call that: `$stripeCustomer = $stripeClient->findCustomer($user)`.
+[[[ code('b0bb31f6a6') ]]]
+
+Then, return the timeless `\Stripe\Customer::retrieve($user->getStripeCustomerId())`:
+
+[[[ code('b2bdffbaeb') ]]]
+
+In the controller, call that: `$stripeCustomer = $stripeClient->findCustomer($user)`:
+
+[[[ code('8ca7737336') ]]]
 
 Ok, I'm feeling good! The last trouble spot is in `updateCardDetails()`. Open
-`SubscriptionHelper`. Oh yea - this method looks at the `sources` key on the Customer
-to get the card brand and last four digits. In our app, every Customer has exactly
-*one* card, so we use the `0` key. But guess what! Not anymore: a customer *might*
-have zero cards.
+`SubscriptionHelper`:
+
+[[[ code('5a7c6e77eb') ]]]
+
+Oh yea - this method looks at the `sources` key on the Customer to get the card brand
+and last four digits. In our app, every Customer has exactly *one* card, so we use the `0`
+key. But guess what! Not anymore: a customer *might* have zero cards.
 
 So we just need to code defensively: add an if statement: if `!$stripeCustomer->sources->data`,
-just return: there's no card details to update.
+just return: there's no card details to update:
+
+[[[ code('7563dc80c5') ]]]
 
 Ok, we're done! A free checkout and a normal checkout are *almost* the same. The only
 difference is that you *don't* have a Stripe token, so you can't attach that to your
@@ -90,7 +123,10 @@ attached in Stripe. And yea know what? This creates a new problem in a *totally*
 unrelated part of the process: webhooks.
 
 But, it's no big deal. Open `WebhookController` and find the `invoice.payment_failed`
-section. Wait! Woh! Before that - oh geez - fix my *horrible* typo: `invoice.payment_succeeded`.
+section. Wait! Woh! Before that - oh geez - fix my *horrible* typo: `invoice.payment_succeeded`:
+
+[[[ code('c50d98ad07') ]]]
+
 This is why you must *test* your webhooks!
 
 Anyways, back to `invoice.payment_failed`. Our *entire* reason for handling this
@@ -111,9 +147,14 @@ In those cases, the email should *really* have some different text, like:
 > you can add a credit card to your account page.
 
 So to know *which* language to use, first fetch the Stripe Customer by saying
-`$this->get('stripe_client')->findCustomer($user)`.
+`$this->get('stripe_client')->findCustomer($user)`:
+
+[[[ code('58eecc41a9') ]]]
 
 Now we can create a new variable, called `$hasCardOnFile`. Set that to a count
-of `$stripeCustomer->sources->data` and check if it's greater than zero. Now, you
-can use that variable to write the most uplifting, majestic, and encouraging payment
-failed emails that the world has ever seen.
+of `$stripeCustomer->sources->data` and check if it's greater than zero:
+
+[[[ code('74aa483b22') ]]]
+
+Now, you can use that variable to write the most uplifting, majestic, and encouraging
+payment failed emails that the world has ever seen.
