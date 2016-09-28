@@ -5,13 +5,18 @@ to say "This subscription should have this coupon code" - *or* - attach it to th
 *customer*. They're approximately the same, but we'll attach the coupon to the customer,
 in part, because the coupon should *also* work on individual products.
 
-In `OrderController`, scroll down to the `chargeCustomer()` method. We know this
-method: we get or create the Stripe Customer, create InvoiceItems for any products,
-create the Subscription, and then create an invoice, if needed.
+In `OrderController`, scroll down to the `chargeCustomer()` method:
+
+[[[ code('6ad2513c63') ]]]
+
+We know this method: we get or create the Stripe Customer, create InvoiceItems
+for any products, create the Subscription, and then create an invoice, if needed.
 
 Before adding the invoice items, let's add the coupon to the Customer. So, if
 `$cart->getCouponCodeValue()`, then very simply,
-`$stripeCustomer->coupon = $cart->getCouponCode()`. Make it official with `$customer->save()`.
+`$stripeCustomer->coupon = $cart->getCouponCode()`. Make it official with `$customer->save()`:
+
+[[[ code('3af4499702') ]]]
 
 The important thing is that *you* don't need to change how much you're charging the
 user: attach the coupon, charge them for the full amount, and let Stripe figure
@@ -35,10 +40,14 @@ basically, the API responds with a 404 status code.
 
 This all falls apart in `OrderController` on line 95. Hunt that down!
 
-Ah, `findCoupon()`: surround this beast with a try-catch block for `\Stripe\Error\InvalidRequest`.
+Ah, `findCoupon()`: surround this beast with a try-catch block for `\Stripe\Error\InvalidRequest`:
+
+[[[ code('9639133e26') ]]]
 
 The easiest thing to do is add a flash error message: `Invalid Coupon code`. Then,
-redirect back to the checkout page.
+redirect back to the checkout page:
+
+[[[ code('93dfe3b049') ]]]
 
 Refresh that bad coupon! Ok! That's covered!
 
@@ -68,7 +77,9 @@ field is the *key*. This field basically answers this question:
 
 Brilliant! Back in `OrderController::addCouponAction()`, add an if statement: if
 `!$stripeCoupon->valid`, then, just like in the catch, add an error flash - "Coupon expired" -
-and redirect over to the checkout page.
+and redirect over to the checkout page:
+
+[[[ code('60184248d7') ]]]
 
 Try it again. Awesome, this time, we get blocked.
 
