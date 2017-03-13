@@ -10,9 +10,9 @@ you screw up or do something insecure, there could be real consequences. You
 will *at least* have an angry customer. So I guess this tutorial is all about
 accepting money and having *happy* customers.
 
-So let's build a real-life, robust payment system so that when things go wrong
-- because they will - we fail gracefully, avoid surprises and make happy
-customers.
+So let's build a real-life, robust payment system so that when things go
+wrong - because they will - we fail gracefully, avoid surprises and make
+happy customers.
 
 ## Code Along with Me. Do it!
 
@@ -25,7 +25,7 @@ because I want to focus on Stripe. Inside, open the `README.md` file and follow
 the setup details to get the project running. The last step is to open your
 favorite console app, move into the directory, and run:
 
-```bash
+```terminal
 php bin/console server:run
 ```
 
