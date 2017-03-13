@@ -24,7 +24,7 @@ If you get an error about "Unknown Database" - it's cool! Ignore it for now :)
 
 To get your database up and running, execute the following commands:
 
-```php
+```bash
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
 php bin/console h:d:f:l
