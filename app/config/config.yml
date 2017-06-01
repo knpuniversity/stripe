@@ -71,6 +71,9 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: AppBundle\Entity\User
+    from_email:
+        address: ryan+1@gmail.com
+        sender_name: ryan
 
 stof_doctrine_extensions:
     orm:
