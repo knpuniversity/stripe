@@ -1,5 +1,5 @@
 diff --git a/app/config/config.yml b/app/config/config.yml
-index b510090..20732f7 100644
+index 8bde9c7..4e8f9fa 100644
 --- a/app/config/config.yml
 +++ b/app/config/config.yml
 @@ -7,6 +7,7 @@ imports:
