@@ -15,10 +15,11 @@ diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Contro
 index f64190c..41f0ad7 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -78,6 +78,26 @@ class OrderController extends BaseController
+@@ -77,6 +77,26 @@ class OrderController extends BaseController
+ 
      }
  
-     /**
++    /**
 +     * @Route("/checkout/coupon", name="order_add_coupon")
 +     * @Method("POST")
 +     */
@@ -38,10 +39,9 @@ index f64190c..41f0ad7 100644
 +        dump($stripeCoupon);die;
 +    }
 +
-+    /**
+     /**
       * @param $token
       * @throws \Stripe\Error\Card
-      */
 diff --git a/src/AppBundle/StripeClient.php b/src/AppBundle/StripeClient.php
 index 8b14bdd..fb89ae0 100644
 --- a/src/AppBundle/StripeClient.php

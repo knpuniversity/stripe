@@ -1,25 +1,25 @@
 diff --git a/composer.json b/composer.json
-index 2add2db..17b0f52 100644
+index 6ee7a5e..2f8a072 100644
 --- a/composer.json
 +++ b/composer.json
 @@ -30,6 +30,7 @@
          "incenteev/composer-parameter-handler": "^2.0",
-         "friendsofsymfony/user-bundle": "^2.0",
+         "friendsofsymfony/user-bundle": "~2.0.1",
          "stof/doctrine-extensions-bundle": "^1.2",
 +        "stripe/stripe-php": "^3.15",
-         "doctrine/doctrine-migrations-bundle": "^1.1"
+         "doctrine/doctrine-migrations-bundle": "^1.1",
+         "twig/twig": "^1.24.1"
      },
-     "require-dev": {
 diff --git a/composer.lock b/composer.lock
-index e0944a8..f2b1885 100644
+index be9c87b..0712e8c 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,29 +4,33 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
          "This file is @generated automatically"
      ],
--    "content-hash": "efba45f1f25b1780f7d3748823624d6c",
-+    "content-hash": "e0f5a249ad5696bab612f483e8cdeed0",
+-    "content-hash": "1ed2077108a293d57e6e64fb5e81060a",
++    "content-hash": "6ac3b2c3cd66ccc887ea340a61627237",
      "packages": [
          {
              "name": "behat/transliterator",
@@ -933,10 +933,11 @@ index e0944a8..f2b1885 100644
          },
          {
              "name": "stof/doctrine-extensions-bundle",
-@@ -1694,24 +1834,80 @@
+@@ -1693,25 +1833,81 @@
+             ],
              "time": "2016-01-26T23:58:32+00:00"
          },
-         {
++        {
 +            "name": "stripe/stripe-php",
 +            "version": "v3.23.0",
 +            "source": {
@@ -991,7 +992,7 @@ index e0944a8..f2b1885 100644
 +            ],
 +            "time": "2016-09-15T18:16:59+00:00"
 +        },
-+        {
+         {
              "name": "swiftmailer/swiftmailer",
 -            "version": "v5.4.2",
 +            "version": "v5.4.8",
@@ -1348,7 +1349,7 @@ index e0944a8..f2b1885 100644
          },
          {
              "name": "twig/twig",
-@@ -2400,26 +2605,27 @@
+@@ -2402,26 +2607,27 @@
          },
          {
              "name": "zendframework/zend-code",
@@ -1382,7 +1383,7 @@ index e0944a8..f2b1885 100644
                  "zendframework/zend-stdlib": "^2.7 || ^3.0"
              },
              "suggest": {
-@@ -2429,8 +2635,8 @@
+@@ -2431,8 +2637,8 @@
              "type": "library",
              "extra": {
                  "branch-alias": {
@@ -1393,7 +1394,7 @@ index e0944a8..f2b1885 100644
                  }
              },
              "autoload": {
-@@ -2448,30 +2654,30 @@
+@@ -2450,30 +2656,30 @@
                  "code",
                  "zf2"
              ],
@@ -1432,7 +1433,7 @@ index e0944a8..f2b1885 100644
                  "zendframework/zend-stdlib": "^2.7.3 || ^3.0"
              },
              "suggest": {
-@@ -2481,8 +2687,8 @@
+@@ -2483,8 +2689,8 @@
              "type": "library",
              "extra": {
                  "branch-alias": {
@@ -1443,7 +1444,7 @@ index e0944a8..f2b1885 100644
                  }
              },
              "autoload": {
-@@ -2502,22 +2708,22 @@
+@@ -2504,22 +2710,22 @@
                  "events",
                  "zf2"
              ],
@@ -1471,7 +1472,7 @@ index e0944a8..f2b1885 100644
                  "shasum": ""
              },
              "require": {
-@@ -2563,7 +2769,7 @@
+@@ -2565,7 +2771,7 @@
              "keywords": [
                  "database"
              ],
@@ -1480,7 +1481,7 @@ index e0944a8..f2b1885 100644
          },
          {
              "name": "fzaninotto/faker",
-@@ -2615,39 +2821,37 @@
+@@ -2617,39 +2823,37 @@
          },
          {
              "name": "hautelook/alice-bundle",
@@ -1538,7 +1539,7 @@ index e0944a8..f2b1885 100644
              },
              "suggest": {
                  "doctrine/data-fixtures": "To use Doctrine fixtures loader",
-@@ -2655,16 +2859,14 @@
+@@ -2657,16 +2861,14 @@
                  "doctrine/mongodb-odm": "To use Doctrine MongoDB",
                  "doctrine/mongodb-odm-bundle": "To use Doctrine MongoDB with Symfony",
                  "doctrine/orm": "To use Doctrine ORM",
@@ -1558,7 +1559,7 @@ index e0944a8..f2b1885 100644
              },
              "autoload": {
                  "psr-4": {
-@@ -2694,36 +2896,38 @@
+@@ -2696,36 +2898,38 @@
                  "orm",
                  "symfony"
              ],
@@ -1609,7 +1610,7 @@ index e0944a8..f2b1885 100644
                  }
              },
              "autoload": {
-@@ -2743,6 +2947,10 @@
+@@ -2745,6 +2949,10 @@
                  {
                      "name": "Tim Shelburne",
                      "email": "shelburt02@gmail.com"
@@ -1620,7 +1621,7 @@ index e0944a8..f2b1885 100644
                  }
              ],
              "description": "Expressive fixtures generator",
-@@ -2752,37 +2960,39 @@
+@@ -2754,37 +2962,39 @@
                  "orm",
                  "test"
              ],
@@ -1668,7 +1669,7 @@ index e0944a8..f2b1885 100644
                  }
              },
              "autoload": {
-@@ -2804,32 +3014,39 @@
+@@ -2806,32 +3016,39 @@
                  }
              ],
              "description": "This bundle generates code for you",
@@ -1714,7 +1715,7 @@ index e0944a8..f2b1885 100644
                  }
              },
              "autoload": {
-@@ -2859,7 +3076,7 @@
+@@ -2861,7 +3078,7 @@
              ],
              "description": "Symfony PHPUnit Bridge",
              "homepage": "https://symfony.com",

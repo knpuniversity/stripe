@@ -2,16 +2,17 @@ diff --git a/app/Resources/views/profile/account.html.twig b/app/Resources/views
 index 608f91e..9ae43ca 100644
 --- a/app/Resources/views/profile/account.html.twig
 +++ b/app/Resources/views/profile/account.html.twig
-@@ -4,13 +4,17 @@
+@@ -3,14 +3,18 @@
+ {% block body %}
  <div class="nav-space">
      <div class="container">
-         <div class="row">
+-        <div class="row">
 -            <div class="col-xs-12">
 -                <h1>My Account</h1>
 -            </div>
 -        </div>
 -
--        <div class="row">
+         <div class="row">
              <div class="col-xs-6">
 +                <h1>
 +                    My Account

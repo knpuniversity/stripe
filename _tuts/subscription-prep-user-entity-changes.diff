@@ -42,10 +42,11 @@ diff --git a/src/AppBundle/Entity/User.php b/src/AppBundle/Entity/User.php
 index f4a3356..bb313f9 100644
 --- a/src/AppBundle/Entity/User.php
 +++ b/src/AppBundle/Entity/User.php
-@@ -24,6 +24,16 @@ class User extends BaseUser
+@@ -23,6 +23,16 @@ class User extends BaseUser
+      */
      private $stripeCustomerId;
  
-     /**
++    /**
 +     * @ORM\Column(type="string", nullable=true)
 +     */
 +    private $cardBrand;
@@ -55,10 +56,9 @@ index f4a3356..bb313f9 100644
 +     */
 +    private $cardLast4;
 +
-+    /**
+     /**
       * @ORM\OneToOne(targetEntity="Subscription", mappedBy="user")
       */
-     private $subscription;
 @@ -50,4 +60,24 @@ class User extends BaseUser
      {
          return $this->subscription;

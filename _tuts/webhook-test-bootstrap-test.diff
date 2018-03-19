@@ -1,34 +1,33 @@
 diff --git a/composer.json b/composer.json
-index 17b0f52..e98609b 100644
+index 2f8a072..18052f5 100644
 --- a/composer.json
 +++ b/composer.json
-@@ -31,7 +31,8 @@
-         "friendsofsymfony/user-bundle": "^2.0",
+@@ -32,6 +32,7 @@
          "stof/doctrine-extensions-bundle": "^1.2",
          "stripe/stripe-php": "^3.15",
--        "doctrine/doctrine-migrations-bundle": "^1.1"
-+        "doctrine/doctrine-migrations-bundle": "^1.1",
-+        "phpunit/phpunit": "^5.5"
+         "doctrine/doctrine-migrations-bundle": "^1.1",
++        "phpunit/phpunit": "^5.5",
+         "twig/twig": "^1.24.1"
      },
      "require-dev": {
-         "sensio/generator-bundle": "^3.0",
 diff --git a/composer.lock b/composer.lock
-index f2b1885..64340a6 100644
+index 0712e8c..3aa4c46 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,7 +4,7 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
          "This file is @generated automatically"
      ],
--    "content-hash": "e0f5a249ad5696bab612f483e8cdeed0",
-+    "content-hash": "c73e8d66633c7c825c72f4ffebd68e11",
+-    "content-hash": "6ac3b2c3cd66ccc887ea340a61627237",
++    "content-hash": "5e7448995d0444af9e1cd9dd5372aed4",
      "packages": [
          {
              "name": "behat/transliterator",
-@@ -1348,232 +1348,1348 @@
+@@ -1347,233 +1347,1349 @@
+             ],
              "time": "2017-03-13T07:08:03+00:00"
          },
-         {
++        {
 +            "name": "myclabs/deep-copy",
 +            "version": "1.6.1",
 +            "source": {
@@ -70,7 +69,7 @@ index f2b1885..64340a6 100644
 +            ],
 +            "time": "2017-04-12T18:52:22+00:00"
 +        },
-+        {
+         {
              "name": "ocramius/package-versions",
              "version": "1.1.2",
              "source": {
@@ -1560,10 +1559,11 @@ index f2b1885..64340a6 100644
          },
          {
              "name": "sensio/distribution-bundle",
-@@ -2604,6 +3758,56 @@
-             "time": "2017-04-21T00:13:02+00:00"
+@@ -2605,6 +3759,56 @@
+             ],
+             "time": "2018-03-03T16:21:29+00:00"
          },
-         {
++        {
 +            "name": "webmozart/assert",
 +            "version": "1.2.0",
 +            "source": {
@@ -1613,10 +1613,9 @@ index f2b1885..64340a6 100644
 +            ],
 +            "time": "2016-11-23T20:04:58+00:00"
 +        },
-+        {
+         {
              "name": "zendframework/zend-code",
              "version": "3.1.0",
-             "source": {
 diff --git a/tests/AppBundle/Controller/WebhookControllerTest.php b/tests/AppBundle/Controller/WebhookControllerTest.php
 new file mode 100644
 index 0000000..5806cbf

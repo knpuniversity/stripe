@@ -28,10 +28,11 @@ diff --git a/src/AppBundle/Controller/OrderController.php b/src/AppBundle/Contro
 index 5995275..c8dd3e8 100644
 --- a/src/AppBundle/Controller/OrderController.php
 +++ b/src/AppBundle/Controller/OrderController.php
-@@ -26,6 +26,14 @@ class OrderController extends BaseController
+@@ -25,6 +25,14 @@ class OrderController extends BaseController
+         return $this->redirectToRoute('order_checkout');
      }
  
-     /**
++    /**
 +     * @Route("/cart/subscription/{planId}", name="order_add_subscription_to_cart")
 +     */
 +    public function addSubscriptionToCartAction($planId)
@@ -39,10 +40,9 @@ index 5995275..c8dd3e8 100644
 +        // todo - add the subscription plan to the cart!
 +    }
 +
-+    /**
+     /**
       * @Route("/checkout", name="order_checkout", schemes={"%secure_channel%"})
       * @Security("is_granted('ROLE_USER')")
-      */
 diff --git a/src/AppBundle/Store/ShoppingCart.php b/src/AppBundle/Store/ShoppingCart.php
 index ff17ee1..6063cce 100644
 --- a/src/AppBundle/Store/ShoppingCart.php

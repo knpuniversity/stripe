@@ -2,10 +2,11 @@ diff --git a/src/AppBundle/Controller/WebhookController.php b/src/AppBundle/Cont
 index d1adb38..3abade3 100644
 --- a/src/AppBundle/Controller/WebhookController.php
 +++ b/src/AppBundle/Controller/WebhookController.php
-@@ -37,8 +37,20 @@ class WebhookController extends BaseController
+@@ -36,9 +36,21 @@ class WebhookController extends BaseController
+ 
                  $subscriptionHelper->fullyCancelSubscription($subscription);
  
-                 break;
++                break;
 +            case 'invoice.payment_succeeded':
 +                $stripeSubscriptionId = $stripeEvent->data->object->subscription;
 +
@@ -16,7 +17,7 @@ index d1adb38..3abade3 100644
 +
 +                    $subscriptionHelper->handleSubscriptionPaid($subscription, $stripeSubscription);
 +                }
-+                break;
+                 break;
              default:
 -                throw new \Exception('Unexpected webhook type form Stripe! '.$stripeEvent->type);
 +                // allow this - we'll have Stripe send us everything
