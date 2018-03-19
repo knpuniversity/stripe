@@ -28,9 +28,10 @@
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "friendsofsymfony/user-bundle": "^2.0",
+        "friendsofsymfony/user-bundle": "~2.0.1",
         "stof/doctrine-extensions-bundle": "^1.2",
-        "doctrine/doctrine-migrations-bundle": "^1.1"
+        "doctrine/doctrine-migrations-bundle": "^1.1",
+        "twig/twig": "^1.24.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
