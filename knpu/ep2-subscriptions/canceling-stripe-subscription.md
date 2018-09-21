@@ -63,9 +63,10 @@ So easy!
 ***TIP
 Since 2018-07-27, Stripe changed the way you cancel a subscription at period end. Use this code for > the updated API:
 
+```php
 $sub->cancel_at_period_end = true;
-
 $sub->save();
+```
 ***
 
 Or not easy: because you *might* want to pass this an `at_period_end` option set
