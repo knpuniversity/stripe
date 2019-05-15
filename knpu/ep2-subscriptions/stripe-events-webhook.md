@@ -48,7 +48,8 @@ sent us a webhook whenever a subscription was canceled, we would be in business!
 A really nice way to test out webhooks is by using a site called [http://requestb.in][request_bin].
 
 ***TIP
-The requestb.in site is no longer available. Try https://requestbin.com/ instead.
+The http://requestb.in site is no longer available (see https://github.com/Runscope/requestbin#readme).
+Try https://requestbin.com instead that has a bunch more features.
 ***
 
 Click "Create a RequestBin". Ok, real simple: this page will record and display
