@@ -45,11 +45,12 @@ to our site in Stripe. Then, whenever certain event *types* happen, Stripe will
 send a request to our URL that contains the *event* object as JSON. So if Stripe
 sent us a webhook whenever a subscription was canceled, we would be in business!
 
+A really nice way to test out webhooks is by using a site called [http://requestb.in][request_bin].
+
 ***TIP
-The requestb.in site is no longer available. Try https://requestbin.com/ instead
+The requestb.in site is no longer available. Try https://requestbin.com/ instead.
 ***
 
-A really nice way to test out webhooks is by using a site called [http://requestb.in][request_bin].
 Click "Create a RequestBin". Ok, real simple: this page will record and display
 any requests made to this temporary URL. 
 
