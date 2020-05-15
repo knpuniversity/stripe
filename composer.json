@@ -69,7 +69,9 @@
             "keep-outdated": true
         }
     },
-    "platform": {
-        "php": "5.6"
+    "config": {
+        "platform": {
+            "php": "7.1.3"
+        }
     }
 }
