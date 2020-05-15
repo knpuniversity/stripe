@@ -1,5 +1,5 @@
 diff --git a/composer.json b/composer.json
-index 6ee7a5e..2f8a072 100644
+index 377e3df..f4c4ee1 100644
 --- a/composer.json
 +++ b/composer.json
 @@ -30,6 +30,7 @@
@@ -11,19 +11,19 @@ index 6ee7a5e..2f8a072 100644
          "twig/twig": "^1.24.1"
      },
 diff --git a/composer.lock b/composer.lock
-index 510bcdc..7fa0cc8 100644
+index 28d538f..7dc02ca 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,7 +4,7 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
          "This file is @generated automatically"
      ],
--    "content-hash": "1ed2077108a293d57e6e64fb5e81060a",
-+    "content-hash": "6ac3b2c3cd66ccc887ea340a61627237",
+-    "content-hash": "478035ca64b601af958171bcfde9b43a",
++    "content-hash": "dd562e3e8ab50445b0c19ac7a6eea76e",
      "packages": [
          {
              "name": "behat/transliterator",
-@@ -2053,6 +2053,61 @@
+@@ -2082,6 +2082,61 @@
              ],
              "time": "2016-01-26T23:58:32+00:00"
          },
