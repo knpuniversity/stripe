@@ -5,6 +5,9 @@ rich quick (hint: lottery) for the KnpUniversity [Stripe Tutorial][stripe_tuts].
 
 ## Setup
 
+**NOTE**: Because this is an older tutorial, the code only
+works on PHP 7.3 and lower.
+
 ### 1) Install the vendor libs with Composer!
 
 [Download Composer][composer] either globally or right into *this* directory,
