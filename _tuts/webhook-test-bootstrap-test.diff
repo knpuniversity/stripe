@@ -30,7 +30,7 @@ index 8825a96..a7bf65a 100755
  
  function has_color_support()
 diff --git a/composer.json b/composer.json
-index f4c4ee1..1a5a04e 100644
+index 2c9d007..ab2dee0 100644
 --- a/composer.json
 +++ b/composer.json
 @@ -32,6 +32,7 @@
@@ -42,15 +42,15 @@ index f4c4ee1..1a5a04e 100644
      },
      "require-dev": {
 diff --git a/composer.lock b/composer.lock
-index 7dc02ca..42d85c9 100644
+index a21f29d..417ed51 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,29 +4,33 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
          "This file is @generated automatically"
      ],
--    "content-hash": "dd562e3e8ab50445b0c19ac7a6eea76e",
-+    "content-hash": "b2622833f86019f0555d507262a6cb36",
+-    "content-hash": "7b40e484bad91bf0d14ac0ddd7fddca2",
++    "content-hash": "577e1c510b9774271c6476fb9d28a426",
      "packages": [
          {
              "name": "behat/transliterator",
@@ -596,27 +596,27 @@ index 7dc02ca..42d85c9 100644
          },
          {
 -            "name": "sensio/distribution-bundle",
--            "version": "v5.0.7",
+-            "version": "v5.0.22",
 +            "name": "phpdocumentor/type-resolver",
 +            "version": "0.2.1",
              "source": {
                  "type": "git",
 -                "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
--                "reference": "a9c4723cbdbc6cf7fbfdfde3c639cb1943f0293a"
+-                "reference": "209b11f8cee5bf71986dd703e45e27d3ed7a6d15"
 +                "url": "https://github.com/phpDocumentor/TypeResolver.git",
 +                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb"
              },
              "dist": {
                  "type": "zip",
--                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/a9c4723cbdbc6cf7fbfdfde3c639cb1943f0293a",
--                "reference": "a9c4723cbdbc6cf7fbfdfde3c639cb1943f0293a",
+-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/209b11f8cee5bf71986dd703e45e27d3ed7a6d15",
+-                "reference": "209b11f8cee5bf71986dd703e45e27d3ed7a6d15",
 +                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb",
 +                "reference": "e224fb2ea2fba6d3ad6fdaef91cd09a172155ccb",
                  "shasum": ""
              },
              "require": {
 -                "php": ">=5.3.9",
--                "sensiolabs/security-checker": "~3.0",
+-                "sensiolabs/security-checker": "~3.0|~4.0",
 -                "symfony/class-loader": "~2.3|~3.0",
 -                "symfony/config": "~2.3|~3.0",
 -                "symfony/dependency-injection": "~2.3|~3.0",
@@ -662,7 +662,7 @@ index 7dc02ca..42d85c9 100644
 -                "configuration",
 -                "distribution"
 -            ],
--            "time": "2016-06-23T16:11:33+00:00"
+-            "time": "2018-06-07T06:22:12+00:00"
 +            "time": "2016-11-25T06:54:22+00:00"
          },
          {
@@ -728,7 +728,7 @@ index 7dc02ca..42d85c9 100644
                  }
              },
              "notification-url": "https://packagist.org/downloads/",
-@@ -1966,157 +2076,1287 @@
+@@ -1966,152 +2076,1282 @@
              ],
              "authors": [
                  {
@@ -960,11 +960,7 @@ index 7dc02ca..42d85c9 100644
 -                "branch-alias": {
 -                    "dev-master": "2.0-dev"
 -                }
--            },
-             "autoload": {
--                "psr-4": {
--                    "Stripe\\": "lib/"
--                }
++            "autoload": {
 +                "classmap": [
 +                    "src/"
 +                ]
@@ -1835,16 +1831,16 @@ index 7dc02ca..42d85c9 100644
 +        },
 +        {
 +            "name": "sensio/distribution-bundle",
-+            "version": "v5.0.20",
++            "version": "v5.0.22",
 +            "source": {
 +                "type": "git",
 +                "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-+                "reference": "4b019d4c0bd64438c42e4b6b0726085b409be8d9"
++                "reference": "209b11f8cee5bf71986dd703e45e27d3ed7a6d15"
 +            },
 +            "dist": {
 +                "type": "zip",
-+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/4b019d4c0bd64438c42e4b6b0726085b409be8d9",
-+                "reference": "4b019d4c0bd64438c42e4b6b0726085b409be8d9",
++                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/209b11f8cee5bf71986dd703e45e27d3ed7a6d15",
++                "reference": "209b11f8cee5bf71986dd703e45e27d3ed7a6d15",
 +                "shasum": ""
 +            },
 +            "require": {
@@ -1883,7 +1879,7 @@ index 7dc02ca..42d85c9 100644
 +                "configuration",
 +                "distribution"
 +            ],
-+            "time": "2017-05-11T16:21:03+00:00"
++            "time": "2018-06-07T06:22:12+00:00"
 +        },
 +        {
 +            "name": "sensio/framework-extra-bundle",
@@ -2091,14 +2087,9 @@ index 7dc02ca..42d85c9 100644
 +                "branch-alias": {
 +                    "dev-master": "2.0-dev"
 +                }
-+            },
-+            "autoload": {
-+                "psr-4": {
-+                    "Stripe\\": "lib/"
-+                }
              },
-             "notification-url": "https://packagist.org/downloads/",
-             "license": [
+             "autoload": {
+                 "psr-4": {
 @@ -2139,23 +3379,24 @@
          },
          {
