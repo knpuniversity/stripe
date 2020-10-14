@@ -42,7 +42,7 @@ Ready to find out what it is? Open your browser, and go to:
     http://localhost:8000
 
 That's right: welcome to The Sheep Shear Club, your one-stop shop for artisanal
-shearing accessories for the most dapper sheep. Purchase cutting-edge individual
+shearing accessories for the most dapper of sheep. Purchase cutting-edge individual
 products - like one of our After-Shear scents - or have products delivered directly
 to your farm with a monthly subscription.
 
