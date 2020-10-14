@@ -58,4 +58,4 @@ Make sure we didn't break anything by finding a product and adding it to the car
 The fact that this "Pay with Card" shows up means things are probably OK.
 
 This was a small step, but don't mess it up! If that secret key becomes *not* so
-secret, sheep-zombies will attack.
+secret, sheep-zombies guys, sheep-zombies will attack.
