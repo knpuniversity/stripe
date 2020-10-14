@@ -51,7 +51,7 @@ For `source`, replace this fake token with the *submitted* `$token` variable:
 
 [[[ code('18c34bf96e') ]]]
 
-The token basically represents the credit card that was just sent. We're saying:
+The token represents the credit card that was just sent. So we're saying:
 Use *this* card as the source for this charge. And then, put whatever you want for
 description, like "First test charge":
 
@@ -77,7 +77,7 @@ Next, I want to show a success message to the user. To do that in Symfony, call
 And finally, you should *definitely* redirect the page somewhere. I'll use
 `redirectToRoute()` to send the user to the homepage.
 
-That is it. Now for the *real* moment of truth. Hit enter to reload our page without
+And that is it. Now for the *real* moment of truth. Hit enter to reload our page without
 submitting, put in the fake credit card, any date, any CVC, and...
 
 ***TIP
