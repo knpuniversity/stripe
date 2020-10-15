@@ -82,7 +82,7 @@ the *customer*. Set `'customer' => $user->getStripeCustomerId()`:
 
 [[[ code('0e00498024') ]]]
 
-Since we're no long saying "Charge this credit card", we're saying "Charge this customer,
+So we're no long saying "Charge this credit card", we're saying "Charge this customer,
 using whatever credit card they have on file".
 
 Ok, time to try it out! Go back and reload this page. Run through the checkout with
