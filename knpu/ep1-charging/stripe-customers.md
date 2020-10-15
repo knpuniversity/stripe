@@ -78,11 +78,11 @@ with our user. Phew!
 ## Charging the User
 
 The last thing we need to update is the Charge: instead of passing `source`, charge
-the *customer* instead. Set `'customer' => $user->getStripeCustomerId()`:
+the *customer*. Set `'customer' => $user->getStripeCustomerId()`:
 
 [[[ code('0e00498024') ]]]
 
-We're no long saying "Charge this credit card", we're saying "Charge this customer,
+Since we're no long saying "Charge this credit card", we're saying "Charge this customer,
 using whatever credit card they have on file".
 
 Ok, time to try it out! Go back and reload this page. Run through the checkout with
