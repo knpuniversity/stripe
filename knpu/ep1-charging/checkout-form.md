@@ -67,8 +67,8 @@ just happened - a step that's *core* to how Stripe checkout works.
 
 ## The Stripe Checkout Token
 
-First, credit card information is *never* sent to our servers... which is the *greatest*
-news ever from a security standpoint. I do *not* want to handle your CC number:
+First, credit card information is *never, ever* sent to our servers... which is the *greatest*
+news I have ever heard from a security standpoint. I do *not* want to handle your CC number:
 this would *greatly* increase the security requirements on my server.
 
 Instead, when you hit "Pay", this sends the credit card information to *Stripe* directly,
