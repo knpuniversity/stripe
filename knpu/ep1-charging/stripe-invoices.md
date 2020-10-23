@@ -44,7 +44,7 @@ But, if you have web hooks setup - something we'll talk about in the second cour
 that will delay charging the user by 1 hour. Calling `->pay()` guarantees that this
 happens *right* now.
 
-Ok, go back and try this out. Find a great and high-quality product, and add it to
+Ok, go back and try this out. Find a wonderful and high-quality product, and add it to
 the cart. Checkout using your favorite fake credit card and fake information.
 
 Looks like it worked! And since this user *already* is a Stripe customer, refresh
