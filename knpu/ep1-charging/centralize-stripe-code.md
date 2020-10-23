@@ -98,7 +98,7 @@ Now the `StripeClient` class is getting dangerous!
 
 ## Always setting the API Key
 
-But, there's one small problem. This *will* work now, but look at the `setApiKey()`
+But, there's one small problem. This *will* work, but look at the `setApiKey()`
 method call that's above everything:
 
 [[[ code('09c79da48b') ]]]
@@ -167,8 +167,8 @@ and `true` to pay immediately:
 
 [[[ code('b1bbad5c43') ]]]
 
-Phew! This was a giant step sideways - but not only is our code more re-usable, it
+Phew! This was a giant step sideways - but it's good, not only is our code more re-usable, it
 just makes a lot more sense when you read it!
 
-Double-check to make sure it works. Add something to your cart. Check-out. Yes!
-No error! The system still works and this `StripeClient` is really, really sweet.
+Double-check to make sure it works. Add something to your cart. Annnd check-out using our fake information. Yes!
+No error! The system still works and this `StripeClient` class is looking really, really sweet.
