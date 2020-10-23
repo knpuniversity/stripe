@@ -171,4 +171,4 @@ Phew! This was a giant step sideways - but it's good, not only is our code more 
 just makes a lot more sense when you read it!
 
 Double-check to make sure it works. Add something to your cart. Annnd check-out using our fake information. Yes!
-No error! The system still works and this `StripeClient` class is really, really sweet.
+No error! The system still works and this `StripeClient` class is looking really, really sweet.
