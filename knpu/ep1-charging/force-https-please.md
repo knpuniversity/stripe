@@ -7,7 +7,7 @@ Oh, but there's just one thing that you *cannot* forget to do. And that's to *fo
 `https` to be used on your checkout page.
 
 Right now, there is *no* little lock icon in my browser - this page is *not* secure.
-Of course it's not a problem now because I'm just coding locally.
+Of course it's not a problem right now because I'm just coding locally.
 
 But on production, different story. Even though you're not handling credit card
 information, Stripe *does* submit that token to our server. If that submit happens
