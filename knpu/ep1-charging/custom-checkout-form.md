@@ -47,8 +47,8 @@ This will read this *other* template file I prepared: `_cardForm.html.twig`:
 
 [[[ code('0744de8f61') ]]]
 
-As you can see, this is a normal HTML form. Its `method` is post and its `action`
-is still empty so that it will submit right back to the same URL and controller.
+And as you can see, this is a normal HTML form. Its `method` is POST and its `action`
+is still empty so that it will submit right back to the same URL in controller.
 Then, there's just a bunch of fields that are rendered to look good with Bootstrap.
 
 Let's see how awesome my design skills are: go back and refresh. Hey, it looks pretty
