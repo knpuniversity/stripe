@@ -31,7 +31,8 @@
         "friendsofsymfony/user-bundle": "~2.0.1",
         "stof/doctrine-extensions-bundle": "^1.2",
         "doctrine/doctrine-migrations-bundle": "^1.1",
-        "twig/twig": "^1.24.1"
+        "twig/twig": "^1.24.1",
+        "composer/package-versions-deprecated": "^1.11"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
