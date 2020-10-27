@@ -11,7 +11,7 @@ index 8bde9c7..4e8f9fa 100644
  framework:
      #esi:             ~
 diff --git a/app/config/config_test.yml b/app/config/config_test.yml
-index 0a953e6..e4a6b43 100644
+index 0a953e66..e4a6b43 100644
 --- a/app/config/config_test.yml
 +++ b/app/config/config_test.yml
 @@ -1,6 +1,9 @@

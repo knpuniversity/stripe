@@ -1,5 +1,5 @@
 diff --git a/composer.json b/composer.json
-index 89ba528..2c9d007 100644
+index 7e1e787..f7cc746 100644
 --- a/composer.json
 +++ b/composer.json
 @@ -30,6 +30,7 @@
@@ -8,22 +8,22 @@ index 89ba528..2c9d007 100644
          "stof/doctrine-extensions-bundle": "^1.2",
 +        "stripe/stripe-php": "^3.15",
          "doctrine/doctrine-migrations-bundle": "^1.1",
-         "twig/twig": "^1.24.1"
-     },
+         "twig/twig": "^1.24.1",
+         "composer/package-versions-deprecated": "^1.11"
 diff --git a/composer.lock b/composer.lock
-index a2f062c..a21f29d 100644
+index 884fb0a..6104b78 100644
 --- a/composer.lock
 +++ b/composer.lock
 @@ -4,7 +4,7 @@
          "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
          "This file is @generated automatically"
      ],
--    "content-hash": "75eb76667fb981917906b3092d13997a",
-+    "content-hash": "7b40e484bad91bf0d14ac0ddd7fddca2",
+-    "content-hash": "39b804874aad7075f23ccd33fd6fa960",
++    "content-hash": "a63b32ed37997a9872740325b47ef44c",
      "packages": [
          {
              "name": "behat/transliterator",
-@@ -2082,6 +2082,61 @@
+@@ -2105,6 +2105,61 @@
              ],
              "time": "2016-01-26T23:58:32+00:00"
          },
